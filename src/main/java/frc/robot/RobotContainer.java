@@ -17,8 +17,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import lib.RobotMethods;
 
-public class RobotContainer {
+public class RobotContainer implements RobotMethods {
     // Subsystems
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -79,5 +80,75 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         return Commands.print("No autonomous command configured");
+    }
+
+    @Override
+    public void robotPeriodic() {
+
+    }
+
+    @Override
+    public void disabledInit() {
+
+    }
+
+    @Override
+    public void disabledPeriodic() {
+
+    }
+
+    @Override
+    public void disabledExit() {
+
+    }
+
+    @Override
+    public void autonomousInit() {
+
+    }
+
+    @Override
+    public void autonomousPeriodic() {
+
+    }
+
+    @Override
+    public void autonomousExit() {
+
+    }
+
+    @Override
+    public void teleopInit() {
+
+    }
+
+    @Override
+    public void teleopPeriodic() {
+
+    }
+
+    @Override
+    public void teleopExit() {
+
+    }
+
+    @Override
+    public void testInit() {
+
+    }
+
+    @Override
+    public void testPeriodic() {
+
+    }
+
+    @Override
+    public void testExit() {
+
+    }
+
+    @Override
+    public void simulationPeriodic() {
+
     }
 }
