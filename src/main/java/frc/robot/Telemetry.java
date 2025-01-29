@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import lib.LoggingHelper;
 
 public class Telemetry {
     private final double MaxSpeed;
@@ -35,6 +36,8 @@ public class Telemetry {
 
     /* What to publish over networktables for telemetry */
     private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
+
+    private final LoggingHelper LoggingHelper = new lib.LoggingHelper(inst);
 
     /* Robot swerve drive state */
     private final NetworkTable driveStateTable = inst.getTable("DriveState");
@@ -128,5 +131,7 @@ public class Telemetry {
 
             SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
         }
+
+        LoggingHelper.logSwerveModuleStates(state);
     }
 }
