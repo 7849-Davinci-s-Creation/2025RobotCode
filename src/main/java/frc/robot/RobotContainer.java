@@ -95,7 +95,7 @@ public class RobotContainer implements RobotMethods {
                                 // negative X (left)
                                 ));
 
-                joystick.leftBumper().whileTrue(
+                joystick.leftTrigger().whileTrue(
                                 drivetrain.applyRequest(() -> drive
                                                 .withVelocityX(-(OperatorControllerUtil.handleDeadZone(
                                                                 joystick.getLeftY(),
@@ -127,7 +127,7 @@ public class RobotContainer implements RobotMethods {
                                 // negative X (left)
                                 ));
 
-                joystick.rightBumper().whileTrue(
+                joystick.rightTrigger().whileTrue(
                                 drivetrain.applyRequest(() -> drive
                                                 .withVelocityX(-(OperatorControllerUtil.handleDeadZone(
                                                                 joystick.getLeftY(),
