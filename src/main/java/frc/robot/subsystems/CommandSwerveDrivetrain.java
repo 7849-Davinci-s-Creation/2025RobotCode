@@ -2,17 +2,25 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.io.IOException;
 import java.util.function.Supplier;
+
+import org.json.simple.parser.ParseException;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -22,7 +30,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
+import frc.robot.Constants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
 /**
@@ -305,5 +313,46 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             Matrix<N3, N1> visionMeasurementStdDevs) {
         super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds),
                 visionMeasurementStdDevs);
+    }
+
+    public Pose2d getPose() {
+        return super.getState().Pose;
+    }
+
+    public ChassisSpeeds getChassisSpeeds() {
+        return super.getKinematics().toChassisSpeeds(this.getState().ModuleStates);
+    }
+
+    public void drive(ChassisSpeeds chassisSpeeds) {
+        super.setControl(new SwerveRequest.ApplyRobotSpeeds().withSpeeds(chassisSpeeds));
+    }
+
+    public void configPathPlanner() {
+        // Configure AutoBuilder last
+        try {
+            AutoBuilder.configure(
+                    this::getPose, // Robot pose supplier
+                    this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+                    this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+                    this::drive, // Method that will drive the robot given ROBOT
+                                 // RELATIVE ChassisSpeeds. Also optionally outputs
+                                 // individual module feedforwards
+                    new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller
+                                                    // for
+                                                    // holonomic drive trains
+                            new PIDConstants(10.0, 0.0, 0.0), // Translation PID constants
+                            new PIDConstants(10.0, 0.0, 0.0) // Rotation PID constants
+                    ),
+                    RobotConfig.fromGUISettings(), // The robot configuration
+
+                    () -> DriverStation.getAlliance().get().equals(DriverStation.Alliance.Red),
+
+                    this // Reference to this subsystem to set requirements
+            );
+
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+            DriverStation.reportError(e.getMessage(), e.getStackTrace());
+        }
     }
 }

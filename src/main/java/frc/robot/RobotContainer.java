@@ -7,9 +7,12 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -46,9 +49,16 @@ public class RobotContainer implements RobotMethods {
         private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
         private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
+        private final SendableChooser<Command> autoChooser;
+
         public RobotContainer() {
                 Telemetry logger = new Telemetry(MaxSpeed);
                 drivetrain.registerTelemetry(logger::telemeterize);
+
+                drivetrain.configPathPlanner();
+
+                autoChooser = AutoBuilder.buildAutoChooser();
+                SmartDashboard.putData(autoChooser);
 
                 configureBindings();
         }
@@ -86,10 +96,69 @@ public class RobotContainer implements RobotMethods {
                                 // negative X (left)
                                 ));
 
-                joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-                joystick.b().whileTrue(drivetrain.applyRequest(
-                                () -> point.withModuleDirection(
-                                                new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
+                joystick.leftBumper().whileTrue(
+                                drivetrain.applyRequest(() -> drive
+                                                .withVelocityX(-(OperatorControllerUtil.handleDeadZone(
+                                                                joystick.getLeftY(),
+                                                                Constants.OperatorConstants.DRIVER_CONTROLLER_DEADBAND)
+                                                                * MaxSpeed)
+                                                                / Constants.OperatorConstants.SLIGHT_CREEP_NERF) // Drive
+                                                // forward
+                                                // with
+                                                // negative Y
+                                                // (forward)
+                                                .withVelocityY(-(OperatorControllerUtil.handleDeadZone(
+                                                                joystick.getLeftX(),
+                                                                Constants.OperatorConstants.DRIVER_CONTROLLER_DEADBAND)
+                                                                * MaxSpeed)
+                                                                / Constants.OperatorConstants.SLIGHT_CREEP_NERF) // Drive
+                                                // left
+                                                // with
+                                                // negative
+                                                // X
+                                                // (left)
+                                                .withRotationalRate(
+                                                                -(OperatorControllerUtil.handleDeadZone(
+                                                                                joystick.getRightX(),
+                                                                                Constants.OperatorConstants.DRIVER_CONTROLLER_DEADBAND)
+                                                                                * MaxAngularRate)
+                                                                                / Constants.OperatorConstants.SLIGHT_CREEP_NERF) // Drive
+                                // counterclockwise
+                                // with
+                                // negative X (left)
+                                ));
+
+                joystick.rightBumper().whileTrue(
+                                drivetrain.applyRequest(() -> drive
+                                                .withVelocityX(-(OperatorControllerUtil.handleDeadZone(
+                                                                joystick.getLeftY(),
+                                                                Constants.OperatorConstants.DRIVER_CONTROLLER_DEADBAND)
+                                                                * MaxSpeed)
+                                                                / Constants.OperatorConstants.MAJOR_CREEP_NERF) // Drive
+                                                // forward
+                                                // with
+                                                // negative Y
+                                                // (forward)
+                                                .withVelocityY(-(OperatorControllerUtil.handleDeadZone(
+                                                                joystick.getLeftX(),
+                                                                Constants.OperatorConstants.DRIVER_CONTROLLER_DEADBAND)
+                                                                * MaxSpeed)
+                                                                / Constants.OperatorConstants.MAJOR_CREEP_NERF) // Drive
+                                                // left
+                                                // with
+                                                // negative
+                                                // X
+                                                // (left)
+                                                .withRotationalRate(
+                                                                -(OperatorControllerUtil.handleDeadZone(
+                                                                                joystick.getRightX(),
+                                                                                Constants.OperatorConstants.DRIVER_CONTROLLER_DEADBAND)
+                                                                                * MaxAngularRate)
+                                                                                / Constants.OperatorConstants.MAJOR_CREEP_NERF) // Drive
+                                // counterclockwise
+                                // with
+                                // negative X (left)
+                                ));
 
                 // IF WE NEED TO USE SYSID ROUTINES THEY ARE HERE
                 // // Run SysId routines when holding back/start and X/Y.
@@ -100,11 +169,16 @@ public class RobotContainer implements RobotMethods {
                 // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
                 // reset the field-centric heading on left bumper press
-                joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+                joystick.back().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+
+                joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+                joystick.b().whileTrue(drivetrain.applyRequest(
+                                () -> point.withModuleDirection(
+                                                new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
         }
 
         public Command getAutonomousCommand() {
-                return Commands.print("No autonomous command configured");
+                return autoChooser.getSelected();
         }
 
         @Override
