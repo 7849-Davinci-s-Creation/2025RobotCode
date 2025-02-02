@@ -21,6 +21,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import lib.OperatorControllerUtil;
 import lib.RobotMethods;
+import pabeles.concurrency.IntOperatorTask;
 
 public class RobotContainer implements RobotMethods {
         // Subsystems
@@ -68,28 +69,21 @@ public class RobotContainer implements RobotMethods {
                 drivetrain.setDefaultCommand(
                                 // Drivetrain will execute this command periodically
                                 drivetrain.applyRequest(() -> drive
-                                                .withVelocityX(-OperatorControllerUtil.handleDeadZone(
-                                                                joystick.getLeftY(),
-                                                                Constants.OperatorConstants.DRIVER_CONTROLLER_DEADBAND)
-                                                                * MaxSpeed) // Drive
+                                                .withVelocityX(drivetrain.calculateVelocity(joystick.getLeftY(),
+                                                                MaxSpeed)) // Drive
                                                 // forward
                                                 // with
                                                 // negative Y
                                                 // (forward)
-                                                .withVelocityY(-OperatorControllerUtil.handleDeadZone(
-                                                                joystick.getLeftX(),
-                                                                Constants.OperatorConstants.DRIVER_CONTROLLER_DEADBAND)
-                                                                * MaxSpeed) // Drive
+                                                .withVelocityY(drivetrain.calculateVelocity(joystick.getLeftX(),
+                                                                MaxSpeed)) // Drive
                                                 // left
                                                 // with
                                                 // negative
                                                 // X
                                                 // (left)
-                                                .withRotationalRate(
-                                                                -OperatorControllerUtil.handleDeadZone(
-                                                                                joystick.getRightX(),
-                                                                                Constants.OperatorConstants.DRIVER_CONTROLLER_DEADBAND)
-                                                                                * MaxAngularRate) // Drive
+                                                .withRotationalRate(drivetrain.calculateVelocity(joystick.getRightX(),
+                                                                MaxAngularRate)) // Drive
                                 // counterclockwise
                                 // with
                                 // negative X (left)
@@ -97,31 +91,23 @@ public class RobotContainer implements RobotMethods {
 
                 joystick.leftTrigger().whileTrue(
                                 drivetrain.applyRequest(() -> drive
-                                                .withVelocityX(-(OperatorControllerUtil.handleDeadZone(
-                                                                joystick.getLeftY(),
-                                                                Constants.OperatorConstants.DRIVER_CONTROLLER_DEADBAND)
-                                                                * MaxSpeed)
+                                                .withVelocityX(drivetrain.calculateVelocity(joystick.getLeftY(),
+                                                                MaxSpeed)
                                                                 / Constants.OperatorConstants.SLIGHT_CREEP_NERF) // Drive
                                                 // forward
                                                 // with
                                                 // negative Y
                                                 // (forward)
-                                                .withVelocityY(-(OperatorControllerUtil.handleDeadZone(
-                                                                joystick.getLeftX(),
-                                                                Constants.OperatorConstants.DRIVER_CONTROLLER_DEADBAND)
-                                                                * MaxSpeed)
+                                                .withVelocityY(drivetrain.calculateVelocity(joystick.getLeftX(),
+                                                                MaxSpeed)
                                                                 / Constants.OperatorConstants.SLIGHT_CREEP_NERF) // Drive
                                                 // left
                                                 // with
                                                 // negative
                                                 // X
                                                 // (left)
-                                                .withRotationalRate(
-                                                                -(OperatorControllerUtil.handleDeadZone(
-                                                                                joystick.getRightX(),
-                                                                                Constants.OperatorConstants.DRIVER_CONTROLLER_DEADBAND)
-                                                                                * MaxAngularRate)
-                                                                                / Constants.OperatorConstants.SLIGHT_CREEP_NERF) // Drive
+                                                .withRotationalRate(drivetrain.calculateVelocity(joystick.getRightX(),
+                                                                MaxAngularRate)) // Drive
                                 // counterclockwise
                                 // with
                                 // negative X (left)
@@ -129,19 +115,15 @@ public class RobotContainer implements RobotMethods {
 
                 joystick.rightTrigger().whileTrue(
                                 drivetrain.applyRequest(() -> drive
-                                                .withVelocityX(-(OperatorControllerUtil.handleDeadZone(
-                                                                joystick.getLeftY(),
-                                                                Constants.OperatorConstants.DRIVER_CONTROLLER_DEADBAND)
-                                                                * MaxSpeed)
+                                                .withVelocityX(drivetrain.calculateVelocity(joystick.getLeftX(),
+                                                                MaxSpeed)
                                                                 / Constants.OperatorConstants.MAJOR_CREEP_NERF) // Drive
                                                 // forward
                                                 // with
                                                 // negative Y
                                                 // (forward)
-                                                .withVelocityY(-(OperatorControllerUtil.handleDeadZone(
-                                                                joystick.getLeftX(),
-                                                                Constants.OperatorConstants.DRIVER_CONTROLLER_DEADBAND)
-                                                                * MaxSpeed)
+                                                .withVelocityY(drivetrain.calculateVelocity(joystick.getLeftX(),
+                                                                MaxSpeed)
                                                                 / Constants.OperatorConstants.MAJOR_CREEP_NERF) // Drive
                                                 // left
                                                 // with
@@ -149,10 +131,8 @@ public class RobotContainer implements RobotMethods {
                                                 // X
                                                 // (left)
                                                 .withRotationalRate(
-                                                                -(OperatorControllerUtil.handleDeadZone(
-                                                                                joystick.getRightX(),
-                                                                                Constants.OperatorConstants.DRIVER_CONTROLLER_DEADBAND)
-                                                                                * MaxAngularRate)
+                                                                drivetrain.calculateVelocity(joystick.getRightX(),
+                                                                                MaxAngularRate)
                                                                                 / Constants.OperatorConstants.MAJOR_CREEP_NERF) // Drive
                                 // counterclockwise
                                 // with

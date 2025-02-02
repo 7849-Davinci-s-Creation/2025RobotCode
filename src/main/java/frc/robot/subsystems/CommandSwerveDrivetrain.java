@@ -5,6 +5,8 @@ import static edu.wpi.first.units.Units.*;
 import java.io.IOException;
 import java.util.function.Supplier;
 
+import frc.robot.Constants;
+import lib.OperatorControllerUtil;
 import org.json.simple.parser.ParseException;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -30,7 +32,6 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
 /**
@@ -327,6 +328,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         super.setControl(new SwerveRequest.ApplyRobotSpeeds().withSpeeds(chassisSpeeds));
     }
 
+    public double calculateVelocity(double joystickAxis, double Max) {
+        return -OperatorControllerUtil.handleDeadZone(
+                joystickAxis,
+                Constants.OperatorConstants.DRIVER_CONTROLLER_DEADBAND)
+                * Max;
+    }
+
     public void configPathPlanner() {
         // Configure AutoBuilder last
         try {
@@ -345,13 +353,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                     ),
                     RobotConfig.fromGUISettings(), // The robot configuration
 
-                    () -> DriverStation.getAlliance().get().equals(DriverStation.Alliance.Red),
+                    () -> {
+                        if (DriverStation.getAlliance().isPresent()) {
+                            return DriverStation.getAlliance().get().equals(Alliance.Red);
+                        }
+                        return false;
+                    },
 
                     this // Reference to this subsystem to set requirements
             );
 
         } catch (IOException | ParseException e) {
-            e.printStackTrace();
             DriverStation.reportError(e.getMessage(), e.getStackTrace());
         }
     }
