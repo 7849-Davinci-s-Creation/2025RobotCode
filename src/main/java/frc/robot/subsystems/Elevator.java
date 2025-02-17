@@ -1,0 +1,93 @@
+package frc.robot.subsystems;
+
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.InchesPerSecond;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
+
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import edu.wpi.first.units.measure.MutDistance;
+import edu.wpi.first.units.measure.MutLinearVelocity;
+import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
+import frc.robot.Constants;
+
+public class Elevator extends SubsystemBase {
+    // Motors (plus dumb neo config crap)
+    private final SparkMax motor1;
+    private final SparkMax motor2;
+    private final SparkBaseConfig motor1Config;
+    private final SparkBaseConfig motor2Config;
+
+    // Encoders
+    private final RelativeEncoder encoder;
+
+    // SYSID CRAP
+    private final SysIdRoutine.Config sysIDConfig;
+    private final SysIdRoutine routine;
+    private final MutVoltage appliedVoltage = Volts.mutable(0);
+    private final MutDistance elevatorPosition = Inches.mutable(0);
+    private final MutLinearVelocity elevatorVelocity = InchesPerSecond.mutable(0);
+
+    public Elevator() {
+
+        motor1 = new SparkMax(Constants.ElevatorConstants.MOTOR1_CANID, MotorType.kBrushless);
+        motor2 = new SparkMax(Constants.ElevatorConstants.MOTOR2_CANID, MotorType.kBrushless);
+
+        // DONT FORGET TO CONFIGURE NEOS BEFORE RUNNING TESTS (find can ids, and calculate conversion factor)
+        motor1Config = new SparkMaxConfig().idleMode(IdleMode.kBrake);
+        motor2Config = new SparkMaxConfig().idleMode(IdleMode.kBrake).follow(Constants.ElevatorConstants.MOTOR1_CANID);
+
+        // Config motors
+        motor1Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR).velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
+        motor2Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR).velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
+
+        motor1.configure(motor1Config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+        motor2.configure(motor2Config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+
+        encoder = motor1.getEncoder();
+
+        sysIDConfig = new Config(
+                Volts.of(Constants.ElevatorConstants.SYSID_RAMP_RATE).per(Second),
+                Volts.of(Constants.ElevatorConstants.SYSID_STEP_VOLTS),
+                Seconds.of(Constants.ElevatorConstants.SYSID_TIMEOUT));
+
+        routine = new SysIdRoutine(sysIDConfig, new SysIdRoutine.Mechanism(motor1::setVoltage,
+                (log) -> {
+                    log.motor("elevatorMotor1").voltage(appliedVoltage.mut_replace(
+                            motor1.get() * RobotController.getBatteryVoltage(), Volts))
+                            .linearPosition(elevatorPosition.mut_replace(
+                                    encoder.getPosition(), Inches))
+                            .linearVelocity(elevatorVelocity.mut_replace(
+                                    encoder.getVelocity(), InchesPerSecond));
+                },
+                this));
+    }
+
+    @Override
+    public void periodic() {
+
+    }
+
+    public Command sysIDQuasistatic(SysIdRoutine.Direction direction) {
+        return routine.quasistatic(direction);
+    }
+
+    public Command sysIDDynamic(SysIdRoutine.Direction direction) {
+        return routine.dynamic(direction);
+    }
+
+}

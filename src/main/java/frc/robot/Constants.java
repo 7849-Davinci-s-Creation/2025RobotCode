@@ -11,4 +11,17 @@ public final class Constants {
     public static final class DriveTrainConstants {
         public static final double CHASSIS_RADIUS = 0.388;
     }
+
+    public static final class ElevatorConstants {
+        public static final double SYSID_RAMP_RATE = .25; // default 1
+        public static final double SYSID_STEP_VOLTS = 3; // default 7
+        public static final double SYSID_TIMEOUT = 10; // default 10
+
+        // FIND ME
+        public static final int MOTOR1_CANID = 0;
+        public static final int MOTOR2_CANID = 0;
+
+        // CALCULATE THIS
+        public static final double ENCODER_CONVERSION_FACTOR = 0;
+    }
 }
