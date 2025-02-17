@@ -23,5 +23,22 @@ public final class Constants {
 
         // CALCULATE THIS
         public static final double ENCODER_CONVERSION_FACTOR = 0;
+
+        // SYS ID FOR THESE
+        public static final double FF_S = 0;
+        public static final double FF_G = 0;
+        public static final double FF_V = 0;
+
+        public static final double PC_P = 0;
+        public static final double PC_I = 0;
+        public static final double PC_D = 0;
+        
+
+        // CALCULATE THIS
+        public static final double MAX_VELOCITY = 0;
+        public static final double MAX_ACCELERATION = 0;
+
+        // FIND THIS
+        public static final double ELEVATOR_MAXHEIGHT = 0;
     }
 }
