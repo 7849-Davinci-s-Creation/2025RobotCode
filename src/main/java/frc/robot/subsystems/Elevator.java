@@ -102,8 +102,8 @@ public class Elevator extends SubsystemBase {
 
     }
 
-    public void goToSetpoint(DoubleSupplier setPoint) {
-        double clampedSetpoint = MathUtil.clamp(setPoint.getAsDouble(), 0,
+    public void goToSetpoint(double setPoint) {
+        double clampedSetpoint = MathUtil.clamp(setPoint, 0,
                 Constants.ElevatorConstants.ELEVATOR_MAXHEIGHT);
 
         motor1.setVoltage(
