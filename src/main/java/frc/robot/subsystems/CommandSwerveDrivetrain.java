@@ -263,14 +263,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         try (/* Run simulation at a faster rate so PID gains behave more reasonably */
                 /* use the measured time delta, get battery voltage from WPILib */
-        Notifier m_simNotifier = new Notifier(() -> {
-            final double currentTime = Utils.getCurrentTimeSeconds();
-            double deltaTime = currentTime - m_lastSimTime;
-            m_lastSimTime = currentTime;
+                Notifier m_simNotifier = new Notifier(() -> {
+                    final double currentTime = Utils.getCurrentTimeSeconds();
+                    double deltaTime = currentTime - m_lastSimTime;
+                    m_lastSimTime = currentTime;
 
-            /* use the measured time delta, get battery voltage from WPILib */
-            updateSimState(deltaTime, RobotController.getBatteryVoltage());
-        })) {
+                    /* use the measured time delta, get battery voltage from WPILib */
+                    updateSimState(deltaTime, RobotController.getBatteryVoltage());
+                })) {
             m_simNotifier.startPeriodic(kSimLoopPeriod);
         }
     }
