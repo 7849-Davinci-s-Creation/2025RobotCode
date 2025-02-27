@@ -1,15 +1,16 @@
 package frc.robot;
 
+/**
+ * PLEASE NOTE THAT ANY MEASUREMENTS MUST BE DONE IN IMPERIAL UNITS,
+ * 
+ * Any Constants you are defining you must specify what units they are, (ex: ELEVATOR_MAXHEIGHT_INCHES)
+ */
 public final class Constants {
     public static final class OperatorConstants {
         public static final int DRIVER_CONTROLLER_PORT = 1;
         public static final double DRIVER_CONTROLLER_DEADBAND = 0.1;
         public static final double SLIGHT_CREEP_NERF = 5;
         public static final double MAJOR_CREEP_NERF = 8;
-    }
-
-    public static final class DriveTrainConstants {
-        public static final double CHASSIS_RADIUS = 0.388;
     }
 
     public static final class ElevatorConstants {
@@ -35,10 +36,14 @@ public final class Constants {
         
 
         // CALCULATE THIS
-        public static final double MAX_VELOCITY = 0;
-        public static final double MAX_ACCELERATION = 0;
+        public static final double MAX_VELOCITY_MPS = 0;
+        public static final double MAX_ACCELERATION_MPS2 = 0;
 
         // FIND THIS
-        public static final double ELEVATOR_MAXHEIGHT = 0;
+        public static final double ELEVATOR_MAXHEIGHT_INCHES = 55.5;
+    }
+
+    public static final class VisionConstants {
+        public static final double CAMERA_MOUNT_HEIGHT_INCHES = 18.5;
     }
 }

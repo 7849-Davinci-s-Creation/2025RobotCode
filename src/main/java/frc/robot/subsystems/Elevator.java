@@ -92,7 +92,7 @@ public class Elevator extends SubsystemBase {
 
         positionController = new ProfiledPIDController(Constants.ElevatorConstants.PC_P,
                 Constants.ElevatorConstants.PC_I, Constants.ElevatorConstants.PC_D, new TrapezoidProfile.Constraints(
-                        Constants.ElevatorConstants.MAX_VELOCITY, Constants.ElevatorConstants.MAX_ACCELERATION));
+                        Constants.ElevatorConstants.MAX_VELOCITY_MPS, Constants.ElevatorConstants.MAX_ACCELERATION_MPS2));
     }
 
     @Override
@@ -102,7 +102,7 @@ public class Elevator extends SubsystemBase {
 
     public void goToSetpoint(double setPoint) {
         double clampedSetpoint = MathUtil.clamp(setPoint, 0,
-                Constants.ElevatorConstants.ELEVATOR_MAXHEIGHT);
+                Constants.ElevatorConstants.ELEVATOR_MAXHEIGHT_INCHES);
 
         motor1.setVoltage(
                 positionController.calculate(encoder.getPosition(), clampedSetpoint)
