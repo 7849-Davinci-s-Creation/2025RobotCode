@@ -29,93 +29,110 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 
-public class Elevator extends SubsystemBase {
-    // Motors (plus dumb neo config crap)
-    private final SparkMax motor1;
-    private final SparkMax motor2;
-    private final SparkBaseConfig motor1Config;
-    private final SparkBaseConfig motor2Config;
+public final class Elevator extends SubsystemBase implements NiceSubsystem {
+        // Motors (plus dumb neo config crap)
+        private final SparkMax motor1;
+        private final SparkMax motor2;
+        private final SparkBaseConfig motor1Config;
+        private final SparkBaseConfig motor2Config;
 
-    // Encoders
-    private final RelativeEncoder encoder;
+        // Encoders
+        private final RelativeEncoder encoder;
 
-    // SYSID CRAP
-    private final SysIdRoutine.Config sysIDConfig;
-    private final SysIdRoutine routine;
-    private final MutVoltage appliedVoltage = Volts.mutable(0);
-    private final MutDistance elevatorPosition = Inches.mutable(0);
-    private final MutLinearVelocity elevatorVelocity = InchesPerSecond.mutable(0);
+        // SYSID CRAP
+        private final SysIdRoutine.Config sysIDConfig;
+        private final SysIdRoutine routine;
+        private final MutVoltage appliedVoltage = Volts.mutable(0);
+        private final MutDistance elevatorPosition = Inches.mutable(0);
+        private final MutLinearVelocity elevatorVelocity = InchesPerSecond.mutable(0);
 
-    // HOW WE WILL BE CONTROLLING THE ELEVATOR
-    private final ElevatorFeedforward elevatorFeedforward;
-    private final ProfiledPIDController positionController;
+        // HOW WE WILL BE CONTROLLING THE ELEVATOR
+        private final ElevatorFeedforward elevatorFeedforward;
+        private final ProfiledPIDController positionController;
 
-    public Elevator() {
+        private static Elevator instance;
 
-        motor1 = new SparkMax(Constants.ElevatorConstants.MOTOR1_CANID, MotorType.kBrushless);
-        motor2 = new SparkMax(Constants.ElevatorConstants.MOTOR2_CANID, MotorType.kBrushless);
+        public Elevator() {
 
-        // DONT FORGET TO CONFIGURE NEOS BEFORE RUNNING TESTS (find can ids, and
-        // calculate conversion factor)
-        motor1Config = new SparkMaxConfig().idleMode(IdleMode.kBrake);
-        motor2Config = new SparkMaxConfig().idleMode(IdleMode.kBrake).follow(Constants.ElevatorConstants.MOTOR1_CANID);
+                motor1 = new SparkMax(Constants.ElevatorConstants.MOTOR1_CANID, MotorType.kBrushless);
+                motor2 = new SparkMax(Constants.ElevatorConstants.MOTOR2_CANID, MotorType.kBrushless);
 
-        // Config motors
-        motor1Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
-                .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
-        motor2Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
-                .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
+                // DONT FORGET TO CONFIGURE NEOS BEFORE RUNNING TESTS (find can ids, and
+                // calculate conversion factor)
+                motor1Config = new SparkMaxConfig().idleMode(IdleMode.kBrake);
+                motor2Config = new SparkMaxConfig().idleMode(IdleMode.kBrake)
+                                .follow(Constants.ElevatorConstants.MOTOR1_CANID);
 
-        motor1.configure(motor1Config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-        motor2.configure(motor2Config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+                // Config motors
+                motor1Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
+                                .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
+                motor2Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
+                                .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
 
-        encoder = motor1.getEncoder();
+                motor1.configure(motor1Config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+                motor2.configure(motor2Config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
 
-        sysIDConfig = new Config(
-                Volts.of(Constants.ElevatorConstants.SYSID_RAMP_RATE).per(Second),
-                Volts.of(Constants.ElevatorConstants.SYSID_STEP_VOLTS),
-                Seconds.of(Constants.ElevatorConstants.SYSID_TIMEOUT));
+                encoder = motor1.getEncoder();
 
-        routine = new SysIdRoutine(sysIDConfig, new SysIdRoutine.Mechanism(motor1::setVoltage,
-                (log) -> {
-                    log.motor("elevatorMotor1").voltage(appliedVoltage.mut_replace(
-                            motor1.get() * RobotController.getBatteryVoltage(), Volts))
-                            .linearPosition(elevatorPosition.mut_replace(
-                                    encoder.getPosition(), Inches))
-                            .linearVelocity(elevatorVelocity.mut_replace(
-                                    encoder.getVelocity(), InchesPerSecond));
-                },
-                this));
+                sysIDConfig = new Config(
+                                Volts.of(Constants.ElevatorConstants.SYSID_RAMP_RATE).per(Second),
+                                Volts.of(Constants.ElevatorConstants.SYSID_STEP_VOLTS),
+                                Seconds.of(Constants.ElevatorConstants.SYSID_TIMEOUT));
 
-        elevatorFeedforward = new ElevatorFeedforward(Constants.ElevatorConstants.FF_S,
-                Constants.ElevatorConstants.FF_G, Constants.ElevatorConstants.FF_V);
+                routine = new SysIdRoutine(sysIDConfig, new SysIdRoutine.Mechanism(motor1::setVoltage,
+                                (log) -> {
+                                        log.motor("elevatorMotor1").voltage(appliedVoltage.mut_replace(
+                                                        motor1.get() * RobotController.getBatteryVoltage(), Volts))
+                                                        .linearPosition(elevatorPosition.mut_replace(
+                                                                        encoder.getPosition(), Inches))
+                                                        .linearVelocity(elevatorVelocity.mut_replace(
+                                                                        encoder.getVelocity(), InchesPerSecond));
+                                },
+                                this));
 
-        positionController = new ProfiledPIDController(Constants.ElevatorConstants.PC_P,
-                Constants.ElevatorConstants.PC_I, Constants.ElevatorConstants.PC_D, new TrapezoidProfile.Constraints(
-                        Constants.ElevatorConstants.MAX_VELOCITY_MPS, Constants.ElevatorConstants.MAX_ACCELERATION_MPS2));
-    }
+                elevatorFeedforward = new ElevatorFeedforward(Constants.ElevatorConstants.FF_S,
+                                Constants.ElevatorConstants.FF_G, Constants.ElevatorConstants.FF_V);
 
-    @Override
-    public void periodic() {
+                positionController = new ProfiledPIDController(Constants.ElevatorConstants.PC_P,
+                                Constants.ElevatorConstants.PC_I, Constants.ElevatorConstants.PC_D,
+                                new TrapezoidProfile.Constraints(
+                                                Constants.ElevatorConstants.MAX_VELOCITY_MPS,
+                                                Constants.ElevatorConstants.MAX_ACCELERATION_MPS2));
+        }
 
-    }
+        public static Elevator getInstance() {
+                if (instance == null) {
+                        instance = new Elevator();
+                }
 
-    public void goToSetpoint(double setPoint) {
-        double clampedSetpoint = MathUtil.clamp(setPoint, 0,
-                Constants.ElevatorConstants.ELEVATOR_MAXHEIGHT_INCHES);
+                return instance;
+        }
 
-        motor1.setVoltage(
-                positionController.calculate(encoder.getPosition(), clampedSetpoint)
-                        + elevatorFeedforward.calculate(positionController.getSetpoint().velocity)
-                        );
-    }
+        public void goToSetpoint(double setPoint) {
+                double clampedSetpoint = MathUtil.clamp(setPoint, 0,
+                                Constants.ElevatorConstants.ELEVATOR_MAXHEIGHT_INCHES);
 
-    public Command sysIDQuasistatic(SysIdRoutine.Direction direction) {
-        return routine.quasistatic(direction);
-    }
+                motor1.setVoltage(
+                                positionController.calculate(encoder.getPosition(), clampedSetpoint)
+                                                + elevatorFeedforward
+                                                                .calculate(positionController.getSetpoint().velocity));
+        }
 
-    public Command sysIDDynamic(SysIdRoutine.Direction direction) {
-        return routine.dynamic(direction);
-    }
+        @Override
+        public void periodic() {
 
+        }
+
+        @Override
+        public void initialize() {
+
+        }
+
+        public Command sysIDQuasistatic(SysIdRoutine.Direction direction) {
+                return routine.quasistatic(direction);
+        }
+
+        public Command sysIDDynamic(SysIdRoutine.Direction direction) {
+                return routine.dynamic(direction);
+        }
 }
