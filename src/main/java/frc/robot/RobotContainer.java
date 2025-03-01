@@ -63,6 +63,7 @@ public final class RobotContainer implements RobotMethods {
                                 // negative X (left)
                                 ));
 
+                // THIS IS STUPID UGLY, but behavior breaks otherwise, so we keep :/
                 joystick.leftTrigger().whileTrue(
                                 drivetrain.applyRequest(() -> drivetrain.getDrive()
                                                 .withVelocityX(drivetrain.calculateVelocity(joystick.getLeftY(),
