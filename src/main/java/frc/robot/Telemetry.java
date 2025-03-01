@@ -138,7 +138,8 @@ public final class Telemetry {
                         moduleDirections[i].setAngle(state.ModuleStates[i].angle);
                         moduleSpeeds[i].setLength(state.ModuleStates[i].speedMetersPerSecond / (2 * MaxSpeed));
 
-                        SmartDashboard.putData("Module " + i, moduleMechanisms[i]);
+                        // uncomment if you want all that crap on the dashboard
+                        // SmartDashboard.putData("Module " + i, moduleMechanisms[i]);
                 }
 
                 LoggingHelper.logSwerveModuleStates(state);

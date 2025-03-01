@@ -30,6 +30,7 @@ public final class RobotContainer implements RobotMethods {
         public RobotContainer() {
                 drivetrain.initialize();
 
+                // the pathplanner auto builder must have been initialized before you all buildAutoChooser();
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData(autoChooser);
 
