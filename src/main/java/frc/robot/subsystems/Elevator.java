@@ -69,8 +69,8 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                 motor2Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
                                 .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
 
-                motor1.configure(motor1Config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-                motor2.configure(motor2Config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+                motor1.configure(motor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+                motor2.configure(motor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
                 encoder = motor1.getEncoder();
 

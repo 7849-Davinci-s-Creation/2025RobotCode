@@ -62,4 +62,9 @@ public final class Constants {
     public static final class VisionConstants {
         public static final double CAMERA_MOUNT_HEIGHT_INCHES = 18.5;
     }
+
+    public static final class ClimberConstants {
+        public static final int MOTOR1_CANID = 40;
+        public static final int MOTOR2_CANID = 41;
+    }
 }
