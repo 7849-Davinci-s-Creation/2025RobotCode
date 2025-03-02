@@ -16,6 +16,7 @@ public final class Constants {
         public static final double DRIVER_CONTROLLER_DEADBAND = 0.1;
         public static final double SLIGHT_CREEP_NERF = 5;
         public static final double MAJOR_CREEP_NERF = 8;
+        public static final int OPERATOR_CONTROLLER_PORT = 0;
     }
 
     public static final class DriveTrainConstants {

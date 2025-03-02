@@ -7,10 +7,12 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.Climb;
@@ -25,8 +27,10 @@ public final class RobotContainer implements RobotMethods {
         private final Climber climber = Climber.getInstance();
 
         // Controllers
-        private final CommandXboxController joystick = new CommandXboxController(
+        private final CommandXboxController driverController = new CommandXboxController(
                         Constants.OperatorConstants.DRIVER_CONTROLLER_PORT);
+
+        private final CommandJoystick operatorController = new CommandJoystick(Constants.OperatorConstants.OPERATOR_CONTROLLER_PORT);
 
         // Everything else
         private final SendableChooser<Command> autoChooser;
@@ -34,7 +38,8 @@ public final class RobotContainer implements RobotMethods {
         public RobotContainer() {
                 drivetrain.initialize();
 
-                // the pathplanner auto builder must have been initialized before you all buildAutoChooser();
+                // the pathplanner auto builder must have been initialized before you all
+                // buildAutoChooser();
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData(autoChooser);
 
@@ -47,20 +52,21 @@ public final class RobotContainer implements RobotMethods {
                 drivetrain.setDefaultCommand(
                                 // Drivetrain will execute this command periodically
                                 drivetrain.applyRequest(() -> drivetrain.getDrive()
-                                                .withVelocityX(drivetrain.calculateVelocity(joystick.getLeftY(),
+                                                .withVelocityX(drivetrain.calculateVelocity(driverController.getLeftY(),
                                                                 Constants.DriveTrainConstants.MAX_SPEED)) // Drive
                                                 // forward
                                                 // with
                                                 // negative Y
                                                 // (forward)
-                                                .withVelocityY(drivetrain.calculateVelocity(joystick.getLeftX(),
+                                                .withVelocityY(drivetrain.calculateVelocity(driverController.getLeftX(),
                                                                 Constants.DriveTrainConstants.MAX_SPEED)) // Drive
                                                 // left
                                                 // with
                                                 // negative
                                                 // X
                                                 // (left)
-                                                .withRotationalRate(drivetrain.calculateVelocity(joystick.getRightX(),
+                                                .withRotationalRate(drivetrain.calculateVelocity(
+                                                                driverController.getRightX(),
                                                                 Constants.DriveTrainConstants.MAX_ANGULAR_RATE)) // Drive
                                 // counterclockwise
                                 // with
@@ -68,16 +74,16 @@ public final class RobotContainer implements RobotMethods {
                                 ));
 
                 // THIS IS STUPID UGLY, but behavior breaks otherwise, so we keep :/
-                joystick.leftTrigger().whileTrue(
+                driverController.leftTrigger().whileTrue(
                                 drivetrain.applyRequest(() -> drivetrain.getDrive()
-                                                .withVelocityX(drivetrain.calculateVelocity(joystick.getLeftY(),
+                                                .withVelocityX(drivetrain.calculateVelocity(driverController.getLeftY(),
                                                                 Constants.DriveTrainConstants.MAX_SPEED)
                                                                 / Constants.OperatorConstants.SLIGHT_CREEP_NERF) // Drive
                                                 // forward
                                                 // with
                                                 // negative Y
                                                 // (forward)
-                                                .withVelocityY(drivetrain.calculateVelocity(joystick.getLeftX(),
+                                                .withVelocityY(drivetrain.calculateVelocity(driverController.getLeftX(),
                                                                 Constants.DriveTrainConstants.MAX_SPEED)
                                                                 / Constants.OperatorConstants.SLIGHT_CREEP_NERF) // Drive
                                                 // left
@@ -85,23 +91,24 @@ public final class RobotContainer implements RobotMethods {
                                                 // negative
                                                 // X
                                                 // (left)
-                                                .withRotationalRate(drivetrain.calculateVelocity(joystick.getRightX(),
+                                                .withRotationalRate(drivetrain.calculateVelocity(
+                                                                driverController.getRightX(),
                                                                 Constants.DriveTrainConstants.MAX_ANGULAR_RATE)) // Drive
                                 // counterclockwise
                                 // with
                                 // negative X (left)
                                 ));
 
-                joystick.rightTrigger().whileTrue(
+                driverController.rightTrigger().whileTrue(
                                 drivetrain.applyRequest(() -> drivetrain.getDrive()
-                                                .withVelocityX(drivetrain.calculateVelocity(joystick.getLeftX(),
+                                                .withVelocityX(drivetrain.calculateVelocity(driverController.getLeftX(),
                                                                 Constants.DriveTrainConstants.MAX_SPEED)
                                                                 / Constants.OperatorConstants.MAJOR_CREEP_NERF) // Drive
                                                 // forward
                                                 // with
                                                 // negative Y
                                                 // (forward)
-                                                .withVelocityY(drivetrain.calculateVelocity(joystick.getLeftX(),
+                                                .withVelocityY(drivetrain.calculateVelocity(driverController.getLeftX(),
                                                                 Constants.DriveTrainConstants.MAX_SPEED)
                                                                 / Constants.OperatorConstants.MAJOR_CREEP_NERF) // Drive
                                                 // left
@@ -110,7 +117,8 @@ public final class RobotContainer implements RobotMethods {
                                                 // X
                                                 // (left)
                                                 .withRotationalRate(
-                                                                drivetrain.calculateVelocity(joystick.getRightX(),
+                                                                drivetrain.calculateVelocity(
+                                                                                driverController.getRightX(),
                                                                                 Constants.DriveTrainConstants.MAX_ANGULAR_RATE)
                                                                                 / Constants.OperatorConstants.MAJOR_CREEP_NERF) // Drive
                                 // counterclockwise
@@ -120,24 +128,26 @@ public final class RobotContainer implements RobotMethods {
 
                 // // Run SysId routines when holding back/start and X/Y.
                 // // Note that each routine should be run exactly once in a single log.
-                joystick.leftBumper().and(joystick.y())
+                driverController.leftBumper().and(driverController.y())
                                 .whileTrue(drivetrain.sysIdDynamic(SysIdRoutine.Direction.kForward));
-                joystick.leftBumper().and(joystick.x())
+                driverController.leftBumper().and(driverController.x())
                                 .whileTrue(drivetrain.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-                joystick.rightBumper().and(joystick.y())
+                driverController.rightBumper().and(driverController.y())
                                 .whileTrue(drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-                joystick.rightBumper().and(joystick.x())
+                driverController.rightBumper().and(driverController.x())
                                 .whileTrue(drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
 
                 // reset the field-centric heading on left bumper press
-                joystick.back().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+                driverController.back().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-                joystick.a().whileTrue(drivetrain.applyRequest(drivetrain::getBrake));
-                joystick.b().whileTrue(drivetrain.applyRequest(
+                driverController.a().whileTrue(drivetrain.applyRequest(drivetrain::getBrake));
+                driverController.b().whileTrue(drivetrain.applyRequest(
                                 () -> drivetrain.getPoint().withModuleDirection(
-                                                new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
+                                                new Rotation2d(-driverController.getLeftY(),
+                                                                -driverController.getLeftX()))));
 
-                joystick.x().whileTrue(new Climb(climber)).onFalse(Commands.runOnce(climber.stop(), climber));
+                driverController.x().whileTrue(new Climb(climber)).onFalse(Commands.runOnce(climber.stop(), climber));
+                operatorController.button(0);
         }
 
         public Command getAutonomousCommand() {
