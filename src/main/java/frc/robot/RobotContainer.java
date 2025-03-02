@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.Climb;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -30,15 +29,22 @@ public final class RobotContainer implements RobotMethods {
         private final CommandXboxController driverController = new CommandXboxController(
                         Constants.OperatorConstants.DRIVER_CONTROLLER_PORT);
 
-        private final CommandJoystick operatorController = new CommandJoystick(Constants.OperatorConstants.OPERATOR_CONTROLLER_PORT);
+        private final CommandJoystick operatorController = new CommandJoystick(
+                        Constants.OperatorConstants.OPERATOR_CONTROLLER_PORT);
 
         // Everything else
         private final SendableChooser<Command> autoChooser;
 
         public RobotContainer() {
+                // Initialize subsystems
                 drivetrain.initialize();
+                climber.initialize();
+
+                // ---- ALL ROBOT SUBSYSTEMS SHOULD BE INITIALIZED BEFORE DOING ANYTHING ELSE
+                // IF THEY HAVE NOT THEN YOU ARE DOING SOMETHING COMPLETELY WRONG !! ----
 
                 // the pathplanner auto builder must have been initialized before you all
+                //
                 // buildAutoChooser();
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData(autoChooser);
@@ -146,8 +152,8 @@ public final class RobotContainer implements RobotMethods {
                                                 new Rotation2d(-driverController.getLeftY(),
                                                                 -driverController.getLeftX()))));
 
-                driverController.x().whileTrue(new Climb(climber)).onFalse(Commands.runOnce(climber.stop(), climber));
-                operatorController.button(0);
+                driverController.x().whileTrue(Commands.runOnce(climber.climb()))
+                                .onFalse(Commands.runOnce(climber.stop(), climber));
         }
 
         public Command getAutonomousCommand() {

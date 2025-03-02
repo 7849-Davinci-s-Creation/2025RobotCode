@@ -39,15 +39,13 @@ public final class Climber extends SubsystemBase implements NiceSubsystem {
         return instance;
     }
 
-    public void climb() {
+    public Runnable climb() {
         // slow climb for
-        motor1.set(0.50);
+        return () -> motor1.set(0.50);
     }
 
     public Runnable stop() {
-        return () -> {
-            motor1.set(0);
-        };
+        return () -> motor1.set(0);
     }
 
     @Override

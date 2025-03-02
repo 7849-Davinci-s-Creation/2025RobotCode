@@ -56,7 +56,6 @@ public final class Constants {
         public static final double MAX_VELOCITY_MPS = 0;
         public static final double MAX_ACCELERATION_MPS2 = 0;
 
-        // FIND THIS
         public static final double ELEVATOR_MAXHEIGHT_INCHES = 55.5;
     }
 
