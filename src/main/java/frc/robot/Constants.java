@@ -28,7 +28,17 @@ public final class Constants {
         public static final double MAX_SPEED = TunerConstants.SPEED_AT_12_VOLTS.in(MetersPerSecond); // SPEED_AT_12_VOLTS
                                                                                                      // desired
         public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a
-                                                                                                        // rotation per
+        public static final double DRIVE_KP = 0.16618;
+        public static final double DRIVE_KI = 0;
+        public static final double DRIVE_KD = 0;
+        public static final double DRIVE_KS = 0.086163;
+        public static final double DRIVE_KV = 0.11562;
+        public static final double STEER_KP = 100;
+        public static final double STEER_KI = 0;
+        public static final double STEER_KD = 0;
+        public static final double STEER_KS = 0.077023;
+        public static final double STEER_KV = 2.4786;
+        public static final double STEER_KA = 0.077097; // rotation per
     }
 
     public static final class ElevatorConstants {

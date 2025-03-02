@@ -57,7 +57,7 @@ public final class CommandSwerveDrivetrain extends TunerSwerveDrivetrain impleme
             new SysIdRoutine.Config(
                     null, // Use default ramp rate (1 V/s)
                     Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
-                    null, // Use default timeout (10 s)
+                    Seconds.of(8) , // Use default timeout (10 s)
                     // Log state with SignalLogger class
                     state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
             new SysIdRoutine.Mechanism(
@@ -108,7 +108,7 @@ public final class CommandSwerveDrivetrain extends TunerSwerveDrivetrain impleme
                     this));
 
     /* The SysId routine to test */
-    private final SysIdRoutine sysIdRoutineToApply = sysIdRoutineTranslation;
+    private final SysIdRoutine sysIdRoutineToApply = sysIdRoutineSteer;
 
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(Constants.DriveTrainConstants.MAX_SPEED * 0.1)

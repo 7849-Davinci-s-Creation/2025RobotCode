@@ -25,14 +25,15 @@ public final class TunerConstants {
         // the
         // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
         private static final Slot0Configs steerGains = new Slot0Configs()
-                        .withKP(100).withKI(0).withKD(0.5)
-                        .withKS(0.1).withKV(2.66).withKA(0)
+                        .withKP(100
+                        ).withKI(0).withKD(0)
+                        .withKS(0.077023).withKV(2.4786).withKA(0.077097)
                         .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
         // When using closed-loop control, the drive motor uses the control
         // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
         private static final Slot0Configs driveGains = new Slot0Configs()
-                        .withKP(0.1).withKI(0).withKD(0)
-                        .withKS(0).withKV(0.124);
+                        .withKP(0.16618).withKI(0).withKD(0)
+                        .withKS(0.086163).withKV(0.11562);
 
         // The closed-loop output type to use for the steer motors;
         // This affects the PID/FF gains for the steer motors
@@ -143,7 +144,7 @@ public final class TunerConstants {
         private static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 26;
         private static final int FRONT_RIGHT_STEER_MOTOR_ID = 24;
         private static final int FRONT_RIGHT_ENCODER_ID = 31;
-        private static final Angle FRONT_RIGHT_ENCODER_OFFSET = Rotations.of(0.022216796875);
+        private static final Angle FRONT_RIGHT_ENCODER_OFFSET = Rotations.of(0.022216796885);
         private static final boolean FRONT_RIGHT_STEER_MOTOR_INVERTED = true;
         private static final boolean FRONT_RIGHT_ENCODER_INVERTED = false;
 
@@ -165,7 +166,7 @@ public final class TunerConstants {
         private static final int BACK_RIGHT_DRIVE_MOTOR_ID = 21;
         private static final int BACK_RIGHT_STEER_MOTOR_ID = 22;
         private static final int BACK_RIGHT_ENCODER_ID = 33;
-        private static final Angle BACK_RIGHT_ENCODER_OFFSET = Rotations.of(-0.287841796875);
+        private static final Angle BACK_RIGHT_ENCODER_OFFSET = Rotations.of(-0.287841796885);
         private static final boolean BACK_RIGHT_STEER_MOTOR_INVERTED = true;
         private static final boolean BACK_RIGHT_ENCODER_INVERTED = false;
 

@@ -152,8 +152,8 @@ public final class RobotContainer implements RobotMethods {
                                                 new Rotation2d(-driverController.getLeftY(),
                                                                 -driverController.getLeftX()))));
 
-                driverController.x().whileTrue(Commands.runOnce(climber.climb()))
-                                .onFalse(Commands.runOnce(climber.stop(), climber));
+                operatorController.button(1).whileTrue(Commands.runOnce(climber.climb()))
+                                .onFalse(Commands.runOnce(climber.stop()));
         }
 
         public Command getAutonomousCommand() {
