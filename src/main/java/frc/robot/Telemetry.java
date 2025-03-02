@@ -123,10 +123,11 @@ public final class Telemetry {
                         moduleTargetsArray[i * 2 + 1] = state.ModuleTargets[i].speedMetersPerSecond;
                 }
 
-                SignalLogger.writeDoubleArray("DriveState/Pose", poseArray);
-                SignalLogger.writeDoubleArray("DriveState/ModuleStates", moduleStatesArray);
-                SignalLogger.writeDoubleArray("DriveState/ModuleTargets", moduleTargetsArray);
-                SignalLogger.writeDouble("DriveState/OdometryPeriod", state.OdometryPeriod, "seconds");
+               // SignalLogger.writeDoubleArray("DriveState/Pose", poseArray);
+                //SignalLogger.writeDoubleArray("DriveState/ModuleStates", moduleStatesArray);
+                //SignalLogger.writeDoubleArray("DriveState/ModuleTargets", moduleTargetsArray);
+                //SignalLogger.writeDouble("DriveState/OdometryPeriod", state.OdometryPeriod, "seconds");
+                SmartDashboard.putNumber("heading",poseArray[2]);
 
                 /* Implementer the pose to a Field2D */
                 fieldTypePub.set("Field2d");

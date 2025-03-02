@@ -23,6 +23,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -57,7 +58,7 @@ public final class CommandSwerveDrivetrain extends TunerSwerveDrivetrain impleme
             new SysIdRoutine.Config(
                     null, // Use default ramp rate (1 V/s)
                     Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
-                    Seconds.of(8) , // Use default timeout (10 s)
+                    Seconds.of(8), // Use default timeout (10 s)
                     // Log state with SignalLogger class
                     state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
             new SysIdRoutine.Mechanism(
@@ -114,7 +115,14 @@ public final class CommandSwerveDrivetrain extends TunerSwerveDrivetrain impleme
             .withDeadband(Constants.DriveTrainConstants.MAX_SPEED * 0.1)
             .withRotationalDeadband(Constants.DriveTrainConstants.MAX_ANGULAR_RATE * 0.1) // Add a 10% deadband
             .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive
-    // motors
+                                                                                  // motors
+
+    private final SwerveRequest.FieldCentricFacingAngle driveFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
+            .withDeadband(Constants.DriveTrainConstants.MAX_SPEED * 0.1)
+            .withRotationalDeadband(Constants.DriveTrainConstants.MAX_ANGULAR_RATE * 0.1) // Add a 10% deadband
+            .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+
+    
 
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
@@ -391,5 +399,9 @@ public final class CommandSwerveDrivetrain extends TunerSwerveDrivetrain impleme
 
     public SwerveRequest.PointWheelsAt getPoint() {
         return point;
+    }
+
+    public SwerveRequest.FieldCentricFacingAngle facingAngle() {
+        return driveFacingAngle;
     }
 }

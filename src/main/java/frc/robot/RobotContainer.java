@@ -107,7 +107,7 @@ public final class RobotContainer implements RobotMethods {
 
                 driverController.rightTrigger().whileTrue(
                                 drivetrain.applyRequest(() -> drivetrain.getDrive()
-                                                .withVelocityX(drivetrain.calculateVelocity(driverController.getLeftX(),
+                                                .withVelocityX(drivetrain.calculateVelocity(driverController.getLeftY(),
                                                                 Constants.DriveTrainConstants.MAX_SPEED)
                                                                 / Constants.OperatorConstants.MAJOR_CREEP_NERF) // Drive
                                                 // forward
@@ -122,11 +122,9 @@ public final class RobotContainer implements RobotMethods {
                                                 // negative
                                                 // X
                                                 // (left)
-                                                .withRotationalRate(
-                                                                drivetrain.calculateVelocity(
-                                                                                driverController.getRightX(),
-                                                                                Constants.DriveTrainConstants.MAX_ANGULAR_RATE)
-                                                                                / Constants.OperatorConstants.MAJOR_CREEP_NERF) // Drive
+                                                .withRotationalRate(drivetrain.calculateVelocity(
+                                                                driverController.getRightX(),
+                                                                Constants.DriveTrainConstants.MAX_ANGULAR_RATE)) // Drive
                                 // counterclockwise
                                 // with
                                 // negative X (left)
