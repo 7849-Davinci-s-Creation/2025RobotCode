@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.Climb;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -32,9 +31,15 @@ public final class RobotContainer implements RobotMethods {
         private final SendableChooser<Command> autoChooser;
 
         public RobotContainer() {
+                // Initialize subsystems
                 drivetrain.initialize();
+                climber.initialize();
 
-                // the pathplanner auto builder must have been initialized before you all buildAutoChooser();
+                // ---- ALL ROBOT SUBSYSTEMS SHOULD BE INITIALIZED BEFORE DOING ANYTHING ELSE
+                // IF THEY HAVE NOT THEN YOU ARE DOING SOMETHING COMPLETELY WRONG !! ----
+
+                // the pathplanner auto builder must have been initialized before you all
+                // buildAutoChooser();
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData(autoChooser);
 
@@ -137,7 +142,8 @@ public final class RobotContainer implements RobotMethods {
                                 () -> drivetrain.getPoint().withModuleDirection(
                                                 new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
 
-                joystick.x().whileTrue(new Climb(climber)).onFalse(Commands.runOnce(climber.stop(), climber));
+                joystick.x().whileTrue(Commands.runOnce(climber.climb()))
+                                .onFalse(Commands.runOnce(climber.stop(), climber));
         }
 
         public Command getAutonomousCommand() {
