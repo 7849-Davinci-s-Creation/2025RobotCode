@@ -28,7 +28,7 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
         intakeMotor1Config = new SparkMaxConfig().idleMode(IdleMode.kBrake);
         intakeMotor2Config = new SparkMaxConfig().idleMode(IdleMode.kBrake);
-        intakeMotor2Config.follow(Constants.ClimberConstants.MOTOR1_CANID);
+        intakeMotor2Config.follow(Constants.EndEffectorConstants.INTAKEMOTOR1_CANID);
 
         intakeMotor1.configure(intakeMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         intakeMotor2.configure(intakeMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -46,6 +46,13 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         return () -> {
             intakeMotor1.set(0.5);
             intakeMotor2.set(0.5);
+        };
+    }
+
+    public Runnable outTake() {
+        return () -> {
+            intakeMotor1.set(-0.5);
+            intakeMotor2.set(-0.5);
         };
     }
 
