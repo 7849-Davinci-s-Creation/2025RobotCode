@@ -75,7 +75,12 @@ public final class Constants {
     }
 
     public static final class ClimberConstants {
-        public static final int MOTOR1_CANID = 40;
-        public static final int MOTOR2_CANID = 41;
+        public static final int MOTOR1_CANID = 55;
+        public static final int MOTOR2_CANID = 54;
+    }
+
+    public static final class EndEffectorConstants {
+        public static final int INTAKEMOTOR1_CANID = 56;
+        public static final int INTAKEMOTOR2_CANID = 57;
     }
 }

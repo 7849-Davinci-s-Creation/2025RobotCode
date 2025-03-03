@@ -23,6 +23,9 @@ public final class Climber extends SubsystemBase implements NiceSubsystem {
         motor1 = new SparkMax(Constants.ClimberConstants.MOTOR1_CANID, MotorType.kBrushless);
         motor2 = new SparkMax(Constants.ClimberConstants.MOTOR2_CANID, MotorType.kBrushless);
 
+        motor1.clearFaults();
+        motor2.clearFaults();
+
         motor1Config = new SparkMaxConfig().idleMode(IdleMode.kBrake);
         motor2Config = new SparkMaxConfig().idleMode(IdleMode.kBrake);
         motor2Config.follow(Constants.ClimberConstants.MOTOR1_CANID);

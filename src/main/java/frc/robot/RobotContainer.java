@@ -7,7 +7,6 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,12 +17,14 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.EndEffector;
 import lib.RobotMethods;
 
 public final class RobotContainer implements RobotMethods {
         // Subsystems
         private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
         private final Climber climber = Climber.getInstance();
+        private final EndEffector endEffector = EndEffector.getInstance();
 
         // Controllers
         private final CommandXboxController driverController = new CommandXboxController(
@@ -152,6 +153,9 @@ public final class RobotContainer implements RobotMethods {
 
                 operatorController.button(1).whileTrue(Commands.runOnce(climber.climb()))
                                 .onFalse(Commands.runOnce(climber.stop()));
+
+                operatorController.button(5).whileTrue(Commands.runOnce(endEffector.intake()))
+                                .onFalse(Commands.runOnce(endEffector.stop()));
         }
 
         public Command getAutonomousCommand() {

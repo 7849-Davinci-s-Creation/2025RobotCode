@@ -51,7 +51,7 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
         public Elevator() {
 
                 motor1 = new SparkMax(Constants.ElevatorConstants.MOTOR1_CANID, MotorType.kBrushless);
-                SparkMax motor2 = new SparkMax(Constants.ElevatorConstants.MOTOR2_CANID, MotorType.kBrushless);
+                final SparkMax motor2 = new SparkMax(Constants.ElevatorConstants.MOTOR2_CANID, MotorType.kBrushless);
 
                 // DONT FORGET TO CONFIGURE NEOS BEFORE RUNNING TESTS (find can ids, and
                 // calculate conversion factor)
@@ -71,7 +71,7 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                 encoder = motor1.getEncoder();
 
                 // SYSID CRAP
-                Config sysIDConfig = new Config(
+                final Config sysIDConfig = new Config(
                                 Volts.of(Constants.ElevatorConstants.SYSID_RAMP_RATE).per(Second),
                                 Volts.of(Constants.ElevatorConstants.SYSID_STEP_VOLTS),
                                 Seconds.of(Constants.ElevatorConstants.SYSID_TIMEOUT));
