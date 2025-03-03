@@ -42,6 +42,13 @@ public final class Constants {
         public static final double STEER_KS = 0.077023;
         public static final double STEER_KV = 2.4786;
         public static final double STEER_KA = 0.077097;
+
+        public static final double ROTATION_KP = 0.094511;
+        public static final double ROTATION_KI = 0;
+        public static final double ROTATION_KD = 0;
+        public static final double ROTATION_KS = 0.052885;
+        public static final double ROTATION_KV = 0.11388;
+        public static final double ROTATION_KA = 0.0049551;
     }
 
     public static final class ElevatorConstants {

@@ -119,8 +119,10 @@ public final class CommandSwerveDrivetrain extends TunerSwerveDrivetrain impleme
     private final SwerveRequest.FieldCentricFacingAngle driveFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
             .withDeadband(Constants.DriveTrainConstants.MAX_SPEED * 0.1)
             .withRotationalDeadband(Constants.DriveTrainConstants.MAX_ANGULAR_RATE * 0.1) // Add a 10% deadband
-            .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive
-                                                                                  // motors
+            .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage) // Use open-loop control for drive
+                                                                                 // motors
+            .withHeadingPID(Constants.DriveTrainConstants.ROTATION_KP, Constants.DriveTrainConstants.ROTATION_KI,
+                    Constants.DriveTrainConstants.ROTATION_KD);
 
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
