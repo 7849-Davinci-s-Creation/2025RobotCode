@@ -119,9 +119,8 @@ public final class CommandSwerveDrivetrain extends TunerSwerveDrivetrain impleme
     private final SwerveRequest.FieldCentricFacingAngle driveFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
             .withDeadband(Constants.DriveTrainConstants.MAX_SPEED * 0.1)
             .withRotationalDeadband(Constants.DriveTrainConstants.MAX_ANGULAR_RATE * 0.1) // Add a 10% deadband
-            .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-
-    
+            .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive
+                                                                                  // motors
 
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
@@ -355,9 +354,9 @@ public final class CommandSwerveDrivetrain extends TunerSwerveDrivetrain impleme
                     this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
                     this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
                     this::drive, // Method that will drive the robot given ROBOT
-                    // RELATIVE ChassisSpeeds. Also optionally outputs
+                    // RELATIVE ChassisSpeeds. Also, optionally outputs
                     // individual module feedforwards
-                    new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller
+                    new PPHolonomicDriveController( // PPHolonomicController is the built-in path following controller
                             // for
                             // holonomic drive trains
                             new PIDConstants(10.0, 0.0, 0.0), // Translation PID constants
@@ -400,7 +399,7 @@ public final class CommandSwerveDrivetrain extends TunerSwerveDrivetrain impleme
         return point;
     }
 
-    public SwerveRequest.FieldCentricFacingAngle facingAngle() {
+    public SwerveRequest.FieldCentricFacingAngle getFacingAngle() {
         return driveFacingAngle;
     }
 }

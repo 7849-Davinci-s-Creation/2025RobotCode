@@ -49,11 +49,13 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
         private static Elevator instance;
 
         public Elevator() {
-
                 motor1 = new SparkMax(Constants.ElevatorConstants.MOTOR1_CANID, MotorType.kBrushless);
                 final SparkMax motor2 = new SparkMax(Constants.ElevatorConstants.MOTOR2_CANID, MotorType.kBrushless);
 
-                // DONT FORGET TO CONFIGURE NEOS BEFORE RUNNING TESTS (find can ids, and
+                motor1.clearFaults();
+                motor2.clearFaults();
+
+                // DON'T FORGET TO CONFIGURE NEOS BEFORE RUNNING TESTS (find can ids, and
                 // calculate conversion factor)
                 SparkBaseConfig motor1Config = new SparkMaxConfig().idleMode(IdleMode.kBrake);
                 SparkBaseConfig motor2Config = new SparkMaxConfig().idleMode(IdleMode.kBrake)

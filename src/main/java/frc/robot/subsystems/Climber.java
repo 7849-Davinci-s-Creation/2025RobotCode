@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -15,19 +16,16 @@ public final class Climber extends SubsystemBase implements NiceSubsystem {
     private static Climber instance;
 
     private final SparkMax motor1;
-    private final SparkMax motor2;
-    private final SparkBaseConfig motor1Config;
-    private final SparkBaseConfig motor2Config;
 
     private Climber() {
         motor1 = new SparkMax(Constants.ClimberConstants.MOTOR1_CANID, MotorType.kBrushless);
-        motor2 = new SparkMax(Constants.ClimberConstants.MOTOR2_CANID, MotorType.kBrushless);
+        final SparkMax motor2 = new SparkMax(Constants.ClimberConstants.MOTOR2_CANID, MotorType.kBrushless);
 
         motor1.clearFaults();
         motor2.clearFaults();
 
-        motor1Config = new SparkMaxConfig().idleMode(IdleMode.kBrake);
-        motor2Config = new SparkMaxConfig().idleMode(IdleMode.kBrake);
+        final SparkBaseConfig motor1Config = new SparkMaxConfig().idleMode(IdleMode.kBrake);
+        final SparkBaseConfig motor2Config = new SparkMaxConfig().idleMode(IdleMode.kBrake);
         motor2Config.follow(Constants.ClimberConstants.MOTOR1_CANID);
 
         motor1.configure(motor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -45,6 +43,10 @@ public final class Climber extends SubsystemBase implements NiceSubsystem {
     public Runnable climb() {
         // slow climb for
         return () -> motor1.set(0.50);
+    }
+
+    public Runnable lowerClimber() {
+        return () -> motor1.set(-0.5);
     }
 
     public Runnable stop() {
