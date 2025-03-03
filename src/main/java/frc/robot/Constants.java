@@ -24,10 +24,11 @@ public final class Constants {
         public static final Rotation2d BLUE_ALLIANCE_PERSPECTIVE_ROTATION = Rotation2d.kZero;
         /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
         public static final Rotation2d RED_ALLIANCE_PERSPECTIVE_ROTATION = Rotation2d.k180deg;
+
         public static final double SIM_LOOP_PERIOD = 0.005; // 5 ms
-        public static final double MAX_SPEED = TunerConstants.SPEED_AT_12_VOLTS.in(MetersPerSecond); // SPEED_AT_12_VOLTS
-                                                                                                     // desired
-        public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a
+        public static final double MAX_SPEED = TunerConstants.SPEED_AT_12_VOLTS.in(MetersPerSecond);
+
+        public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
         public static final double DRIVE_KP = 0.16618;
         public static final double DRIVE_KI = 0;
@@ -40,7 +41,7 @@ public final class Constants {
         public static final double STEER_KD = 0;
         public static final double STEER_KS = 0.077023;
         public static final double STEER_KV = 2.4786;
-        public static final double STEER_KA = 0.077097; // rotation per
+        public static final double STEER_KA = 0.077097;
     }
 
     public static final class ElevatorConstants {
