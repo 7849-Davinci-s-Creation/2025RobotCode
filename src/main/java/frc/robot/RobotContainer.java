@@ -44,8 +44,7 @@ public final class RobotContainer implements RobotMethods {
                 // ---- ALL ROBOT SUBSYSTEMS SHOULD BE INITIALIZED BEFORE DOING ANYTHING ELSE
                 // IF THEY HAVE NOT THEN YOU ARE DOING SOMETHING COMPLETELY WRONG !! ----
 
-                // the pathplanner auto builder must have been initialized before you all
-                //
+                // the pathplanner auto builder must have been initialized before you call
                 // buildAutoChooser();
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData(autoChooser);
