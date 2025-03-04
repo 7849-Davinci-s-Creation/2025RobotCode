@@ -1,6 +1,10 @@
 package frc.robot;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import frc.robot.generated.TunerConstants;
 
 import static edu.wpi.first.units.Units.*;
@@ -81,6 +85,15 @@ public final class Constants {
 
     public static final class VisionConstants {
         public static final double CAMERA_MOUNT_HEIGHT_INCHES = 18.5;
+
+        // THESE MIGHT BE CHANGED IN ACTUAL IMPLEMENTATION
+        public static final String FRONT_LEFT_CAMERA_NAME = "frontleft";
+        public static final String FRONT_RIGHT_CAMERA_NAME = "frontright";
+        public static final String BACK_LEFT_CAMERA_NAME = "backleft";
+        public static final String BACK_RIGHT_CAMERA_NAME = "backright";
+
+        public static final Matrix<N3, N1> SINGLE_TAG_STD_DEVS = VecBuilder.fill(.1, .2, .3);
+        public static final Matrix<N3, N1> MULTI_TAG_STD_DEVS = VecBuilder.fill(.1, .1, .2);
     }
 
     public static final class ClimberConstants {

@@ -1,0 +1,144 @@
+package frc.robot.commands;
+
+import com.ctre.phoenix6.Utils;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Vision;
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
+import java.util.List;
+import java.util.Optional;
+
+// This command takes targets from one camera and finds the robot's estimated pose
+// on the field relative to the data it is reading
+public final class Localize extends Command {
+    private final CommandSwerveDrivetrain drivetrain;
+    private final Vision.VisionCamera camera;
+    private final PhotonPoseEstimator poseEstimator;
+
+    private Matrix<N3, N1> currentStdDevs;
+
+    public Localize(Vision vision, CommandSwerveDrivetrain drivetrain, String camera) {
+        this.drivetrain = drivetrain;
+        this.camera = vision.getCamera(camera);
+
+        poseEstimator = new PhotonPoseEstimator(vision.getAprilTagFieldLayout(),
+                PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+                this.camera.cameraPosition());
+
+        poseEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
+
+        addRequirements(vision, drivetrain);
+    }
+
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+        // if camera is not there or connected do not even try to do things with it.
+        if (camera.camera() == null) {
+            isFinished();
+            return;
+        }
+
+        if (!camera.camera().isConnected()) {
+            isFinished();
+        }
+    }
+
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+        Optional<EstimatedRobotPose> estimatedRobotPose = getEstimatedGlobalPose();
+
+        estimatedRobotPose.ifPresent(pose -> drivetrain.addVisionMeasurement(pose.estimatedPose.toPose2d(),
+                Utils.fpgaToCurrentTime(pose.timestampSeconds), currentStdDevs));
+    }
+
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+    }
+
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return camera.camera() == null || !camera.camera().isConnected();
+    }
+
+    private Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
+        List<PhotonPipelineResult> results = camera.camera().getAllUnreadResults();
+        Optional<EstimatedRobotPose> visionEstimate = Optional.empty();
+
+        for (PhotonPipelineResult result : results) {
+            visionEstimate = poseEstimator.update(result);
+
+            updateEstimationStdDevs(visionEstimate, result.getTargets());
+        }
+
+        return visionEstimate;
+    }
+
+    // I HAVE NOT A SINGLE CLUE HOW THE HELL THIS WORKS :) time to teach students
+    // how it works
+    private void updateEstimationStdDevs(Optional<EstimatedRobotPose> estimatedPose,
+            List<PhotonTrackedTarget> targets) {
+        if (estimatedPose.isEmpty()) {
+            // if there is no pose present, default to single tag std devs
+            currentStdDevs = Constants.VisionConstants.SINGLE_TAG_STD_DEVS;
+
+        } else {
+            // Start running Heuristic
+            Matrix<N3, N1> estimatedStandardDeviations = Constants.VisionConstants.SINGLE_TAG_STD_DEVS;
+            int numberOfTags = 0;
+            double averageDistance = 0;
+
+            // Precalculation - see how many tags we found, and calculate an
+            // average-distance metric
+            for (PhotonTrackedTarget target : targets) {
+                Optional<Pose3d> tagPose = poseEstimator.getFieldTags().getTagPose(target.getFiducialId());
+
+                if (tagPose.isEmpty()) {
+                    continue;
+                }
+
+                numberOfTags++;
+
+                averageDistance += tagPose.get().toPose2d().getTranslation()
+                        .getDistance(estimatedPose.get().estimatedPose.toPose2d().getTranslation());
+            }
+
+            // No tags are visible
+            if (numberOfTags == 0) {
+                currentStdDevs = Constants.VisionConstants.SINGLE_TAG_STD_DEVS;
+            } else {
+                // One or more tags visible, run the full heuristic.
+                // take average
+                averageDistance /= numberOfTags;
+
+                // decrease standard deviations if multiple targets are present
+                if (numberOfTags > 1)
+                    estimatedStandardDeviations = Constants.VisionConstants.MULTI_TAG_STD_DEVS;
+
+                // increase standard deviations based upon average distance
+                if (numberOfTags == 1 && averageDistance > 4) {
+                    currentStdDevs = estimatedStandardDeviations;
+                }
+
+            }
+
+        }
+
+    }
+
+}
