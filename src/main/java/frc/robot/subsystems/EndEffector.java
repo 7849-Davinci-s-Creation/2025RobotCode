@@ -1,5 +1,11 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.InchesPerSecond;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
@@ -13,7 +19,14 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.measure.MutAngle;
+import edu.wpi.first.units.measure.MutLinearVelocity;
+import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 
 public final class EndEffector extends SubsystemBase implements NiceSubsystem {
@@ -26,6 +39,11 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
     private final ProfiledPIDController pidPivotcontroller;
     private final ArmFeedforward pivotFeedForward;
+
+    private final SysIdRoutine routine;
+    private final MutVoltage appliedVoltage = Volts.mutable(0);
+    private final MutAngle pivotPosition = Degrees.mutable(0);
+    private final MutLinearVelocity pivotVelocity = InchesPerSecond.mutable(0);
 
     private EndEffector() {
         intakeMotor1 = new SparkMax(Constants.EndEffectorConstants.INTAKEMOTOR1_CANID, MotorType.kBrushless);
@@ -66,6 +84,22 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
                 Constants.EndEffectorConstants.PIVOT_G, Constants.EndEffectorConstants.PIVOT_V,
                 Constants.EndEffectorConstants.PIVOT_A);
 
+        // SYS ID CRAP
+        final Config sysIDConfig = new Config(
+                Volts.of(Constants.EndEffectorConstants.SYSID_RAMP_RATE).per(Second),
+                Volts.of(Constants.EndEffectorConstants.SYSID_STEP_VOLTS),
+                Seconds.of(Constants.EndEffectorConstants.SYSID_TIMEOUT));
+
+        routine = new SysIdRoutine(sysIDConfig, new SysIdRoutine.Mechanism(pivotMotor1::setVoltage,
+                (log) -> {
+                    log.motor("pivotMotor1").voltage(appliedVoltage.mut_replace(
+                            pivotMotor1.get() * RobotController.getBatteryVoltage(), Volts))
+                            .angularPosition(pivotPosition.mut_replace(
+                                    pivotEncoder.getPosition(), Degrees))
+                            .linearVelocity(pivotVelocity.mut_replace(
+                                    pivotEncoder.getVelocity(), InchesPerSecond));
+                },
+                this));
     }
 
     public static EndEffector getInstance() {
@@ -98,7 +132,7 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
     public void pivot(double angle) {
         double clampedAngle = MathUtil.clamp(angle, 0, Constants.EndEffectorConstants.MAX_ANGLE);
-        
+
         pivotMotor1.setVoltage(pidPivotcontroller.calculate(getDegrees(), clampedAngle) + pivotFeedForward
                 .calculate(getDegrees() / (Math.PI / 180), pidPivotcontroller.getSetpoint().velocity));
 
@@ -106,6 +140,14 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
     private double getDegrees() {
         return (pivotEncoder.getPosition() * 360) * 100;
+    }
+
+    public Command sysIDQuasistatic(SysIdRoutine.Direction direction) {
+        return routine.quasistatic(direction);
+    }
+
+    public Command sysIDDynamic(SysIdRoutine.Direction direction) {
+        return routine.dynamic(direction);
     }
 
     @Override

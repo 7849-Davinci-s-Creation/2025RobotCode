@@ -113,5 +113,9 @@ public final class Constants {
 
         // FIND THIS
         public static final double MAX_ANGLE = 0;
+
+        public static final double SYSID_RAMP_RATE = .25; // default 1
+        public static final double SYSID_STEP_VOLTS = 3; // default 7
+        public static final double SYSID_TIMEOUT = 3; // default 10
     }
 }
