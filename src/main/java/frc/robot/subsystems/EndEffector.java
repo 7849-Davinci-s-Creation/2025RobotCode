@@ -88,6 +88,14 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         return () -> intakeMotor1.set(0);
     }
 
+    public Runnable runPivotMotorsDown() {
+        return () -> pivotMotor1.set(-1);
+    }
+
+    public Runnable runPivotMotorsUp() {
+        return () -> pivotMotor1.set(1);
+    }
+
     public void pivot(double angle) {
         double clampedAngle = MathUtil.clamp(angle, 0, Constants.EndEffectorConstants.MAX_ANGLE);
         
