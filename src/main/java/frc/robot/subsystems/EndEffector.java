@@ -139,7 +139,7 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
     }
 
     private double getDegrees() {
-        return (pivotEncoder.getPosition() * 360) * 100;
+        return (pivotEncoder.getPosition() * 360) * Constants.EndEffectorConstants.GEAR_RATIO;
     }
 
     public Command sysIDQuasistatic(SysIdRoutine.Direction direction) {
