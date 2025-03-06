@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -12,11 +11,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -25,9 +21,11 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
     private final SparkMax intakeMotor1;
     private final SparkMax pivotMotor1;
+
+    private final RelativeEncoder pivotEncoder;
+
     private final ProfiledPIDController pidPivotcontroller;
     private final ArmFeedforward pivotFeedForward;
-    private final RelativeEncoder pivotEncoder;
 
     private EndEffector() {
         intakeMotor1 = new SparkMax(Constants.EndEffectorConstants.INTAKEMOTOR1_CANID, MotorType.kBrushless);
@@ -65,8 +63,8 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
                         Constants.EndEffectorConstants.MAX_ACCELERATION_MPS2));
 
         pivotFeedForward = new ArmFeedforward(Constants.EndEffectorConstants.PIVOT_S,
-                Constants.EndEffectorConstants.PIVOT_G,Constants.EndEffectorConstants.PIVOT_V,Constants.EndEffectorConstants.PIVOT_A);
-
+                Constants.EndEffectorConstants.PIVOT_G, Constants.EndEffectorConstants.PIVOT_V,
+                Constants.EndEffectorConstants.PIVOT_A);
 
     }
 
@@ -91,12 +89,14 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
     }
 
     public void pivot(double angle) {
-       double clampedAngle = MathUtil.clamp(angle, 0 , Constants.EndEffectorConstants.MAX_ANGLE);
-       pivotMotor1.setVoltage(pidPivotcontroller.calculate(getDegrees(), clampedAngle) + pivotFeedForward.calculate(getDegrees()/(Math.PI/180),pidPivotcontroller.getSetpoint().velocity));
+        double clampedAngle = MathUtil.clamp(angle, 0, Constants.EndEffectorConstants.MAX_ANGLE);
+        
+        pivotMotor1.setVoltage(pidPivotcontroller.calculate(getDegrees(), clampedAngle) + pivotFeedForward
+                .calculate(getDegrees() / (Math.PI / 180), pidPivotcontroller.getSetpoint().velocity));
 
     }
 
-    private double getDegrees(){
+    private double getDegrees() {
         return (pivotEncoder.getPosition() * 360) * 100;
     }
 

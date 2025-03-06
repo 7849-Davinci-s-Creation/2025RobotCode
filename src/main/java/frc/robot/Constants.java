@@ -35,7 +35,7 @@ public final class Constants {
         public static final double DRIVE_KD = 0;
         public static final double DRIVE_KS = 0.086163;
         public static final double DRIVE_KV = 0.11562;
-        
+
         public static final double STEER_KP = 100;
         public static final double STEER_KI = 0;
         public static final double STEER_KD = 0;
@@ -91,21 +91,27 @@ public final class Constants {
     public static final class EndEffectorConstants {
         public static final int INTAKEMOTOR1_CANID = 56;
         public static final int INTAKEMOTOR2_CANID = 57;
-        //find the pivot motors canID
+
+        // find the pivot motors canID
         public static final int PIVOTMOTOR1_CANID = 0;
         public static final int PIVOTMOTOR2_CANID = 0;
+        
+        // SYS ID FOR HTESE
         public static final double PIVOT_P = 0;
         public static final double PIVOT_I = 0;
         public static final double PIVOT_D = 0;
+
+        // CALCULATE THIS
         public static final double MAX_VELOCITY_MPS = 0;
         public static final double MAX_ACCELERATION_MPS2 = 0;
+
+        // SYSID FOR THIS
         public static final double PIVOT_S = 0;
         public static final double PIVOT_G = 0;
         public static final double PIVOT_V = 0;
         public static final double PIVOT_A = 0;
+
+        // FIND THIS
         public static final double MAX_ANGLE = 0;
-
-
-
     }
 }
