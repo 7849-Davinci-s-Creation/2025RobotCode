@@ -5,7 +5,10 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.networktables.DoubleArrayPublisher;
+import edu.wpi.first.networktables.DoubleArrayTopic;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -26,7 +29,7 @@ public class PoseEstimate extends Command {
 
     private Matrix<N3, N1> currentStdDevs;
 
-    private final LoggingHelper logger;
+    private final DoubleArrayPublisher estimatedPoses;
 
     public PoseEstimate(Vision vision, CommandSwerveDrivetrain drivetrain, String camera) {
         this.drivetrain = drivetrain;
@@ -38,7 +41,9 @@ public class PoseEstimate extends Command {
 
         poseEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
 
-        logger = new LoggingHelper(NetworkTableInstance.getDefault());
+        // logging crap
+        NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        estimatedPoses = inst.getDoubleArrayTopic(this.camera.camera().getName() + "_estimated_pose").publish();
 
         addRequirements(vision, drivetrain);
     }
@@ -66,7 +71,11 @@ public class PoseEstimate extends Command {
             drivetrain.addVisionMeasurement(pose.estimatedPose.toPose2d(),
                     Utils.fpgaToCurrentTime(pose.timestampSeconds), currentStdDevs);
 
-            logger.logPose(pose.estimatedPose::toPose2d, camera.camera().getName() + "_estimated_pose");
+            estimatedPoses.set(new double[] {
+                    pose.estimatedPose.getX(),
+                    pose.estimatedPose.getY(),
+                    pose.estimatedPose.getRotation().toRotation2d().getDegrees()
+            });
         });
 
 
