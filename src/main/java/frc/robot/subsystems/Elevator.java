@@ -116,6 +116,14 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                                                                 .calculate(positionController.getSetpoint().velocity));
         }
 
+        public Runnable runElevatorUp() {
+                return () -> motor1.set(1);
+        }
+
+        public Runnable runElevatorDown() {
+                return () -> motor1.set(-1);
+        }
+
         @Override
         public void periodic() {
 
