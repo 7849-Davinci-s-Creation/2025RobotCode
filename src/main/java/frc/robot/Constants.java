@@ -108,7 +108,7 @@ public final class Constants {
         public static final int PIVOTMOTOR1_CANID = 0;
         public static final int PIVOTMOTOR2_CANID = 0;
 
-        // SYS ID FOR HTESE
+        // SYS ID FOR THESE
         public static final double PIVOT_P = 0;
         public static final double PIVOT_I = 0;
         public static final double PIVOT_D = 0;
