@@ -91,5 +91,21 @@ public final class Constants {
     public static final class EndEffectorConstants {
         public static final int INTAKEMOTOR1_CANID = 56;
         public static final int INTAKEMOTOR2_CANID = 57;
+        //find the pivot motors canID
+        public static final int PIVOTMOTOR1_CANID = 0;
+        public static final int PIVOTMOTOR2_CANID = 0;
+        public static final double PIVOT_P = 0;
+        public static final double PIVOT_I = 0;
+        public static final double PIVOT_D = 0;
+        public static final double MAX_VELOCITY_MPS = 0;
+        public static final double MAX_ACCELERATION_MPS2 = 0;
+        public static final double PIVOT_S = 0;
+        public static final double PIVOT_G = 0;
+        public static final double PIVOT_V = 0;
+        public static final double PIVOT_A = 0;
+        public static final double MAX_ANGLE = 0;
+
+
+
     }
 }
