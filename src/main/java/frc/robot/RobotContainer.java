@@ -30,7 +30,7 @@ public final class RobotContainer implements RobotMethods {
         private final CommandXboxController driverController = new CommandXboxController(
                         Constants.OperatorConstants.DRIVER_CONTROLLER_PORT);
 
-        private final CommandJoystick operatorController = new CommandJoystick(
+        private final CommandXboxController operatorController = new CommandXboxController(
                         Constants.OperatorConstants.OPERATOR_CONTROLLER_PORT);
 
         // Everything else
@@ -152,10 +152,10 @@ public final class RobotContainer implements RobotMethods {
                                                 new Rotation2d(-driverController.getLeftY(),
                                                                 -driverController.getLeftX()))));
 
-                operatorController.button(1).whileTrue(Commands.runOnce(climber.climb()))
+                operatorController.leftTrigger().whileTrue(Commands.runOnce(climber.climb()))
                                 .onFalse(Commands.runOnce(climber.stop()));
 
-                operatorController.button(5).whileTrue(Commands.runOnce(endEffector.intake()))
+                operatorController.x().whileTrue(Commands.runOnce(endEffector.intake()))
                                 .onFalse(Commands.runOnce(endEffector.stop()));
         }
 

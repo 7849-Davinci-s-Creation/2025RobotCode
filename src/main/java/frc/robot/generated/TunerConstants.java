@@ -93,7 +93,7 @@ public class TunerConstants {
     private static final boolean INVERT_LEFT_SIDE = false;
     private static final boolean INVERT_RIGHT_SIDE = true;
 
-    private static final int PIGEON_ID = 1;
+    private static final int PIGEON_ID = 11;
 
     // These are only used for simulation
     private static final MomentOfInertia STEER_INERTIA = KilogramSquareMeters.of(0.01);
