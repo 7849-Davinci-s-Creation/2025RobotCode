@@ -61,8 +61,8 @@ public final class Constants {
         public static final double SYSID_TIMEOUT = 10; // default 10
 
         // FIND ME
-        public static final int MOTOR1_CANID = 0;
-        public static final int MOTOR2_CANID = 0;
+        public static final int MOTOR1_CANID = 1;
+        public static final int MOTOR2_CANID = 51;
 
         // CALCULATE THIS
         public static final double ENCODER_CONVERSION_FACTOR = 0;
