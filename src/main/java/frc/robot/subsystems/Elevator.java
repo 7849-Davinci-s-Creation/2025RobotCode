@@ -124,11 +124,11 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
         }
 
         public Runnable runElevatorDown() {
-                if (!elevatorLimitSwitch.get()) {
+                if (elevatorLimitSwitch.get()) {
                         return () -> motor1.set(0);
 
                 } else {
-                        return () -> motor1.set(-0.4);
+                        return () -> motor1.set(-0.1);
                 }
         }
 
