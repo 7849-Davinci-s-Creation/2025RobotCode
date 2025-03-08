@@ -17,15 +17,18 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -387,6 +390,8 @@ public final class CommandSwerveDrivetrain extends TunerSwerveDrivetrain impleme
 
         Telemetry logger = new Telemetry(Constants.DriveTrainConstants.MAX_SPEED);
         this.registerTelemetry(logger::telemeterize);
+
+        PathfindingCommand.warmupCommand().schedule();
     }
 
     public SwerveRequest.FieldCentric getDrive() {
@@ -403,5 +408,16 @@ public final class CommandSwerveDrivetrain extends TunerSwerveDrivetrain impleme
 
     public SwerveRequest.FieldCentricFacingAngle getFacingAngle() {
         return driveFacingAngle;
+    }
+
+    public Command pathfind(Pose2d target) {
+        PathConstraints constraints = new PathConstraints(3.0, 4.0,
+                Units.degreesToRadians(540), Units.degreesToRadians(720));
+                
+        return AutoBuilder.pathfindToPose(
+                target,
+                constraints,
+                0.0 // Goal end velocity in meters/se
+        );
     }
 }
