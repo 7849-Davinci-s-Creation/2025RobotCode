@@ -64,6 +64,7 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                                 .follow(Constants.ElevatorConstants.MOTOR1_CANID);
 
                 // Config motors
+                // UNCOMMENT THIS WHEN VALUE IS CALCULATED
                 // motor1Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
                 //                 .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
                 // motor2Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
