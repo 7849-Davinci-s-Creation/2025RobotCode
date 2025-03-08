@@ -18,6 +18,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.EndEffector;
+import frc.robot.subsystems.Vision;
 import lib.RobotMethods;
 
 public final class RobotContainer implements RobotMethods {
@@ -25,6 +26,7 @@ public final class RobotContainer implements RobotMethods {
         private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
         private final Climber climber = Climber.getInstance();
         private final EndEffector endEffector = EndEffector.getInstance();
+        private final Vision vision = Vision.getInstance();
 
         // Controllers
         private final CommandXboxController driverController = new CommandXboxController(
@@ -40,6 +42,7 @@ public final class RobotContainer implements RobotMethods {
                 // Initialize subsystems
                 drivetrain.initialize();
                 climber.initialize();
+                vision.initialize();
 
                 // ---- ALL ROBOT SUBSYSTEMS SHOULD BE INITIALIZED BEFORE DOING ANYTHING ELSE
                 // IF THEY HAVE NOT THEN YOU ARE DOING SOMETHING COMPLETELY WRONG !! ----

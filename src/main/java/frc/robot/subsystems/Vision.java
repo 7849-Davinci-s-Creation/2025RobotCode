@@ -5,6 +5,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -90,7 +91,7 @@ public final class Vision extends SubsystemBase implements NiceSubsystem {
 
     @Override
     public void initialize() {
-
+        PortForwarder.add(5800, "photonvision.local", 5800);
     }
 
     public AprilTagFieldLayout getAprilTagFieldLayout() {
