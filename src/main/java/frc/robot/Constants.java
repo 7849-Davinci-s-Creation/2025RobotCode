@@ -60,6 +60,8 @@ public final class Constants {
         public static final double SYSID_STEP_VOLTS = 3; // default 7
         public static final double SYSID_TIMEOUT = 10; // default 10
 
+        public static final int LIMIT_SWITCH_PORT = 0;
+
         // FIND ME
         public static final int MOTOR1_CANID = 1;
         public static final int MOTOR2_CANID = 51;

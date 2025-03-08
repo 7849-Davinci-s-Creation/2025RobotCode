@@ -22,6 +22,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -47,6 +48,8 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
 
         private static Elevator instance;
 
+        DigitalInput elevatorLimitSwitch = new DigitalInput(Constants.ElevatorConstants.LIMIT_SWITCH_PORT);
+
         public Elevator() {
                 motor1 = new SparkMax(Constants.ElevatorConstants.MOTOR1_CANID, MotorType.kBrushless);
                 final SparkMax motor2 = new SparkMax(Constants.ElevatorConstants.MOTOR2_CANID, MotorType.kBrushless);
@@ -61,10 +64,10 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                                 .follow(Constants.ElevatorConstants.MOTOR1_CANID);
 
                 // Config motors
-                motor1Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
-                                .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
-                motor2Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
-                                .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
+                // motor1Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
+                //                 .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
+                // motor2Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
+                //                 .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
 
                 motor1.configure(motor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
                 motor2.configure(motor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -117,11 +120,20 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
         }
 
         public Runnable runElevatorUp() {
-                return () -> motor1.set(1);
+                return () -> motor1.set(0.4);
         }
 
         public Runnable runElevatorDown() {
-                return () -> motor1.set(-1);
+                if (!elevatorLimitSwitch.get()) {
+                        return () -> motor1.set(0);
+
+                } else {
+                        return () -> motor1.set(-0.4);
+                }
+        }
+
+        public Runnable pleaseStop() {
+                return () -> motor1.set(0);
         }
 
         @Override

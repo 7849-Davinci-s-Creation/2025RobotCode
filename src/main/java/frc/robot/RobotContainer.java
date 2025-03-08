@@ -11,12 +11,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.Vision;
 import lib.RobotMethods;
@@ -27,6 +27,7 @@ public final class RobotContainer implements RobotMethods {
         private final Climber climber = Climber.getInstance();
         private final EndEffector endEffector = EndEffector.getInstance();
         private final Vision vision = Vision.getInstance();
+        private final Elevator elevator = Elevator.getInstance();
 
         // Controllers
         private final CommandXboxController driverController = new CommandXboxController(
@@ -43,6 +44,7 @@ public final class RobotContainer implements RobotMethods {
                 drivetrain.initialize();
                 climber.initialize();
                 vision.initialize();
+                elevator.initialize();
 
                 // ---- ALL ROBOT SUBSYSTEMS SHOULD BE INITIALIZED BEFORE DOING ANYTHING ELSE
                 // IF THEY HAVE NOT THEN YOU ARE DOING SOMETHING COMPLETELY WRONG !! ----
@@ -52,6 +54,7 @@ public final class RobotContainer implements RobotMethods {
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData(autoChooser);
 
+                configureDefault();
                 configureBindings();
         }
 
@@ -59,28 +62,28 @@ public final class RobotContainer implements RobotMethods {
                 // Note that X is defined as forward according to WPILib convention,
                 // and Y is defined as to the left according to WPILib convention.
                 drivetrain.setDefaultCommand(
-                        // Drivetrain will execute this command periodically
-                        drivetrain.applyRequest(() -> drivetrain.getDrive()
-                                        .withVelocityX(drivetrain.calculateVelocity(driverController.getLeftY(),
-                                                Constants.DriveTrainConstants.MAX_SPEED)) // Drive
-                                        // forward
-                                        // with
-                                        // negative Y
-                                        // (forward)
-                                        .withVelocityY(drivetrain.calculateVelocity(driverController.getLeftX(),
-                                                Constants.DriveTrainConstants.MAX_SPEED)) // Drive
-                                        // left
-                                        // with
-                                        // negative
-                                        // X
-                                        // (left)
-                                        .withRotationalRate(drivetrain.calculateVelocity(
-                                                driverController.getRightX(),
-                                                Constants.DriveTrainConstants.MAX_ANGULAR_RATE)) // Drive
+                                // Drivetrain will execute this command periodically
+                                drivetrain.applyRequest(() -> drivetrain.getDrive()
+                                                .withVelocityX(drivetrain.calculateVelocity(driverController.getLeftY(),
+                                                                Constants.DriveTrainConstants.MAX_SPEED)) // Drive
+                                                // forward
+                                                // with
+                                                // negative Y
+                                                // (forward)
+                                                .withVelocityY(drivetrain.calculateVelocity(driverController.getLeftX(),
+                                                                Constants.DriveTrainConstants.MAX_SPEED)) // Drive
+                                                // left
+                                                // with
+                                                // negative
+                                                // X
+                                                // (left)
+                                                .withRotationalRate(drivetrain.calculateVelocity(
+                                                                driverController.getRightX(),
+                                                                Constants.DriveTrainConstants.MAX_ANGULAR_RATE)) // Drive
                                 // counterclockwise
                                 // with
                                 // negative X (left)
-                        ));
+                                ));
         }
 
         private void configureBindings() {
@@ -162,6 +165,10 @@ public final class RobotContainer implements RobotMethods {
                                 .onFalse(Commands.runOnce(endEffector.stop()));
                 operatorController.y().whileTrue(Commands.runOnce(endEffector.outake()))
                                 .onFalse(Commands.runOnce(endEffector.stop()));
+                operatorController.povUp().whileTrue(Commands.runOnce(elevator.runElevatorUp()))
+                                .onFalse(Commands.runOnce(elevator.pleaseStop()));
+                operatorController.povDown().whileTrue(Commands.runOnce(elevator.runElevatorDown()))
+                                .onFalse(Commands.runOnce(elevator.pleaseStop()));
         }
 
         public Command getAutonomousCommand() {
