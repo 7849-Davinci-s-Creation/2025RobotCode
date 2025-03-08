@@ -105,8 +105,8 @@ public final class Constants {
         public static final int INTAKEMOTOR2_CANID = 3;
 
         // find the pivot motors canID
-        public static final int PIVOTMOTOR1_CANID = 0;
-        public static final int PIVOTMOTOR2_CANID = 0;
+        public static final int PIVOTMOTOR1_CANID = 40;
+        public static final int PIVOTMOTOR2_CANID = 5;
 
         // SYS ID FOR THESE
         public static final double PIVOT_P = 0;

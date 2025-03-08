@@ -33,6 +33,7 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
     private static EndEffector instance;
 
     private final SparkMax intakeMotor1;
+    private final SparkMax intakeMotor2;
     private final SparkMax pivotMotor1;
 
     private final RelativeEncoder pivotEncoder;
@@ -47,15 +48,15 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
     private EndEffector() {
         intakeMotor1 = new SparkMax(Constants.EndEffectorConstants.INTAKEMOTOR1_CANID, MotorType.kBrushless);
-        final SparkMax intakeMotor2 = new SparkMax(Constants.EndEffectorConstants.INTAKEMOTOR2_CANID,
+        intakeMotor2 = new SparkMax(Constants.EndEffectorConstants.INTAKEMOTOR2_CANID,
                 MotorType.kBrushless);
 
         intakeMotor1.clearFaults();
         intakeMotor2.clearFaults();
 
         final SparkBaseConfig intakeMotor1Config = new SparkMaxConfig().idleMode(IdleMode.kBrake);
+        intakeMotor1Config.inverted(true);
         final SparkBaseConfig intakeMotor2Config = new SparkMaxConfig().idleMode(IdleMode.kBrake);
-        intakeMotor2Config.follow(Constants.EndEffectorConstants.INTAKEMOTOR1_CANID);
 
         intakeMotor1.configure(intakeMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         intakeMotor2.configure(intakeMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -111,15 +112,24 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
     }
 
     public Runnable intake() {
-        return () -> intakeMotor1.set(0.5);
+        return () -> {
+            intakeMotor1.set(0.5);
+            intakeMotor2.set(0.5);
+        };
     }
 
-    public Runnable outTake() {
-        return () -> intakeMotor1.set(-0.5);
+    public Runnable outake() {
+        return () -> {
+            intakeMotor1.set(-0.3);
+            intakeMotor2.set(-0.3);
+        };
     }
 
     public Runnable stop() {
-        return () -> intakeMotor1.set(0);
+        return () -> {
+            intakeMotor1.set(0);
+            intakeMotor2.set(0);
+        };
     }
 
     public Runnable runPivotMotorsDown() {

@@ -157,6 +157,8 @@ public final class RobotContainer implements RobotMethods {
 
                 operatorController.x().whileTrue(Commands.runOnce(endEffector.intake()))
                                 .onFalse(Commands.runOnce(endEffector.stop()));
+                operatorController.y().whileTrue(Commands.runOnce(endEffector.outake()))
+                                .onFalse(Commands.runOnce(endEffector.stop()));
         }
 
         public Command getAutonomousCommand() {
