@@ -66,9 +66,9 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                 // Config motors
                 // UNCOMMENT THIS WHEN VALUE IS CALCULATED
                 // motor1Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
-                //                 .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
+                // .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
                 // motor2Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
-                //                 .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
+                // .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
 
                 motor1.configure(motor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
                 motor2.configure(motor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

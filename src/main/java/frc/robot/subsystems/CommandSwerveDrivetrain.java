@@ -327,6 +327,17 @@ public final class CommandSwerveDrivetrain extends TunerSwerveDrivetrain impleme
                 * Max;
     }
 
+    public Command pathfind(Pose2d target) {
+        PathConstraints constraints = new PathConstraints(3.0, 4.0,
+                Units.degreesToRadians(540), Units.degreesToRadians(720));
+
+        return AutoBuilder.pathfindToPose(
+                target,
+                constraints,
+                0.0 // Goal end velocity in meters/se
+        );
+    }
+
     @Override
     public void periodic() {
         /*
@@ -408,16 +419,5 @@ public final class CommandSwerveDrivetrain extends TunerSwerveDrivetrain impleme
 
     public SwerveRequest.FieldCentricFacingAngle getFacingAngle() {
         return driveFacingAngle;
-    }
-
-    public Command pathfind(Pose2d target) {
-        PathConstraints constraints = new PathConstraints(3.0, 4.0,
-                Units.degreesToRadians(540), Units.degreesToRadians(720));
-                
-        return AutoBuilder.pathfindToPose(
-                target,
-                constraints,
-                0.0 // Goal end velocity in meters/se
-        );
     }
 }
