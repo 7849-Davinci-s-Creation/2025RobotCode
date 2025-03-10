@@ -58,7 +58,7 @@ public final class Constants {
     public static final class ElevatorConstants {
         public static final double SYSID_RAMP_RATE = .25; // default 1
         public static final double SYSID_STEP_VOLTS = 3; // default 7
-        public static final double SYSID_TIMEOUT = 10; // default 10
+        public static final double SYSID_TIMEOUT = 5; // default 10
 
         public static final int LIMIT_SWITCH_PORT = 0;
 
@@ -66,8 +66,10 @@ public final class Constants {
         public static final int MOTOR1_CANID = 1;
         public static final int MOTOR2_CANID = 51;
 
-        // CALCULATE THIS
+        // 2(gear_ratio*(pi*sprocket_pitch_diameter))
         public static final double ENCODER_CONVERSION_FACTOR = 0;
+        public static final double GEAR_RATIO = 0;
+        public static final double SPROCKET_PITCH_DIAMETER = 0;
 
         // SYS ID FOR THESE
         public static final double FF_S = 0;
@@ -91,10 +93,10 @@ public final class Constants {
         public static final Matrix<N3, N1> SINGLE_TAG_DEVIATION = VecBuilder.fill(.1, .2, .3);
         public static final Matrix<N3, N1> MULTI_TAG_DEVIATION = VecBuilder.fill(.1, .1, .2);
 
-        public static final String FRONT_LEFT_CAMERA_NAME = "frontleft";
-        public static final String FRONT_RIGHT_CAMERA_NAME = "frontright";
-        public static final String BACK_LEFT_CAMERA_NAME = "backleft";
-        public static final String BACK_RIGHT_CAMERA_NAME = "backright";
+        public static final String FRONT_LEFT_CAMERA_NAME = "frontleftcamera";
+        public static final String FRONT_RIGHT_CAMERA_NAME = "frontrightcamera";
+        public static final String BACK_LEFT_CAMERA_NAME = "backleftcamera";
+        public static final String BACK_RIGHT_CAMERA_NAME = "backrightcamera";
     }
 
     public static final class ClimberConstants {
