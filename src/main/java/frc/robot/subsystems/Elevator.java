@@ -1,11 +1,5 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.InchesPerSecond;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
-
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -24,11 +18,14 @@ import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+
+import static edu.wpi.first.units.Units.*;
 
 public final class Elevator extends SubsystemBase implements NiceSubsystem {
         // Motors (plus dumb neo config crap)
@@ -114,10 +111,17 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                 double clampedSetpoint = MathUtil.clamp(setPoint, 0,
                                 Constants.ElevatorConstants.ELEVATOR_MAXHEIGHT_INCHES);
 
-                motor1.setVoltage(
-                                positionController.calculate(encoder.getPosition(), clampedSetpoint)
-                                                + elevatorFeedforward
-                                                                .calculate(positionController.getSetpoint().velocity));
+                double pidResult = positionController.calculate(encoder.getPosition(), clampedSetpoint);
+                double ffResult = elevatorFeedforward.calculate(positionController.getSetpoint().velocity);
+
+                // SO WE DO NOT RUN ELEVATOR TOO FAR UP / DOWN
+                if (elevatorLimitSwitch.get()) {
+                        motor1.set(0);
+                } else if (encoder.getPosition() >= Constants.ElevatorConstants.ELEVATOR_MAXHEIGHT_INCHES) {
+                        motor1.set(0);
+                } else {
+                        motor1.set(pidResult + ffResult);
+                }
         }
 
         public Runnable runElevatorUp() {
@@ -139,7 +143,13 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
 
         @Override
         public void periodic() {
+                // check if we are at the bottom of elevator and set position to 0 so we
+                // don't mess our measurements up
+                if (elevatorLimitSwitch.get()) {
+                        encoder.setPosition(0);
+                }
 
+                SmartDashboard.putNumber("Elevator Position", encoder.getPosition());
         }
 
         @Override

@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SmartMotionConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -23,6 +24,7 @@ import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -125,10 +127,23 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         };
     }
 
-    public Runnable stop() {
+    public Runnable stopIntake() {
         return () -> {
             intakeMotor1.set(0);
             intakeMotor2.set(0);
+        };
+    }
+
+    public Runnable stopPivot() {
+        return () -> {
+            pivotMotor1.set(0);
+        };
+    }
+
+    public Runnable stopAll() {
+        return () -> {
+            stopIntake();
+            stopPivot();
         };
     }
 
@@ -162,7 +177,7 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
     @Override
     public void periodic() {
-
+        SmartDashboard.putNumber("EndEffector Angle", getDegrees());
     }
 
     @Override
