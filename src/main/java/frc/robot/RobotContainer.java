@@ -167,27 +167,35 @@ public final class RobotContainer implements RobotMethods {
                 operatorController.rightBumper().whileTrue(Commands.runOnce(endEffector.outake()))
                                 .onFalse(Commands.runOnce(endEffector.stopIntake()));
                 operatorController.povLeft().whileTrue(Commands.runOnce(endEffector.runPivotMotorsUp()))
-                        .onFalse(Commands.runOnce(endEffector.stopPivot()));
+                                .onFalse(Commands.runOnce(endEffector.stopPivot()));
                 operatorController.povRight().whileTrue(Commands.runOnce(endEffector.runPivotMotorsDown()))
                                 .onFalse(Commands.runOnce(endEffector.stopPivot()));
 
                 // END EFFECTOR SYS ID
-                operatorController.povLeft().and(operatorController.back()).whileTrue(endEffector.sysIDDynamic(SysIdRoutine.Direction.kForward));
-                operatorController.povRight().and(operatorController.back()).whileTrue(endEffector.sysIDDynamic(SysIdRoutine.Direction.kReverse));
-                operatorController.povLeft().and(operatorController.start()).whileTrue(endEffector.sysIDQuasistatic(SysIdRoutine.Direction.kForward));
-                operatorController.povRight().and(operatorController.start()).whileTrue(endEffector.sysIDQuasistatic(SysIdRoutine.Direction.kReverse));
+                operatorController.povLeft().and(operatorController.back())
+                                .whileTrue(endEffector.sysIDDynamic(SysIdRoutine.Direction.kForward));
+                operatorController.povRight().and(operatorController.back())
+                                .whileTrue(endEffector.sysIDDynamic(SysIdRoutine.Direction.kReverse));
+                operatorController.povLeft().and(operatorController.start())
+                                .whileTrue(endEffector.sysIDQuasistatic(SysIdRoutine.Direction.kForward));
+                operatorController.povRight().and(operatorController.start())
+                                .whileTrue(endEffector.sysIDQuasistatic(SysIdRoutine.Direction.kReverse));
 
                 // ELEVATOR
                 operatorController.povUp().whileTrue(Commands.runOnce(elevator.runElevatorUp()))
-                        .onFalse(Commands.runOnce(elevator.pleaseStop()));
+                                .onFalse(Commands.runOnce(elevator.pleaseStop()));
                 operatorController.povDown().whileTrue(Commands.runOnce(elevator.runElevatorDown()))
-                        .onFalse(Commands.runOnce(elevator.pleaseStop()));
+                                .onFalse(Commands.runOnce(elevator.pleaseStop()));
 
                 // ELEVATOR SYS ID
-                operatorController.povUp().and(operatorController.back()).whileTrue(elevator.sysIDDynamic(SysIdRoutine.Direction.kForward));
-                operatorController.povDown().and(operatorController.back()).whileTrue(elevator.sysIDDynamic(SysIdRoutine.Direction.kReverse));
-                operatorController.povUp().and(operatorController.start()).whileTrue(elevator.sysIDQuasistatic(SysIdRoutine.Direction.kForward));
-                operatorController.povDown().and(operatorController.start()).whileTrue(elevator.sysIDQuasistatic(SysIdRoutine.Direction.kReverse));
+                operatorController.povUp().and(operatorController.back())
+                                .whileTrue(elevator.sysIDDynamic(SysIdRoutine.Direction.kForward));
+                operatorController.povDown().and(operatorController.back())
+                                .whileTrue(elevator.sysIDDynamic(SysIdRoutine.Direction.kReverse));
+                operatorController.povUp().and(operatorController.start())
+                                .whileTrue(elevator.sysIDQuasistatic(SysIdRoutine.Direction.kForward));
+                operatorController.povDown().and(operatorController.start())
+                                .whileTrue(elevator.sysIDQuasistatic(SysIdRoutine.Direction.kReverse));
         }
 
         public Command getAutonomousCommand() {
