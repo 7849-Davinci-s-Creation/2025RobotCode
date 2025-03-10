@@ -177,7 +177,8 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("EndEffector Angle", getDegrees());
+        SmartDashboard.putNumber("EndEffector Angle (Degrees)", getDegrees());
+        SmartDashboard.putNumber("EndEffector Velocity (RPM)", pivotEncoder.getVelocity());
     }
 
     @Override
