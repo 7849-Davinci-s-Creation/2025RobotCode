@@ -129,7 +129,7 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
         }
 
         public Runnable runElevatorUp() {
-                return () -> motor1.set(0.25);
+                return () -> motor1.set(0.30);
         }
 
         public Runnable runElevatorDown() {
@@ -137,7 +137,7 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                         return () -> motor1.set(0);
 
                 } else {
-                        return () -> motor1.set(-0.25);
+                        return () -> motor1.set(-0.30);
                 }
         }
 
