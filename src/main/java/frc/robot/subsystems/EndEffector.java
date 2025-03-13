@@ -37,6 +37,7 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
     private final SparkMax intakeMotor1;
     private final SparkMax intakeMotor2;
     private final SparkMax pivotMotor1;
+    private final SparkMax algaeRemoverMotor;
 
     private final RelativeEncoder pivotEncoder;
 
@@ -80,6 +81,13 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
         pivotEncoder = pivotMotor1.getEncoder();
 
+        algaeRemoverMotor = new SparkMax(Constants.EndEffectorConstants.ALGAE_REMOVER_CANDID, MotorType.kBrushless);
+
+        final SparkBaseConfig algaeRemoverConfig = new SparkMaxConfig().idleMode(IdleMode.kBrake).inverted(false);
+        algaeRemoverMotor.configure(algaeRemoverConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        algaeRemoverMotor.clearFaults();
+
         pivotLimitSwitch = new DigitalInput(Constants.EndEffectorConstants.LIMIT_SWITCH_PORT);
 
         pidPivotcontroller = new ProfiledPIDController(Constants.EndEffectorConstants.PIVOT_P,
@@ -119,6 +127,8 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         return () -> {
             intakeMotor1.set(0.5);
             intakeMotor2.set(0.5);
+
+            runAlgaeRemoverBackwards().run();
         };
     }
 
@@ -126,7 +136,21 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         return () -> {
             intakeMotor1.set(-0.3);
             intakeMotor2.set(-0.3);
+
+            runAlgaeRemoverBackwards().run();
         };
+    }
+
+    public Runnable runAlgaeRemoverForwards() {
+        return () -> algaeRemoverMotor.set(1);
+    }
+
+    public Runnable runAlgaeRemoverBackwards() {
+        return () -> algaeRemoverMotor.set(-1);
+    }
+
+    public Runnable stopAlgaeRemover() {
+        return () -> algaeRemoverMotor.set(0);
     }
 
     public Runnable stopIntake() {
@@ -146,6 +170,7 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         return () -> {
             stopIntake();
             stopPivot();
+            stopAlgaeRemover();
         };
     }
 

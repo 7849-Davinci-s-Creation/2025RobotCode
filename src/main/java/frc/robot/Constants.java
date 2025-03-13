@@ -113,6 +113,8 @@ public final class Constants {
         public static final int PIVOTMOTOR1_CANID = 0;
         public static final int PIVOTMOTOR2_CANID = 0;
 
+        public static final int ALGAE_REMOVER_CANDID = 0;
+
         public static final int LIMIT_SWITCH_PORT = 2;
 
         // SYS ID FOR THESE
