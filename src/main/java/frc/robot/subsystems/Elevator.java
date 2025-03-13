@@ -116,7 +116,7 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                 // if we are trying to go down but are already at the bottom. don't.
                 // this should in theory never happen since we are clamping our setpoint, but
                 // better to be safe than sorry :)
-                if (elevatorLimitSwitch.get() && (pidResult + ffResult) < 0) {
+                if (elevatorLimitSwitch.get() && (pidResult + ffResult) <= 0) {
                         motor1.set(0);
                 } else if (encoder.getPosition() >= Constants.ElevatorConstants.ELEVATOR_MAXHEIGHT_INCHES) {
                         motor1.set(0);

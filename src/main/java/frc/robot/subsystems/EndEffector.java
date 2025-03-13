@@ -198,7 +198,7 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
                 .calculate(getDegrees() / (Math.PI / 180), pidPivotcontroller.getSetpoint().velocity);
 
         // if the limit switch is hit, and we are trying to go down, don't.
-        if (pivotLimitSwitch.get() && pidControllerResult < 0) {
+        if (pivotLimitSwitch.get() && pidControllerResult + ffResult <= 0) {
             return;
         }
 
