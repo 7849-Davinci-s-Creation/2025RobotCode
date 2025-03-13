@@ -38,6 +38,7 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
     private final SparkMax intakeMotor2;
     private final SparkMax pivotMotor1;
     private final SparkMax algaeRemoverMotor;
+    private final SparkMax pivotMotor2;
 
     private final RelativeEncoder pivotEncoder;
 
@@ -67,14 +68,18 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         intakeMotor2.configure(intakeMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         pivotMotor1 = new SparkMax(Constants.EndEffectorConstants.PIVOTMOTOR1_CANID, MotorType.kBrushless);
-        SparkMax pivotMotor2 = new SparkMax(Constants.EndEffectorConstants.PIVOTMOTOR2_CANID, MotorType.kBrushless);
+        pivotMotor2 = new SparkMax(Constants.EndEffectorConstants.PIVOTMOTOR2_CANID, MotorType.kBrushless);
 
         pivotMotor1.clearFaults();
         pivotMotor2.clearFaults();
 
-        final SparkBaseConfig pivotMotor1Config = new SparkMaxConfig().idleMode(IdleMode.kBrake);
-        final SparkBaseConfig pivotMotor2Config = new SparkMaxConfig().idleMode(IdleMode.kBrake);
-        pivotMotor2Config.follow(Constants.EndEffectorConstants.PIVOTMOTOR1_CANID);
+        final SparkBaseConfig pivotMotor1Config = new SparkMaxConfig().idleMode(IdleMode.kBrake).inverted(false);
+        final SparkBaseConfig pivotMotor2Config = new SparkMaxConfig().idleMode(IdleMode.kBrake).inverted(true);
+
+        // THE NEW REV API IS ONE OF THE WORST THINGS I HAVE EVER WORKED WITH, THIS DOES NOT WORK, YOU CANNOT HAVE ONE 
+        // MOTOR INVERTED , FOLLOWING MEANS EVERYTHING IS THE SAME :)))))))))))))))))))) SO SMART REV THANKS YOU TOTALLY NEEDED
+        // TO CHANGE THIS API.
+        //pivotMotor2Config.follow(Constants.EndEffectorConstants.PIVOTMOTOR1_CANID);
 
         pivotMotor1.configure(pivotMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         pivotMotor2.configure(pivotMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -160,9 +165,17 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         };
     }
 
+    public Runnable stopAlgaeAndIntake() {
+        return () -> {
+            stopIntake().run();
+            stopAlgaeRemover().run();
+        };
+    }
+
     public Runnable stopPivot() {
         return () -> {
             pivotMotor1.set(0);
+            pivotMotor2.set(0);
         };
     }
 
@@ -179,15 +192,21 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
     }
 
     public Runnable runPivotMotorsDown() {
-        if (pivotLimitSwitch.get()) {
-            return () -> pivotMotor1.set(0);
-        }
+        // if (pivotLimitSwitch.get()) {
+        //     return () -> pivotMotor1.set(0);
+        // }
 
-        return () -> pivotMotor1.set(0.30);
+        return () -> {
+            pivotMotor1.set(-0.3);
+            pivotMotor2.set(-0.3);
+        };
     }
 
     public Runnable runPivotMotorsUp() {
-        return () -> pivotMotor1.set(0.30);
+        return () -> {
+            pivotMotor1.set(0.3);
+            pivotMotor2.set(0.3);
+        };
     }
 
     public void pivot(double angle) {
@@ -222,11 +241,11 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
     @Override
     public void periodic() {
         // check if we are at the bottom (in case of power cycle)
-        if (pivotLimitSwitch.get()) {
-            pivotMotor1.set(0);
+        if (!pivotLimitSwitch.get()) {
+            pivotEncoder.setPosition(0);
         }
 
-        SmartDashboard.putNumber("EndEffector Angle (Degrees)", getDegrees());
+        SmartDashboard.putNumber("EndEffector Angle (Degrees)", getDegrees() / 100);
         SmartDashboard.putNumber("EndEffector Velocity (RPM)", pivotEncoder.getVelocity());
     }
 

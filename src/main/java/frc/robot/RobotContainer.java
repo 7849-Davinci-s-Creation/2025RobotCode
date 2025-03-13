@@ -163,9 +163,9 @@ public final class RobotContainer implements RobotMethods {
 
                 // END EFFECTOR
                 operatorController.leftBumper().whileTrue(Commands.runOnce(endEffector.intake()))
-                                .onFalse(Commands.runOnce(endEffector.stopIntake()));
+                                .onFalse(Commands.runOnce(endEffector.stopAlgaeAndIntake()));
                 operatorController.rightBumper().whileTrue(Commands.runOnce(endEffector.outake()))
-                                .onFalse(Commands.runOnce(endEffector.stopIntake()));
+                                .onFalse(Commands.runOnce(endEffector.stopAlgaeAndIntake()));
                 operatorController.povLeft().whileTrue(Commands.runOnce(endEffector.runPivotMotorsUp()))
                                 .onFalse(Commands.runOnce(endEffector.stopPivot()));
                 operatorController.povRight().whileTrue(Commands.runOnce(endEffector.runPivotMotorsDown()))

@@ -134,7 +134,7 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                         return () -> motor1.set(0);
 
                 } else {
-                        return () -> motor1.set(-0.30);
+                        return () -> motor1.set(-0.10);
                 }
         }
 
