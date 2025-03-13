@@ -113,7 +113,7 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
 
                 // SO WE DO NOT RUN ELEVATOR TOO FAR UP / DOWN
 
-                // if we are trying to go down but are already at the bottom. dont.
+                // if we are trying to go down but are already at the bottom. don't.
                 // this should in theory never happen since we are clamping our setpoint, but
                 // better to be safe than sorry :)
                 if (elevatorLimitSwitch.get() && (pidResult + ffResult) < 0) {
