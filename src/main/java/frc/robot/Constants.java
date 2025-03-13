@@ -67,9 +67,9 @@ public final class Constants {
         public static final int MOTOR2_CANID = 51;
 
         // 2(gear_ratio*(pi*sprocket_pitch_diameter))
-        public static final double ENCODER_CONVERSION_FACTOR = 0;
-        public static final double GEAR_RATIO = 0;
-        public static final double SPROCKET_PITCH_DIAMETER = 0;
+        public static final double GEAR_RATIO = 8.45;
+        public static final double SPROCKET_PITCH_DIAMETER = 1.910;
+        public static final double ENCODER_CONVERSION_FACTOR = 2 * (GEAR_RATIO * (Math.PI * SPROCKET_PITCH_DIAMETER));
 
         // SYS ID FOR THESE
         public static final double FF_S = 0;
@@ -105,12 +105,15 @@ public final class Constants {
     }
 
     public static final class EndEffectorConstants {
-        public static final int INTAKEMOTOR1_CANID = 4;
+        // FIND THE CAN IDS
+        public static final int INTAKEMOTOR1_CANID = 0;
         public static final int INTAKEMOTOR2_CANID = 3;
 
         // find the pivot motors canID
-        public static final int PIVOTMOTOR1_CANID = 40;
-        public static final int PIVOTMOTOR2_CANID = 5;
+        public static final int PIVOTMOTOR1_CANID = 0;
+        public static final int PIVOTMOTOR2_CANID = 0;
+
+        public static final int LIMIT_SWITCH_PORT = 2;
 
         // SYS ID FOR THESE
         public static final double PIVOT_P = 0;

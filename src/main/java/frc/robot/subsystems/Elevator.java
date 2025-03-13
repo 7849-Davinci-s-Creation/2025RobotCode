@@ -61,11 +61,10 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                                 .follow(Constants.ElevatorConstants.MOTOR1_CANID);
 
                 // Config motors
-                // UNCOMMENT THIS WHEN VALUE IS CALCULATED
-                // motor1Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
-                // .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
-                // motor2Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
-                // .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
+                 motor1Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
+                 .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
+                 motor2Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
+                 .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
 
                 motor1.configure(motor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
                 motor2.configure(motor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -79,14 +78,12 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                                 Seconds.of(Constants.ElevatorConstants.SYSID_TIMEOUT));
 
                 routine = new SysIdRoutine(sysIDConfig, new SysIdRoutine.Mechanism(motor1::setVoltage,
-                                (log) -> {
-                                        log.motor("elevatorMotor1").voltage(appliedVoltage.mut_replace(
-                                                        motor1.get() * RobotController.getBatteryVoltage(), Volts))
-                                                        .linearPosition(elevatorPosition.mut_replace(
-                                                                        encoder.getPosition(), Inches))
-                                                        .linearVelocity(elevatorVelocity.mut_replace(
-                                                                        encoder.getVelocity(), InchesPerSecond));
-                                },
+                                (log) -> log.motor("elevatorMotor1").voltage(appliedVoltage.mut_replace(
+                                                motor1.get() * RobotController.getBatteryVoltage(), Volts))
+                                                .linearPosition(elevatorPosition.mut_replace(
+                                                                encoder.getPosition(), Inches))
+                                                .linearVelocity(elevatorVelocity.mut_replace(
+                                                                encoder.getVelocity(), InchesPerSecond)),
                                 this));
 
                 elevatorFeedforward = new ElevatorFeedforward(Constants.ElevatorConstants.FF_S,
@@ -143,6 +140,10 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
 
         public Runnable pleaseStop() {
                 return () -> motor1.set(0);
+        }
+
+        public void zeroElevator() {
+                goToSetpoint(0);
         }
 
         @Override
