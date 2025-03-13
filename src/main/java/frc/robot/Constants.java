@@ -107,7 +107,7 @@ public final class Constants {
     public static final class EndEffectorConstants {
         // FIND THE CAN IDS
         public static final int INTAKEMOTOR1_CANID = 0;
-        public static final int INTAKEMOTOR2_CANID = 3;
+        public static final int INTAKEMOTOR2_CANID = 0;
 
         // find the pivot motors canID
         public static final int PIVOTMOTOR1_CANID = 0;
