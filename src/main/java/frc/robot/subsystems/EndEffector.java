@@ -200,6 +200,8 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         // if the limit switch is hit, and we are trying to go down, don't.
         if (pivotLimitSwitch.get() && pidControllerResult + ffResult <= 0) {
             return;
+        } else if (pivotEncoder.getPosition() >= Constants.EndEffectorConstants.MAX_ANGLE) {
+            return;
         }
 
         pivotMotor1.setVoltage(pidControllerResult + ffResult);
