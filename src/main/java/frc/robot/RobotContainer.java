@@ -186,11 +186,6 @@ public final class RobotContainer implements RobotMethods {
                 operatorController.povRight().whileTrue(Commands.runOnce(endEffector.runPivotMotorsDown()))
                                 .onFalse(Commands.runOnce(endEffector.stopPivot()));
 
-                operatorController.leftStick().whileTrue(Commands.runOnce(endEffector.runAlgaeRemoverForwards()))
-                                .onFalse(Commands.runOnce(endEffector.stopAlgaeRemover()));
-                operatorController.rightStick().whileTrue(Commands.runOnce(endEffector.runAlgaeRemoverBackwards()))
-                                .onFalse(Commands.runOnce(endEffector.stopAlgaeRemover()));
-
                 // END EFFECTOR SYS ID
                 operatorController.povLeft().and(operatorController.back())
                                 .whileTrue(endEffector.sysIDDynamic(SysIdRoutine.Direction.kForward));
