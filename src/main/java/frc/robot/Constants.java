@@ -79,7 +79,8 @@ public final class Constants {
         // 2(gear_ratio*(pi*sprocket_pitch_diameter))
         public static final double GEAR_RATIO = 8.45;
         public static final double SPROCKET_PITCH_DIAMETER = 1.910;
-        public static final double ENCODER_CONVERSION_FACTOR = 2 * (GEAR_RATIO * (Math.PI * SPROCKET_PITCH_DIAMETER) );
+        public static final double SPROCKET_PITCH_CIRCUMFRANCE = Math.PI * SPROCKET_PITCH_DIAMETER;
+        public static final double ENCODER_CONVERSION_FACTOR = 2 * (GEAR_RATIO * SPROCKET_PITCH_CIRCUMFRANCE );
 
         // SYS ID FOR THESE
         public static final double FF_S = 0;
@@ -93,7 +94,6 @@ public final class Constants {
         // CALCULATE THIS
         public static final double MAX_VELOCITY_MPS = 0;
         public static final double MAX_ACCELERATION_MPS2 = 0;
-
         public static final double ELEVATOR_MAXHEIGHT_INCHES = 55.5;
     }
 
@@ -156,8 +156,6 @@ public final class Constants {
         public static final class Node {
             private final Pose2d redPose;
             private final Pose2d bluePose;
-
-            private final HashMap<String, Node> nodeMap = new HashMap<>();
 
             public Node(Pose2d redPose, Pose2d bluePose) {
                 this.redPose = redPose;
