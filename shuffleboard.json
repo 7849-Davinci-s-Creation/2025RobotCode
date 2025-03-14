@@ -24,25 +24,82 @@
               "_showGlyph": false
             }
           },
-          "0,1": {
+          "4,0": {
             "size": [
-              5,
-              3
+              1,
+              1
             ],
             "content": {
-              "_type": "Camera Stream",
-              "_source0": "camera_server://photonvision_Port_1182_Output_MJPEG_Server",
-              "_title": "ArduCam",
+              "_type": "Alerts",
+              "_source0": "network_table:///SmartDashboard/PathPlanner",
+              "_title": "/SmartDashboard/PathPlanner",
               "_glyph": 148,
-              "_showGlyph": false,
-              "Crosshair/Show crosshair": false,
-              "Crosshair/Crosshair color": "#FFFFFFFF",
-              "Controls/Show controls": false,
-              "Controls/Rotation": "NONE",
-              "compression": -1.0,
-              "fps": -1,
-              "imageWidth": 0,
-              "imageHeight": 0
+              "_showGlyph": false
+            }
+          },
+          "5,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/heading",
+              "_title": "/SmartDashboard/heading",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "3,1": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/EndEffector Angle (Degrees)",
+              "_title": "/SmartDashboard/EndEffector Angle (Degrees)",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "3,3": {
+            "size": [
+              3,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/EndEffector Velocity (RPM)",
+              "_title": "/SmartDashboard/EndEffector Velocity (RPM)",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,3": {
+            "size": [
+              3,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Elevator Position (Inches)",
+              "_title": "/SmartDashboard/Elevator Position (Inches)",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,1": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Network Table Tree",
+              "_source0": "network_table:///SmartDashboard/Elevator Velocity (In",
+              "_title": "/SmartDashboard/Elevator Velocity (In",
+              "_glyph": 148,
+              "_showGlyph": false
             }
           }
         }
@@ -63,9 +120,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -8.0,
-    "y": -8.0,
-    "width": 1382.0,
-    "height": 744.0
+    "x": -7.0,
+    "y": 2.0,
+    "width": 1378.0,
+    "height": 733.0
   }
 }

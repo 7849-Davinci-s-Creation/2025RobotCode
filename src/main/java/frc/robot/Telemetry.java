@@ -14,6 +14,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -98,6 +99,8 @@ public final class Telemetry {
         private final double[] moduleStatesArray = new double[8];
         private final double[] moduleTargetsArray = new double[8];
 
+        private final Field2d field = new Field2d();
+
         /**
          * Accept the swerve drive state and telemeterize it to SmartDashboard and
          * SignalLogger.
@@ -148,5 +151,9 @@ public final class Telemetry {
                 }
 
                 LoggingHelper.logSwerveModuleStates(state);
+
+                field.setRobotPose(state.Pose);
+
+                SmartDashboard.putData(field);
         }
 }

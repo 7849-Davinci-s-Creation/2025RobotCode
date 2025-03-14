@@ -159,7 +159,7 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                 }
 
                 SmartDashboard.putNumber("Elevator Position (Inches)", encoder.getPosition());
-                SmartDashboard.putNumber("Elevator Velocity (In/S)", encoder.getVelocity());
+                SmartDashboard.putNumber("Elevator Velocity (In a sec)", encoder.getVelocity());
         }
 
         @Override
