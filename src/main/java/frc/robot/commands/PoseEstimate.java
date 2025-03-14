@@ -19,7 +19,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import java.util.List;
 import java.util.Optional;
 
-public class PoseEstimate extends Command {
+public final class PoseEstimate extends Command {
     private final CommandSwerveDrivetrain drivetrain;
     private final Vision.VisionCam camera;
     private final PhotonPoseEstimator poseEstimator;

@@ -327,11 +327,11 @@ public final class CommandSwerveDrivetrain extends TunerSwerveDrivetrain impleme
                 * Max;
     }
 
-    public Command pathfind(Pose2d target) {
+    public void pathfind(Pose2d target) {
         PathConstraints constraints = new PathConstraints(3.0, 4.0,
                 Units.degreesToRadians(540), Units.degreesToRadians(720));
 
-        return AutoBuilder.pathfindToPose(
+        AutoBuilder.pathfindToPose(
                 target,
                 constraints,
                 0.0 // Goal end velocity in meters/se

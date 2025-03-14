@@ -2,10 +2,14 @@ package frc.robot;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.generated.TunerConstants;
+
+import java.util.HashMap;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -140,5 +144,60 @@ public final class Constants {
         public static final double SYSID_RAMP_RATE = .25; // default 1
         public static final double SYSID_STEP_VOLTS = 3; // default 7
         public static final double SYSID_TIMEOUT = 3; // default 10
+    }
+
+    public static final class NodeConstants {
+        public static final class Node {
+            private final Pose2d redPose;
+            private final Pose2d bluePose;
+
+            private final HashMap<String, Node> nodeMap = new HashMap<>();
+
+            public Node(Pose2d redPose, Pose2d bluePose) {
+                this.redPose = redPose;
+                this.bluePose = bluePose;
+            }
+        }
+
+        public static final HashMap<String, Node> NODES = new HashMap<>();
+
+        // FIND ALL OF THESE
+        public static final Node NODE1_POSE = new Node(null, null);
+        public static final Node NODE2_POSE = new Node(null, null);;
+        public static final Node NODE3_POSE = new Node(null, null);;
+        public static final Node NODE4_POSE = new Node(null, null);;
+        public static final Node NODE5_POSE = new Node(null, null);;
+        public static final Node NODE6_POSE = new Node(null, null);;
+        public static final Node NODE7_POSE = new Node(null, null);;
+        public static final Node NODE8_POSE = new Node(null, null);;
+        public static final Node NODE9_POSE = new Node(null, null);;
+        public static final Node NODE10_POSE = new Node(null, null);;
+        public static final Node NODE11_POSE = new Node( null, null);;
+        public static final Node NODE12_POSE = new Node(null,  null);;
+
+        public static Pose2d getScoringNodePose(String nodeName, DriverStation.Alliance alliance) {
+            final Node wantedNode = NODES.get(nodeName);
+
+            if (alliance.equals(DriverStation.Alliance.Red)) {
+                return wantedNode.redPose;
+            }
+
+            return wantedNode.bluePose;
+        }
+
+        static {
+            NODES.put("node1", NODE1_POSE);
+            NODES.put("node2", NODE2_POSE);
+            NODES.put("node3", NODE3_POSE);
+            NODES.put("node4", NODE4_POSE);
+            NODES.put("node5", NODE5_POSE);
+            NODES.put("node6", NODE6_POSE);
+            NODES.put("node7", NODE7_POSE);
+            NODES.put("node8", NODE8_POSE);
+            NODES.put("node9", NODE9_POSE);
+            NODES.put("node10", NODE10_POSE);
+            NODES.put("node11", NODE11_POSE);
+            NODES.put("node12", NODE12_POSE);
+        }
     }
 }
