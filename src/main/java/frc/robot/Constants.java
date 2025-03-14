@@ -79,7 +79,7 @@ public final class Constants {
         // 2(gear_ratio*(pi*sprocket_pitch_diameter))
         public static final double GEAR_RATIO = 8.45;
         public static final double SPROCKET_PITCH_DIAMETER = 1.910;
-        public static final double ENCODER_CONVERSION_FACTOR = 2 * (GEAR_RATIO * (Math.PI * SPROCKET_PITCH_DIAMETER));
+        public static final double ENCODER_CONVERSION_FACTOR = 2 * (GEAR_RATIO * (Math.PI * SPROCKET_PITCH_DIAMETER) );
 
         // SYS ID FOR THESE
         public static final double FF_S = 0;
@@ -145,7 +145,7 @@ public final class Constants {
         // FIND THIS
         public static final double MAX_ANGLE = 0;
 
-        public static final double GEAR_RATIO = 100;
+        public static final double GEAR_RATIO = 0.01;
 
         public static final double SYSID_RAMP_RATE = .25; // default 1
         public static final double SYSID_STEP_VOLTS = 3; // default 7
