@@ -25,6 +25,12 @@ public final class Constants {
         public static final double SLIGHT_CREEP_NERF = 5;
         public static final double MAJOR_CREEP_NERF = 10;;
         public static final int OPERATOR_CONTROLLER_PORT = 0;
+
+        public static final double RED_LEFT_FEEDERSTATION_DEGREES = 0;
+        public static final double RED_RIGHT_FEEDERSTATION_DEGREES = 0;
+
+        public static final double BLUE_LEFT_FEEDERSTATION_DEGREES = 0;
+        public static final double BLUE_RIGHT_FEEDERSTATION_DEGREES = 0;
     }
 
     public static final class DriveTrainConstants {
@@ -199,5 +205,9 @@ public final class Constants {
             NODES.put("node11", NODE11_POSE);
             NODES.put("node12", NODE12_POSE);
         }
+    }
+
+    public enum FeederStation {
+        LEFT, RIGHT
     }
 }

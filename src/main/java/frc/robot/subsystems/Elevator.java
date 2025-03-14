@@ -146,6 +146,10 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                 goToSetpoint(0);
         }
 
+        public Runnable zeroEncoder() {
+                return () -> encoder.setPosition(0);
+        }
+
         @Override
         public void periodic() {
                 // check if we are at the bottom of elevator and set position to 0 so we

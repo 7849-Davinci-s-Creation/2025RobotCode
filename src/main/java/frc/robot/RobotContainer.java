@@ -7,6 +7,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -158,6 +159,20 @@ public final class RobotContainer implements RobotMethods {
                                                 new Rotation2d(-driverController.getLeftY(),
                                                                 -driverController.getLeftX()))));
 
+                operatorController.leftBumper().whileTrue(
+                        Commands.runOnce(
+                                () -> drivetrain.setControl(drivetrain.driveWithFeederStationAngle(DriverStation.getAlliance().get(), Constants.FeederStation.LEFT))
+                        )
+                );
+
+                operatorController.rightBumper().whileTrue(
+                        Commands.runOnce(
+                                () -> drivetrain.setControl(drivetrain.driveWithFeederStationAngle(DriverStation.getAlliance().get(), Constants.FeederStation.RIGHT))
+                        )
+                );
+
+            // operator controller
+
                 operatorController.leftTrigger().whileTrue(Commands.runOnce(climber.climb()))
                                 .onFalse(Commands.runOnce(climber.stop()));
 
@@ -201,6 +216,10 @@ public final class RobotContainer implements RobotMethods {
                                 .whileTrue(elevator.sysIDQuasistatic(SysIdRoutine.Direction.kForward));
                 operatorController.povDown().and(operatorController.start())
                                 .whileTrue(elevator.sysIDQuasistatic(SysIdRoutine.Direction.kReverse));
+
+                // zero end effector / elevator's encoder
+                operatorController.back().onTrue(Commands.runOnce(elevator.zeroEncoder()));
+                operatorController.start().onTrue(Commands.runOnce(endEffector.zeroPivotEncoder()));
         }
 
         public Command getAutonomousCommand() {

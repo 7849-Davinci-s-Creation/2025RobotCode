@@ -227,6 +227,10 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         pivotMotor1.setVoltage(pidControllerResult + ffResult);
     }
 
+    public Runnable zeroPivotEncoder() {
+        return () -> pivotEncoder.setPosition(0);
+    }
+
     private double getDegrees() {
         return (pivotEncoder.getPosition() * 360) * Constants.EndEffectorConstants.GEAR_RATIO;
     }

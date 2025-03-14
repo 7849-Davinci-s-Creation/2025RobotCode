@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule;
+import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.Constants;
 import frc.robot.Telemetry;
 import lib.OperatorControllerUtil;
@@ -336,6 +337,24 @@ public final class CommandSwerveDrivetrain extends TunerSwerveDrivetrain impleme
                 constraints,
                 0.0 // Goal end velocity in meters/se
         );
+    }
+
+    public SwerveRequest.FieldCentricFacingAngle driveWithFeederStationAngle(Alliance alliance, Constants.FeederStation feederStation) {
+        if (alliance.equals(Alliance.Red) && feederStation.equals(Constants.FeederStation.LEFT)) {
+            driveFacingAngle.withTargetDirection(Rotation2d.fromDegrees(Constants.OperatorConstants.RED_LEFT_FEEDERSTATION_DEGREES));
+
+        } else if (alliance.equals(Alliance.Red) && feederStation.equals(Constants.FeederStation.RIGHT)) {
+            driveFacingAngle.withTargetDirection(Rotation2d.fromDegrees(Constants.OperatorConstants.RED_RIGHT_FEEDERSTATION_DEGREES));
+
+        } else if (alliance.equals(Alliance.Blue) && feederStation.equals(Constants.FeederStation.LEFT)) {
+            driveFacingAngle.withTargetDirection(Rotation2d.fromDegrees(Constants.OperatorConstants.BLUE_LEFT_FEEDERSTATION_DEGREES));
+
+        } else {
+            driveFacingAngle.withTargetDirection(Rotation2d.fromDegrees(Constants.OperatorConstants.BLUE_RIGHT_FEEDERSTATION_DEGREES));
+
+        }
+
+        return driveFacingAngle;
     }
 
     @Override
