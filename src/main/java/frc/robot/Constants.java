@@ -152,7 +152,7 @@ public final class Constants {
         public static final double SYSID_TIMEOUT = 3; // default 10
     }
 
-    public static final class NodeConstants {
+    public static final class FieldConstants {
         public static final class Node {
             private final Pose2d redPose;
             private final Pose2d bluePose;

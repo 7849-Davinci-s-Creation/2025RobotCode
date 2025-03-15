@@ -27,7 +27,7 @@ public final class AlignToNode extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        Pose2d target = Constants.NodeConstants.getScoringNodePose(scoringNode, alliance);
+        Pose2d target = Constants.FieldConstants.getScoringNodePose(scoringNode, alliance);
 
         drivetrain.pathfind(target);
     }
