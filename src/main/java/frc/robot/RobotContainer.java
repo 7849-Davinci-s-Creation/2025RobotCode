@@ -160,18 +160,18 @@ public final class RobotContainer implements RobotMethods {
                                                                 -driverController.getLeftX()))));
 
                 operatorController.leftBumper().whileTrue(
-                        Commands.runOnce(
-                                () -> drivetrain.setControl(drivetrain.driveWithFeederStationAngle(DriverStation.getAlliance().get(), Constants.FeederStation.LEFT))
-                        )
-                );
+                                Commands.runOnce(
+                                                () -> drivetrain.setControl(drivetrain.driveWithFeederStationAngle(
+                                                                DriverStation.getAlliance().get(),
+                                                                Constants.FeederStation.LEFT))));
 
                 operatorController.rightBumper().whileTrue(
-                        Commands.runOnce(
-                                () -> drivetrain.setControl(drivetrain.driveWithFeederStationAngle(DriverStation.getAlliance().get(), Constants.FeederStation.RIGHT))
-                        )
-                );
+                                Commands.runOnce(
+                                                () -> drivetrain.setControl(drivetrain.driveWithFeederStationAngle(
+                                                                DriverStation.getAlliance().get(),
+                                                                Constants.FeederStation.RIGHT))));
 
-            // operator controller
+                // operator controller
 
                 operatorController.leftTrigger().whileTrue(Commands.runOnce(climber.climb()))
                                 .onFalse(Commands.runOnce(climber.stop()));

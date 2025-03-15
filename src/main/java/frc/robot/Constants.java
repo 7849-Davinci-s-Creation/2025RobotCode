@@ -80,7 +80,7 @@ public final class Constants {
         public static final double GEAR_RATIO = 8.45;
         public static final double SPROCKET_PITCH_DIAMETER = 1.910;
         public static final double SPROCKET_PITCH_CIRCUMFRANCE = Math.PI * SPROCKET_PITCH_DIAMETER;
-        public static final double ENCODER_CONVERSION_FACTOR = 2 * (GEAR_RATIO * SPROCKET_PITCH_CIRCUMFRANCE );
+        public static final double ENCODER_CONVERSION_FACTOR = 2 * (GEAR_RATIO * SPROCKET_PITCH_CIRCUMFRANCE);
 
         // SYS ID FOR THESE
         public static final double FF_S = 0;
@@ -176,8 +176,8 @@ public final class Constants {
         public static final Node NODE8_POSE = new Node(null, null);;
         public static final Node NODE9_POSE = new Node(null, null);;
         public static final Node NODE10_POSE = new Node(null, null);;
-        public static final Node NODE11_POSE = new Node( null, null);;
-        public static final Node NODE12_POSE = new Node(null,  null);;
+        public static final Node NODE11_POSE = new Node(null, null);;
+        public static final Node NODE12_POSE = new Node(null, null);;
 
         public static Pose2d getScoringNodePose(String nodeName, DriverStation.Alliance alliance) {
             final Node wantedNode = NODES.get(nodeName);

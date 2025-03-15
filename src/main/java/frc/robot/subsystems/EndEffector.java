@@ -76,20 +76,25 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         final SparkBaseConfig pivotMotor1Config = new SparkMaxConfig().idleMode(IdleMode.kBrake).inverted(false);
         final SparkBaseConfig pivotMotor2Config = new SparkMaxConfig().idleMode(IdleMode.kBrake).inverted(true);
 
-        // THE NEW REV API IS ONE OF THE WORST THINGS I HAVE EVER WORKED WITH, THIS DOES NOT WORK, YOU CANNOT HAVE ONE 
-        // MOTOR INVERTED , FOLLOWING MEANS EVERYTHING IS THE SAME :)))))))))))))))))))) SO SMART REV THANKS YOU TOTALLY NEEDED
+        // THE NEW REV API IS ONE OF THE WORST THINGS I HAVE EVER WORKED WITH, THIS DOES
+        // NOT WORK, YOU CANNOT HAVE ONE
+        // MOTOR INVERTED , FOLLOWING MEANS EVERYTHING IS THE SAME :))))))))))))))))))))
+        // SO SMART REV THANKS YOU TOTALLY NEEDED
         // TO CHANGE THIS API.
-        //pivotMotor2Config.follow(Constants.EndEffectorConstants.PIVOTMOTOR1_CANID);
+        // pivotMotor2Config.follow(Constants.EndEffectorConstants.PIVOTMOTOR1_CANID);
 
         pivotMotor1.configure(pivotMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         pivotMotor2.configure(pivotMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         pivotEncoder = pivotMotor1.getEncoder();
 
-        // algaeRemoverMotor = new SparkMax(Constants.EndEffectorConstants.ALGAE_REMOVER_CANDID, MotorType.kBrushless);
+        // algaeRemoverMotor = new
+        // SparkMax(Constants.EndEffectorConstants.ALGAE_REMOVER_CANDID,
+        // MotorType.kBrushless);
 
         final SparkBaseConfig algaeRemoverConfig = new SparkMaxConfig().idleMode(IdleMode.kBrake).inverted(false);
-        // algaeRemoverMotor.configure(algaeRemoverConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        // algaeRemoverMotor.configure(algaeRemoverConfig,
+        // ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         // algaeRemoverMotor.clearFaults();
 
@@ -147,15 +152,15 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
     }
 
     // public Runnable runAlgaeRemoverForwards() {
-    //     return () -> algaeRemoverMotor.set(1);
+    // return () -> algaeRemoverMotor.set(1);
     // }
 
     // public Runnable runAlgaeRemoverBackwards() {
-    //     return () -> algaeRemoverMotor.set(-1);
+    // return () -> algaeRemoverMotor.set(-1);
     // }
 
     // public Runnable stopAlgaeRemover() {
-    //     return () -> algaeRemoverMotor.set(0);
+    // return () -> algaeRemoverMotor.set(0);
     // }
 
     public Runnable stopIntake() {
@@ -193,7 +198,7 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
     public Runnable runPivotMotorsDown() {
         // if (pivotLimitSwitch.get()) {
-        //     return () -> pivotMotor1.set(0);
+        // return () -> pivotMotor1.set(0);
         // }
 
         return () -> {
@@ -218,11 +223,12 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
         // if the limit switch is hit, and we are trying to go down, don't.
         // add in safety once we know how limit switch behaves
-//        if (pivotLimitSwitch.get() && pidControllerResult + ffResult <= 0) {
-//            return;
-//        } else if (pivotEncoder.getPosition() >= Constants.EndEffectorConstants.MAX_ANGLE) {
-//            return;
-//        }
+        // if (pivotLimitSwitch.get() && pidControllerResult + ffResult <= 0) {
+        // return;
+        // } else if (pivotEncoder.getPosition() >=
+        // Constants.EndEffectorConstants.MAX_ANGLE) {
+        // return;
+        // }
 
         pivotMotor1.setVoltage(pidControllerResult + ffResult);
     }
