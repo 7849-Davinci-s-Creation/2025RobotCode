@@ -22,6 +22,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -115,9 +116,9 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
                 Volts.of(Constants.EndEffectorConstants.SYSID_STEP_VOLTS),
                 Seconds.of(Constants.EndEffectorConstants.SYSID_TIMEOUT));
 
-        routine = new SysIdRoutine(sysIDConfig, new SysIdRoutine.Mechanism(pivotMotor1::setVoltage,
+        routine = new SysIdRoutine(sysIDConfig, new SysIdRoutine.Mechanism(this::runMotorsForSysID,
                 (log) -> log.motor("pivotMotor1").voltage(appliedVoltage.mut_replace(
-                        pivotMotor1.get() * RobotController.getBatteryVoltage(), Volts))
+                        pivotMotor1.getAppliedOutput() * pivotMotor1.getBusVoltage(), Volts))
                         .angularPosition(pivotPosition.mut_replace(
                                 pivotEncoder.getPosition(), Degrees))
                         .linearVelocity(pivotVelocity.mut_replace(
@@ -131,6 +132,11 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         }
 
         return instance;
+    }
+
+    public void runMotorsForSysID(Voltage voltage) {
+        pivotMotor1.setVoltage(-voltage.in(Volts));
+        pivotMotor2.setVoltage(-voltage.in(Volts));
     }
 
     public Runnable intake() {
@@ -196,21 +202,21 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         pivot(0);
     }
 
-    public Runnable runPivotMotorsDown() {
+    public Runnable runPivotMotorsUp() {
         // if (pivotLimitSwitch.get()) {
         // return () -> pivotMotor1.set(0);
         // }
 
         return () -> {
-            pivotMotor1.set(-0.3);
-            pivotMotor2.set(-0.3);
+            pivotMotor1.set(-0.2);
+            pivotMotor2.set(-0.2);
         };
     }
 
-    public Runnable runPivotMotorsUp() {
+    public Runnable runPivotMotorsDown() {
         return () -> {
-            pivotMotor1.set(0.3);
-            pivotMotor2.set(0.3);
+            pivotMotor1.set(0.2);
+            pivotMotor2.set(0.2);
         };
     }
 
@@ -230,7 +236,7 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         // return;
         // }
 
-        pivotMotor1.setVoltage(pidControllerResult + ffResult);
+        pivotMotor1.setVoltage(-(pidControllerResult + ffResult));
     }
 
     public Runnable zeroPivotEncoder() {

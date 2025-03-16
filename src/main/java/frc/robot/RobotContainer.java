@@ -133,7 +133,7 @@ public final class RobotContainer implements RobotMethods {
                                                 // (left)
                                                 .withRotationalRate(drivetrain.calculateVelocity(
                                                                 driverController.getRightX(),
-                                                                Constants.DriveTrainConstants.MAX_ANGULAR_RATE)) // Drive
+                                                                Constants.DriveTrainConstants.MAX_ANGULAR_RATE) / 0.20) // Drive
                                 // counterclockwise
                                 // with
                                 // negative X (left)
@@ -159,21 +159,26 @@ public final class RobotContainer implements RobotMethods {
                                                 new Rotation2d(-driverController.getLeftY(),
                                                                 -driverController.getLeftX()))));
 
-                operatorController.leftBumper().whileTrue(
+                driverController.leftBumper().whileTrue(
                                 Commands.runOnce(
                                                 () -> drivetrain.setControl(drivetrain.driveWithFeederStationAngle(
                                                                 DriverStation.getAlliance().get(),
                                                                 Constants.FeederStation.LEFT))));
 
-                operatorController.rightBumper().whileTrue(
+                driverController.rightBumper().whileTrue(
                                 Commands.runOnce(
                                                 () -> drivetrain.setControl(drivetrain.driveWithFeederStationAngle(
                                                                 DriverStation.getAlliance().get(),
                                                                 Constants.FeederStation.RIGHT))));
 
                 // operator controller
+                operatorController.leftTrigger().whileTrue(Commands.runOnce(climber.raiseClimber()))
+                                .onFalse(Commands.runOnce(climber.stop()));
 
-                operatorController.leftTrigger().whileTrue(Commands.runOnce(climber.climb()))
+                operatorController.leftTrigger().and(operatorController.a()).whileTrue(Commands.runOnce(climber.climb()))
+                                .onFalse(Commands.runOnce(climber.stop()));
+
+                operatorController.rightTrigger().whileTrue(Commands.runOnce(climber.lowerClimber()))
                                 .onFalse(Commands.runOnce(climber.stop()));
 
                 // END EFFECTOR
@@ -181,10 +186,11 @@ public final class RobotContainer implements RobotMethods {
                                 .onFalse(Commands.runOnce(endEffector.stopAlgaeAndIntake()));
                 operatorController.rightBumper().whileTrue(Commands.runOnce(endEffector.outake()))
                                 .onFalse(Commands.runOnce(endEffector.stopAlgaeAndIntake()));
-                operatorController.povLeft().whileTrue(Commands.runOnce(endEffector.runPivotMotorsUp()))
-                                .onFalse(Commands.runOnce(endEffector.stopPivot()));
-                operatorController.povRight().whileTrue(Commands.runOnce(endEffector.runPivotMotorsDown()))
-                                .onFalse(Commands.runOnce(endEffector.stopPivot()));
+
+                // operatorController.povLeft().whileTrue(Commands.runOnce(endEffector.runPivotMotorsUp()))
+                //                 .onFalse(Commands.runOnce(endEffector.stopPivot()));
+                // operatorController.povRight().whileTrue(Commands.runOnce(endEffector.runPivotMotorsDown()))
+                //                 .onFalse(Commands.runOnce(endEffector.stopPivot()));
 
                 // END EFFECTOR SYS ID
                 operatorController.povLeft().and(operatorController.back())
@@ -201,6 +207,9 @@ public final class RobotContainer implements RobotMethods {
                                 .onFalse(Commands.runOnce(elevator.pleaseStop()));
                 operatorController.povDown().whileTrue(Commands.runOnce(elevator.runElevatorDown()))
                                 .onFalse(Commands.runOnce(elevator.pleaseStop()));
+
+                operatorController.a().whileTrue(Commands.runOnce(elevator.goToSetpoint(1)))
+                .onFalse(Commands.runOnce(elevator.pleaseStop()));
 
                 // ELEVATOR SYS ID
                 operatorController.povUp().and(operatorController.back())

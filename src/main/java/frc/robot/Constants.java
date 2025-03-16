@@ -68,7 +68,7 @@ public final class Constants {
     public static final class ElevatorConstants {
         public static final double SYSID_RAMP_RATE = .25; // default 1
         public static final double SYSID_STEP_VOLTS = 3; // default 7
-        public static final double SYSID_TIMEOUT = 5; // default 10
+        public static final double SYSID_TIMEOUT = 10; // default 10
 
         public static final int LIMIT_SWITCH_PORT = 0;
 
@@ -79,22 +79,23 @@ public final class Constants {
         // 2(gear_ratio*(pi*sprocket_pitch_diameter))
         public static final double GEAR_RATIO = 8.45;
         public static final double SPROCKET_PITCH_DIAMETER = 1.910;
+        public static final double SPROCKET_PITCH_RADIUS = SPROCKET_PITCH_DIAMETER / 2;
         public static final double SPROCKET_PITCH_CIRCUMFRANCE = Math.PI * SPROCKET_PITCH_DIAMETER;
         public static final double ENCODER_CONVERSION_FACTOR = 2 * (GEAR_RATIO * SPROCKET_PITCH_CIRCUMFRANCE);
 
         // SYS ID FOR THESE
-        public static final double FF_S = 0;
-        public static final double FF_G = 0;
-        public static final double FF_V = 0;
+        public static final double FF_S = 0.24922;
+        public static final double FF_G = 0.47034;
+        public static final double FF_V = 0.067057;
 
-        public static final double PC_P = 0;
+        public static final double PC_P = 3.596;
         public static final double PC_I = 0;
         public static final double PC_D = 0;
 
         // CALCULATE THIS
-        public static final double MAX_VELOCITY_MPS = 0;
-        public static final double MAX_ACCELERATION_MPS2 = 0;
-        public static final double ELEVATOR_MAXHEIGHT_INCHES = 55.5;
+        public static final double MAX_VELOCITY_MPS = 0.3767074;
+        public static final double MAX_ACCELERATION_MPS2 = 0.6858;
+        public static final double ELEVATOR_MAXHEIGHT_METERS = 1.397;
     }
 
     public static final class VisionConstants {
@@ -143,13 +144,13 @@ public final class Constants {
         public static final double PIVOT_A = 0;
 
         // FIND THIS
-        public static final double MAX_ANGLE = 0;
+        public static final double MAX_ANGLE = 110;
 
         public static final double GEAR_RATIO = 0.01;
 
         public static final double SYSID_RAMP_RATE = .25; // default 1
         public static final double SYSID_STEP_VOLTS = 3; // default 7
-        public static final double SYSID_TIMEOUT = 3; // default 10
+        public static final double SYSID_TIMEOUT = 5; // default 10
     }
 
     public static final class FieldConstants {

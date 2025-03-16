@@ -17,13 +17,13 @@ import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+import frc.robot.Constants.ElevatorConstants;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -61,10 +61,10 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                                 .follow(Constants.ElevatorConstants.MOTOR1_CANID);
 
                 // Config motors
-                motor1Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
-                                .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
-                motor2Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
-                                .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
+                // motor1Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
+                // .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
+                // motor2Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
+                // .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
 
                 motor1.configure(motor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
                 motor2.configure(motor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -79,7 +79,7 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
 
                 routine = new SysIdRoutine(sysIDConfig, new SysIdRoutine.Mechanism(motor1::setVoltage,
                                 (log) -> log.motor("elevatorMotor1").voltage(appliedVoltage.mut_replace(
-                                                motor1.get() * RobotController.getBatteryVoltage(), Volts))
+                                                motor1.getAppliedOutput() * motor1.getBusVoltage(), Volts))
                                                 .linearPosition(elevatorPosition.mut_replace(
                                                                 encoder.getPosition(), Inches))
                                                 .linearVelocity(elevatorVelocity.mut_replace(
@@ -104,25 +104,27 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                 return instance;
         }
 
-        public void goToSetpoint(double setPoint) {
-                double clampedSetpoint = MathUtil.clamp(setPoint, 0,
-                                Constants.ElevatorConstants.ELEVATOR_MAXHEIGHT_INCHES);
+        // SET POINT SHOULD BE GIVEN IN METERS
+        public Runnable goToSetpoint(double setPoint) {
+                double voltsOut = MathUtil.clamp(
+                                positionController.calculate(getHeightMeters(), setPoint)
+                                                + elevatorFeedforward.calculateWithVelocities(getVelocityMPS(),
+                                                                positionController.getSetpoint().velocity),
+                                -7, 7);
 
-                double pidResult = positionController.calculate(encoder.getPosition(), clampedSetpoint);
-                double ffResult = elevatorFeedforward.calculate(positionController.getSetpoint().velocity);
+                System.out.println(voltsOut);
+                
+                return () -> motor1.setVoltage(voltsOut);
+        }
 
-                // SO WE DO NOT RUN ELEVATOR TOO FAR UP / DOWN
+        public double getHeightMeters() {
+                return (encoder.getPosition() / Constants.ElevatorConstants.GEAR_RATIO)
+                                * (2 * Math.PI * ElevatorConstants.SPROCKET_PITCH_RADIUS);
+        }
 
-                // if we are trying to go down but are already at the bottom. don't.
-                // this should in theory never happen since we are clamping our setpoint, but
-                // better to be safe than sorry :)
-                if (elevatorLimitSwitch.get() && (pidResult + ffResult) <= 0) {
-                        motor1.set(0);
-                } else if (encoder.getPosition() >= Constants.ElevatorConstants.ELEVATOR_MAXHEIGHT_INCHES) {
-                        motor1.set(0);
-                } else {
-                        motor1.set(pidResult + ffResult);
-                }
+        public double getVelocityMPS() {
+                return ((encoder.getVelocity() / 60) / Constants.ElevatorConstants.GEAR_RATIO)
+                                * (2 * Math.PI * ElevatorConstants.SPROCKET_PITCH_RADIUS);
         }
 
         public Runnable runElevatorUp() {
@@ -158,13 +160,13 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                         encoder.setPosition(0);
                 }
 
-                SmartDashboard.putNumber("Elevator Position (Inches)", encoder.getPosition());
-                SmartDashboard.putNumber("Elevator Velocity (In a sec)", encoder.getVelocity());
+                SmartDashboard.putNumber("Elevator Position (Meters)", getHeightMeters());
+                SmartDashboard.putNumber("Elevator Velocity (MPS)", getVelocityMPS());
         }
 
         @Override
         public void initialize() {
-
+                SmartDashboard.putNumber("Calculated PID and FF value: ", 0);
         }
 
         public Command sysIDQuasistatic(SysIdRoutine.Direction direction) {
