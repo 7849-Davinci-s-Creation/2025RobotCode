@@ -13,15 +13,21 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
 
@@ -36,8 +42,8 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
 
         private final SysIdRoutine routine;
         private final MutVoltage appliedVoltage = Volts.mutable(0);
-        private final MutDistance elevatorPosition = Inches.mutable(0);
-        private final MutLinearVelocity elevatorVelocity = InchesPerSecond.mutable(0);
+        private final MutDistance elevatorPosition = Meters.mutable(0);
+        private final MutLinearVelocity elevatorVelocity = MetersPerSecond.mutable(0);
 
         // HOW WE WILL BE CONTROLLING THE ELEVATOR
         private final ElevatorFeedforward elevatorFeedforward;
@@ -77,17 +83,45 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                                 Volts.of(Constants.ElevatorConstants.SYSID_STEP_VOLTS),
                                 Seconds.of(Constants.ElevatorConstants.SYSID_TIMEOUT));
 
-                routine = new SysIdRoutine(sysIDConfig, new SysIdRoutine.Mechanism(motor1::setVoltage,
-                                (log) -> log.motor("elevatorMotor1").voltage(appliedVoltage.mut_replace(
-                                                motor1.getAppliedOutput() * motor1.getBusVoltage(), Volts))
-                                                .linearPosition(elevatorPosition.mut_replace(
-                                                                encoder.getPosition(), Inches))
-                                                .linearVelocity(elevatorVelocity.mut_replace(
-                                                                encoder.getVelocity(), InchesPerSecond)),
-                                this));
+                routine = new SysIdRoutine(
+                                // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
+                                new SysIdRoutine.Config(Volts.per(Second).of(1),
+                                                Volts.of(7),
+                                                Seconds.of(10)),
+                                new SysIdRoutine.Mechanism(
+                                                // Tell SysId how to plumb the driving voltage to the motor(s).
+                                                motor1::setVoltage,
+                                                // Tell SysId how to record a frame of data for each motor on the
+                                                // mechanism being
+                                                // characterized.
+                                                log -> {
+                                                        // Record a frame for the shooter motor.
+                                                        log.motor("elevator")
+                                                                        .voltage(
+                                                                                        appliedVoltage.mut_replace(
+                                                                                                        motor1.getAppliedOutput()
+                                                                                                                        * RobotController
+                                                                                                                                        .getBatteryVoltage(),
+                                                                                                        Volts))
+                                                                        .linearPosition(elevatorPosition.mut_replace(
+                                                                                        getHeightMeters(),
+                                                                                        Meters)) // Records Height in
+                                                                                                 // Meters via
+                                                                                                 // SysIdRoutineLog.linearPosition
+                                                                        .linearVelocity(elevatorVelocity.mut_replace(
+                                                                                        getVelocityMPS(),
+                                                                                        MetersPerSecond)); // Records
+                                                                                                           // velocity
+                                                                                                           // in
+                                                                                                           // MetersPerSecond
+                                                                                                           // via
+                                                                                                           // SysIdRoutineLog.linearVelocity
+                                                },
+                                                this));
 
                 elevatorFeedforward = new ElevatorFeedforward(Constants.ElevatorConstants.FF_S,
-                                Constants.ElevatorConstants.FF_G, Constants.ElevatorConstants.FF_V);
+                                Constants.ElevatorConstants.FF_G, Constants.ElevatorConstants.FF_V,
+                                Constants.ElevatorConstants.FF_A);
 
                 positionController = new ProfiledPIDController(Constants.ElevatorConstants.PC_P,
                                 Constants.ElevatorConstants.PC_I, Constants.ElevatorConstants.PC_D,
@@ -105,26 +139,35 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
         }
 
         // SET POINT SHOULD BE GIVEN IN METERS
-        public Runnable goToSetpoint(double setPoint) {
+        public void goToSetpoint(double setPoint) {
                 double voltsOut = MathUtil.clamp(
-                                positionController.calculate(getHeightMeters(), setPoint)
-                                                + elevatorFeedforward.calculateWithVelocities(getVelocityMPS(),
+                                positionController.calculate(getHeightMeters(), setPoint) +
+                                                elevatorFeedforward.calculateWithVelocities(getVelocityMPS(),
                                                                 positionController.getSetpoint().velocity),
-                                -7, 7);
+                                -3, 3);
 
-                System.out.println(voltsOut);
-                
-                return () -> motor1.setVoltage(voltsOut);
+                DriverStation.reportWarning(String.valueOf(voltsOut), false);
+
+                motor1.setVoltage(voltsOut);
+        }
+
+        public Command setGoal(double goal) {
+                return run(() -> goToSetpoint(goal) );
         }
 
         public double getHeightMeters() {
-                return (encoder.getPosition() / Constants.ElevatorConstants.GEAR_RATIO)
-                                * (2 * Math.PI * ElevatorConstants.SPROCKET_PITCH_RADIUS);
+                return (2*(encoder.getPosition() / Constants.ElevatorConstants.GEAR_RATIO)
+                                * (2 * Math.PI * ElevatorConstants.SPROCKET_PITCH_RADIUS));
         }
 
         public double getVelocityMPS() {
-                return ((encoder.getVelocity() / 60) / Constants.ElevatorConstants.GEAR_RATIO)
+                return 2*((encoder.getVelocity() / 60) / Constants.ElevatorConstants.GEAR_RATIO)
                                 * (2 * Math.PI * ElevatorConstants.SPROCKET_PITCH_RADIUS);
+        }
+
+        public Distance getLinearPosition() {
+                return Meters.of(2*((Rotations.of(encoder.getPosition()).in(Rotations) / ElevatorConstants.GEAR_RATIO) *
+                                (ElevatorConstants.SPROCKET_PITCH_RADIUS * 2 * Math.PI)));
         }
 
         public Runnable runElevatorUp() {
@@ -152,6 +195,19 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                 return () -> encoder.setPosition(0);
         }
 
+        public Command runSysIdRoutine() {
+                final Trigger atMax = new Trigger(() -> getLinearPosition()
+                                .isNear(Meters.of(ElevatorConstants.ELEVATOR_MAXHEIGHT_METERS), Inches.of(3)));
+
+                final Trigger atMin = new Trigger(() -> getLinearPosition().isNear(Meters.of(0), Inches.of(3)));
+
+                return (routine.dynamic(Direction.kForward).until(atMax))
+                                .andThen(routine.dynamic(Direction.kReverse).until(atMin))
+                                .andThen(routine.quasistatic(Direction.kForward).until(atMax))
+                                .andThen(routine.quasistatic(Direction.kReverse).until(atMin))
+                                .andThen(Commands.print("DONE"));
+        }
+
         @Override
         public void periodic() {
                 // check if we are at the bottom of elevator and set position to 0 so we
@@ -160,13 +216,15 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                         encoder.setPosition(0);
                 }
 
+                SmartDashboard.putBoolean("Elevator LimitSwitch", elevatorLimitSwitch.get());
+
                 SmartDashboard.putNumber("Elevator Position (Meters)", getHeightMeters());
                 SmartDashboard.putNumber("Elevator Velocity (MPS)", getVelocityMPS());
         }
 
         @Override
         public void initialize() {
-                SmartDashboard.putNumber("Calculated PID and FF value: ", 0);
+                
         }
 
         public Command sysIDQuasistatic(SysIdRoutine.Direction direction) {

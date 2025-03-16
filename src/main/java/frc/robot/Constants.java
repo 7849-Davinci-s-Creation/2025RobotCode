@@ -78,24 +78,28 @@ public final class Constants {
 
         // 2(gear_ratio*(pi*sprocket_pitch_diameter))
         public static final double GEAR_RATIO = 8.45;
-        public static final double SPROCKET_PITCH_DIAMETER = 1.910;
-        public static final double SPROCKET_PITCH_RADIUS = SPROCKET_PITCH_DIAMETER / 2;
-        public static final double SPROCKET_PITCH_CIRCUMFRANCE = Math.PI * SPROCKET_PITCH_DIAMETER;
+        public static final double SPROCKET_PITCH_DIAMETER_METERS = 0.048514;
+        public static final double SPROCKET_PITCH_RADIUS = SPROCKET_PITCH_DIAMETER_METERS / 2;
+        public static final double SPROCKET_PITCH_CIRCUMFRANCE = Math.PI * SPROCKET_PITCH_DIAMETER_METERS;
         public static final double ENCODER_CONVERSION_FACTOR = 2 * (GEAR_RATIO * SPROCKET_PITCH_CIRCUMFRANCE);
 
         // SYS ID FOR THESE
-        public static final double FF_S = 0.24922;
-        public static final double FF_G = 0.47034;
-        public static final double FF_V = 0.067057;
+        public static final double FF_S = 0.39475;
+        public static final double FF_G = 0.69778;
+        public static final double FF_V = 2.9562;
+        public static final double FF_A = 0.39152;
 
-        public static final double PC_P = 3.596;
+        public static final double PC_P = 0.0016947;
         public static final double PC_I = 0;
         public static final double PC_D = 0;
 
         // CALCULATE THIS
-        public static final double MAX_VELOCITY_MPS = 0.3767074;
-        public static final double MAX_ACCELERATION_MPS2 = 0.6858;
-        public static final double ELEVATOR_MAXHEIGHT_METERS = 1.397;
+        public static final double MAX_VELOCITY_MPS = 0.98144;
+        public static final double MAX_ACCELERATION_MPS2 = 4;
+
+        // THIS IS NOW GOING OFF OF WHAT THE ENCODER SAYS, OUR ELEVATOR IS NOT ACTUALLY THIS TALL 
+        // (1.702) actual value in meters
+        public static final double ELEVATOR_MAXHEIGHT_METERS = 1.6782701159578037;
     }
 
     public static final class VisionConstants {

@@ -175,7 +175,8 @@ public final class RobotContainer implements RobotMethods {
                 operatorController.leftTrigger().whileTrue(Commands.runOnce(climber.raiseClimber()))
                                 .onFalse(Commands.runOnce(climber.stop()));
 
-                operatorController.leftTrigger().and(operatorController.a()).whileTrue(Commands.runOnce(climber.climb()))
+                operatorController.leftTrigger().and(operatorController.a())
+                                .whileTrue(Commands.runOnce(climber.climb()))
                                 .onFalse(Commands.runOnce(climber.stop()));
 
                 operatorController.rightTrigger().whileTrue(Commands.runOnce(climber.lowerClimber()))
@@ -188,9 +189,9 @@ public final class RobotContainer implements RobotMethods {
                                 .onFalse(Commands.runOnce(endEffector.stopAlgaeAndIntake()));
 
                 // operatorController.povLeft().whileTrue(Commands.runOnce(endEffector.runPivotMotorsUp()))
-                //                 .onFalse(Commands.runOnce(endEffector.stopPivot()));
+                // .onFalse(Commands.runOnce(endEffector.stopPivot()));
                 // operatorController.povRight().whileTrue(Commands.runOnce(endEffector.runPivotMotorsDown()))
-                //                 .onFalse(Commands.runOnce(endEffector.stopPivot()));
+                // .onFalse(Commands.runOnce(endEffector.stopPivot()));
 
                 // END EFFECTOR SYS ID
                 operatorController.povLeft().and(operatorController.back())
@@ -208,18 +209,12 @@ public final class RobotContainer implements RobotMethods {
                 operatorController.povDown().whileTrue(Commands.runOnce(elevator.runElevatorDown()))
                                 .onFalse(Commands.runOnce(elevator.pleaseStop()));
 
-                operatorController.a().whileTrue(Commands.runOnce(elevator.goToSetpoint(1)))
-                .onFalse(Commands.runOnce(elevator.pleaseStop()));
+                operatorController.a().whileTrue(elevator.setGoal(1))
+                                .onFalse(Commands.run(elevator.pleaseStop()));
 
                 // ELEVATOR SYS ID
                 operatorController.povUp().and(operatorController.back())
-                                .whileTrue(elevator.sysIDDynamic(SysIdRoutine.Direction.kForward));
-                operatorController.povDown().and(operatorController.back())
-                                .whileTrue(elevator.sysIDDynamic(SysIdRoutine.Direction.kReverse));
-                operatorController.povUp().and(operatorController.start())
-                                .whileTrue(elevator.sysIDQuasistatic(SysIdRoutine.Direction.kForward));
-                operatorController.povDown().and(operatorController.start())
-                                .whileTrue(elevator.sysIDQuasistatic(SysIdRoutine.Direction.kReverse));
+                                .whileTrue(elevator.runSysIdRoutine());
 
                 // zero end effector / elevator's encoder
                 operatorController.back().onTrue(Commands.runOnce(elevator.zeroEncoder()));
