@@ -172,10 +172,10 @@ public final class RobotContainer implements RobotMethods {
                                                                 Constants.FeederStation.RIGHT))));
 
                 // operator controller
-                operatorController.leftTrigger().whileTrue(Commands.runOnce(climber.raiseClimber()))
-                                .onFalse(Commands.runOnce(climber.stop()));
+                // operatorController.leftTrigger().whileTrue(Commands.runOnce(climber.raiseClimber()))
+                // .onFalse(Commands.runOnce(climber.stop()));
 
-                operatorController.leftTrigger().and(operatorController.a())
+                operatorController.leftTrigger().and(operatorController.rightTrigger())
                                 .whileTrue(Commands.runOnce(climber.climb()))
                                 .onFalse(Commands.runOnce(climber.stop()));
 
@@ -188,20 +188,12 @@ public final class RobotContainer implements RobotMethods {
                 operatorController.rightBumper().whileTrue(Commands.runOnce(endEffector.outake()))
                                 .onFalse(Commands.runOnce(endEffector.stopAlgaeAndIntake()));
 
-                // operatorController.povLeft().whileTrue(Commands.runOnce(endEffector.runPivotMotorsUp()))
-                // .onFalse(Commands.runOnce(endEffector.stopPivot()));
-                // operatorController.povRight().whileTrue(Commands.runOnce(endEffector.runPivotMotorsDown()))
-                // .onFalse(Commands.runOnce(endEffector.stopPivot()));
+                operatorController.povLeft().whileTrue(Commands.runOnce(endEffector.runPivotMotorsUp()))
+                                .onFalse(Commands.runOnce(endEffector.stopPivot()));
+                operatorController.povRight().whileTrue(Commands.runOnce(endEffector.runPivotMotorsDown()))
+                                .onFalse(Commands.runOnce(endEffector.stopPivot()));
 
-                // END EFFECTOR SYS ID
-                operatorController.povLeft().and(operatorController.back())
-                                .whileTrue(endEffector.sysIDDynamic(SysIdRoutine.Direction.kForward));
-                operatorController.povRight().and(operatorController.back())
-                                .whileTrue(endEffector.sysIDDynamic(SysIdRoutine.Direction.kReverse));
-                operatorController.povLeft().and(operatorController.start())
-                                .whileTrue(endEffector.sysIDQuasistatic(SysIdRoutine.Direction.kForward));
-                operatorController.povRight().and(operatorController.start())
-                                .whileTrue(endEffector.sysIDQuasistatic(SysIdRoutine.Direction.kReverse));
+                operatorController.a().whileTrue(endEffector.setGoal(50)).onFalse(Commands.run(endEffector.stopPivot()));
 
                 // ELEVATOR
                 operatorController.povUp().whileTrue(Commands.runOnce(elevator.runElevatorUp()))
@@ -209,12 +201,7 @@ public final class RobotContainer implements RobotMethods {
                 operatorController.povDown().whileTrue(Commands.runOnce(elevator.runElevatorDown()))
                                 .onFalse(Commands.runOnce(elevator.pleaseStop()));
 
-                operatorController.a().whileTrue(elevator.setGoal(1))
-                                .onFalse(Commands.run(elevator.pleaseStop()));
-
-                // ELEVATOR SYS ID
-                operatorController.povUp().and(operatorController.back())
-                                .whileTrue(elevator.runSysIdRoutine());
+                // scoring positions
 
                 // zero end effector / elevator's encoder
                 operatorController.back().onTrue(Commands.runOnce(elevator.zeroEncoder()));

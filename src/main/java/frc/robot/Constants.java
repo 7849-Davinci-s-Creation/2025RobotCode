@@ -23,7 +23,7 @@ public final class Constants {
         public static final int DRIVER_CONTROLLER_PORT = 1;
         public static final double DRIVER_CONTROLLER_DEADBAND = 0.1;
         public static final double SLIGHT_CREEP_NERF = 5;
-        public static final double MAJOR_CREEP_NERF = 10;;
+        public static final double MAJOR_CREEP_NERF = 10;
         public static final int OPERATOR_CONTROLLER_PORT = 0;
 
         public static final double RED_LEFT_FEEDERSTATION_DEGREES = 0;
@@ -84,13 +84,13 @@ public final class Constants {
         public static final double ENCODER_CONVERSION_FACTOR = 2 * (GEAR_RATIO * SPROCKET_PITCH_CIRCUMFRANCE);
 
         // SYS ID FOR THESE
-        public static final double FF_S = 0.39475;
-        public static final double FF_G = 0.69778;
-        public static final double FF_V = 2.9562;
-        public static final double FF_A = 0.39152;
+        public static final double FF_S = 0.05;
+        public static final double FF_G = 0.1;
+        public static final double FF_V = 0.05;
+        public static final double FF_A = 0;
 
-        public static final double PC_P = 0.0016947;
-        public static final double PC_I = 0;
+        public static final double PC_P = 60;
+        public static final double PC_I = 0; 
         public static final double PC_D = 0;
 
         // CALCULATE THIS
@@ -133,13 +133,13 @@ public final class Constants {
         public static final int LIMIT_SWITCH_PORT = 2;
 
         // SYS ID FOR THESE
-        public static final double PIVOT_P = 0;
+        public static final double PIVOT_P = 5;
         public static final double PIVOT_I = 0;
         public static final double PIVOT_D = 0;
 
         // CALCULATE THIS
-        public static final double MAX_VELOCITY_MPS = 0;
-        public static final double MAX_ACCELERATION_MPS2 = 0;
+        public static final double MAX_VELOCITY_MPS = 1;
+        public static final double MAX_ACCELERATION_MPS2 = 2.5;
 
         // SYSID FOR THIS
         public static final double PIVOT_S = 0;
@@ -148,9 +148,9 @@ public final class Constants {
         public static final double PIVOT_A = 0;
 
         // FIND THIS
-        public static final double MAX_ANGLE = 110;
+        public static final double MAX_ANGLE_DEGREES = 135;
 
-        public static final double GEAR_RATIO = 0.01;
+        public static final double GEAR_RATIO = 100;
 
         public static final double SYSID_RAMP_RATE = .25; // default 1
         public static final double SYSID_STEP_VOLTS = 3; // default 7

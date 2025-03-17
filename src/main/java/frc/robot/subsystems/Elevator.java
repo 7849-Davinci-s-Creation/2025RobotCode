@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
@@ -66,22 +65,10 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                 SparkBaseConfig motor2Config = new SparkMaxConfig().idleMode(IdleMode.kBrake)
                                 .follow(Constants.ElevatorConstants.MOTOR1_CANID);
 
-                // Config motors
-                // motor1Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
-                // .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
-                // motor2Config.encoder.positionConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR)
-                // .velocityConversionFactor(Constants.ElevatorConstants.ENCODER_CONVERSION_FACTOR);
-
                 motor1.configure(motor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
                 motor2.configure(motor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
                 encoder = motor1.getEncoder();
-
-                // SYSID CRAP
-                final Config sysIDConfig = new Config(
-                                Volts.of(Constants.ElevatorConstants.SYSID_RAMP_RATE).per(Second),
-                                Volts.of(Constants.ElevatorConstants.SYSID_STEP_VOLTS),
-                                Seconds.of(Constants.ElevatorConstants.SYSID_TIMEOUT));
 
                 routine = new SysIdRoutine(
                                 // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
@@ -140,11 +127,18 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
 
         // SET POINT SHOULD BE GIVEN IN METERS
         public void goToSetpoint(double setPoint) {
+                double wantedSetPoint = Math.abs(setPoint);
+
+                // so we dont go over our elevators max height
+                if (wantedSetPoint >= Constants.ElevatorConstants.ELEVATOR_MAXHEIGHT_METERS) {
+                        wantedSetPoint = Constants.ElevatorConstants.ELEVATOR_MAXHEIGHT_METERS;
+                }
+
                 double voltsOut = MathUtil.clamp(
-                                positionController.calculate(getHeightMeters(), setPoint) +
+                                positionController.calculate(getHeightMeters(), wantedSetPoint) +
                                                 elevatorFeedforward.calculateWithVelocities(getVelocityMPS(),
                                                                 positionController.getSetpoint().velocity),
-                                -3, 3);
+                                -7, 7);
 
                 DriverStation.reportWarning(String.valueOf(voltsOut), false);
 

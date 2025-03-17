@@ -2,11 +2,13 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.InchesPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -18,12 +20,16 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -47,6 +53,7 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
     private final ProfiledPIDController pidPivotcontroller;
     private final ArmFeedforward pivotFeedForward;
+    private final SparkClosedLoopController sparkClosedLoopController;
 
     private final SysIdRoutine routine;
     private final MutVoltage appliedVoltage = Volts.mutable(0);
@@ -103,12 +110,14 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
         pidPivotcontroller = new ProfiledPIDController(Constants.EndEffectorConstants.PIVOT_P,
                 Constants.EndEffectorConstants.PIVOT_I, Constants.EndEffectorConstants.PIVOT_D,
-                new TrapezoidProfile.Constraints(Constants.EndEffectorConstants.MAX_VELOCITY_MPS,
+                new Constraints(Constants.EndEffectorConstants.MAX_VELOCITY_MPS,
                         Constants.EndEffectorConstants.MAX_ACCELERATION_MPS2));
 
         pivotFeedForward = new ArmFeedforward(Constants.EndEffectorConstants.PIVOT_S,
                 Constants.EndEffectorConstants.PIVOT_G, Constants.EndEffectorConstants.PIVOT_V,
                 Constants.EndEffectorConstants.PIVOT_A);
+
+        sparkClosedLoopController = pivotMotor1.getClosedLoopController();
 
         // SYS ID CRAP
         final Config sysIDConfig = new Config(
@@ -214,37 +223,46 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
     }
 
     public Runnable runPivotMotorsDown() {
+        // if (pivotLimitSwitch.get()) {
+        //     return () -> {
+        //         pivotMotor1.set(0);
+        //         pivotMotor2.set(0);
+        //     };
+        // }
         return () -> {
-            pivotMotor1.set(0.2);
-            pivotMotor2.set(0.2);
+            pivotMotor1.set(0.20);
+            pivotMotor2.set(0.20);
         };
     }
 
+    public Angle convertAngleToSensorUnits(Angle measurment) {
+        return Rotations.of(measurment.in(Rotations) * Constants.EndEffectorConstants.GEAR_RATIO);
+    }
+
     public void pivot(double angle) {
-        double clampedAngle = MathUtil.clamp(angle, 0, Constants.EndEffectorConstants.MAX_ANGLE);
+        double wantedSetPoint = convertAngleToSensorUnits(Degrees.of(angle)).in(Rotations);
 
-        double pidControllerResult = pidPivotcontroller.calculate(getDegrees(), clampedAngle);
-        double ffResult = pivotFeedForward
-                .calculate(getDegrees() / (Math.PI / 180), pidPivotcontroller.getSetpoint().velocity);
+        double pidOutput = pidPivotcontroller.calculate(pivotEncoder.getPosition(), wantedSetPoint);
+        State setPointState = pidPivotcontroller.getSetpoint();
 
-        // if the limit switch is hit, and we are trying to go down, don't.
-        // add in safety once we know how limit switch behaves
-        // if (pivotLimitSwitch.get() && pidControllerResult + ffResult <= 0) {
-        // return;
-        // } else if (pivotEncoder.getPosition() >=
-        // Constants.EndEffectorConstants.MAX_ANGLE) {
-        // return;
-        // }
+        double outPut = MathUtil.clamp(pidOutput + pivotFeedForward.calculate(setPointState.position, setPointState.velocity), -5, 5);
 
-        pivotMotor1.setVoltage(-(pidControllerResult + ffResult));
+        DriverStation.reportWarning(String.valueOf(outPut), false);
+
+        pivotMotor1.setVoltage(outPut);
+        pivotMotor2.setVoltage(outPut);
+    }
+
+    public Command setGoal(double angle) {
+        return run(() -> pivot(angle));
     }
 
     public Runnable zeroPivotEncoder() {
-        return () -> pivotEncoder.setPosition(0);
+        return () -> pivot(0);
     }
 
     private double getDegrees() {
-        return (pivotEncoder.getPosition() * 360) * Constants.EndEffectorConstants.GEAR_RATIO;
+        return Math.abs((pivotEncoder.getPosition() * 360) / Constants.EndEffectorConstants.GEAR_RATIO);
     }
 
     public Command sysIDQuasistatic(SysIdRoutine.Direction direction) {
@@ -258,12 +276,13 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
     @Override
     public void periodic() {
         // check if we are at the bottom (in case of power cycle)
-        if (!pivotLimitSwitch.get()) {
+        if (pivotLimitSwitch.get()) {
             pivotEncoder.setPosition(0);
         }
 
-        SmartDashboard.putNumber("EndEffector Angle (Degrees)", getDegrees() / 100);
+        SmartDashboard.putNumber("EndEffector Angle (Degrees)", getDegrees());
         SmartDashboard.putNumber("EndEffector Velocity (RPM)", pivotEncoder.getVelocity());
+        SmartDashboard.putBoolean("End Effector Limit Switch", pivotLimitSwitch.get());
     }
 
     @Override
