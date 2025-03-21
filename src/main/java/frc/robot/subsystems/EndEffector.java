@@ -45,7 +45,6 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
     private final SparkMax intakeMotor2;
     private final SparkMax pivotMotor1;
     // private final SparkMax algaeRemoverMotor;
-    private final SparkMax pivotMotor2;
 
     private final RelativeEncoder pivotEncoder;
 
@@ -76,13 +75,13 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         intakeMotor2.configure(intakeMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         pivotMotor1 = new SparkMax(Constants.EndEffectorConstants.PIVOTMOTOR1_CANID, MotorType.kBrushless);
-        pivotMotor2 = new SparkMax(Constants.EndEffectorConstants.PIVOTMOTOR2_CANID, MotorType.kBrushless);
+        
 
         pivotMotor1.clearFaults();
-        pivotMotor2.clearFaults();
+        
 
         final SparkBaseConfig pivotMotor1Config = new SparkMaxConfig().idleMode(IdleMode.kBrake).inverted(false);
-        final SparkBaseConfig pivotMotor2Config = new SparkMaxConfig().idleMode(IdleMode.kBrake).inverted(true);
+    
 
         // THE NEW REV API IS ONE OF THE WORST THINGS I HAVE EVER WORKED WITH, THIS DOES
         // NOT WORK, YOU CANNOT HAVE ONE
@@ -92,8 +91,6 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         // pivotMotor2Config.follow(Constants.EndEffectorConstants.PIVOTMOTOR1_CANID);
 
         pivotMotor1.configure(pivotMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        pivotMotor2.configure(pivotMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
         pivotEncoder = pivotMotor1.getEncoder();
 
         // algaeRemoverMotor = new
@@ -145,7 +142,6 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
     public void runMotorsForSysID(Voltage voltage) {
         pivotMotor1.setVoltage(-voltage.in(Volts));
-        pivotMotor2.setVoltage(-voltage.in(Volts));
     }
 
     public Runnable intake() {
@@ -159,8 +155,8 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
     public Runnable outake() {
         return () -> {
-            intakeMotor1.set(-0.3);
-            intakeMotor2.set(-0.3);
+            intakeMotor1.set(-0.15);
+            intakeMotor2.set(-0.15);
 
             // runAlgaeRemoverBackwards().run();
         };
@@ -195,7 +191,7 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
     public Runnable stopPivot() {
         return () -> {
             pivotMotor1.set(0);
-            pivotMotor2.set(0);
+            
         };
     }
 
@@ -218,7 +214,7 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
         return () -> {
             pivotMotor1.set(-0.2);
-            pivotMotor2.set(-0.2);
+            
         };
     }
 
@@ -231,7 +227,20 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         // }
         return () -> {
             pivotMotor1.set(0.20);
-            pivotMotor2.set(0.20);
+            
+        };
+    }
+
+    public Runnable runPivotMotorsDown(double speed) {
+        // if (pivotLimitSwitch.get()) {
+        //     return () -> {
+        //         pivotMotor1.set(0);
+        //         pivotMotor2.set(0);
+        //     };
+        // }
+        return () -> {
+            pivotMotor1.set(speed);
+            
         };
     }
 
@@ -240,17 +249,46 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
     }
 
     public void pivot(double angle) {
-        double wantedSetPoint = convertAngleToSensorUnits(Degrees.of(angle)).in(Rotations);
+        double clampedAngle = MathUtil.clamp(angle, 0, Constants.EndEffectorConstants.MAX_ANGLE_DEGREES);
+ 
+        double pidControllerResult = pidPivotcontroller.calculate(Math.toRadians(getDegrees()), Math.toRadians(clampedAngle));
+        double ffResult = pivotFeedForward
+                .calculate(pidPivotcontroller.getSetpoint().position, pidPivotcontroller.getSetpoint().velocity);
 
-        double pidOutput = pidPivotcontroller.calculate(pivotEncoder.getPosition(), wantedSetPoint);
-        State setPointState = pidPivotcontroller.getSetpoint();
+        DriverStation.reportWarning(String.valueOf( -(pidControllerResult + ffResult)), false);
+        
+        pivotMotor1.setVoltage(-(pidControllerResult + ffResult));
+        
 
-        double outPut = MathUtil.clamp(pidOutput + pivotFeedForward.calculate(setPointState.position, setPointState.velocity), -5, 5);
+        // if the limit switch is hit, and we are trying to go down, don't.
+        // add in safety once we know how limit switch behaves
+        // if (pivotLimitSwitch.get() && pidControllerResult + ffResult <= 0) {
+        // return;
+        // } else if (pivotEncoder.getPosition() >=
+        // Constants.EndEffectorConstants.MAX_ANGLE) {
+        // return;
+        // }
 
-        DriverStation.reportWarning(String.valueOf(outPut), false);
+        // double wantedSetPoint = convertAngleToSensorUnits(Degrees.of(angle)).in(Rotations);
 
-        pivotMotor1.setVoltage(outPut);
-        pivotMotor2.setVoltage(outPut);
+        // DriverStation.reportWarning(String.valueOf(wantedSetPoint), false);
+
+        // double pidOutput = pidPivotcontroller.calculate(pivotEncoder.getPosition(), wantedSetPoint);
+        // State setPointState = pidPivotcontroller.getSetpoint();
+
+        // double outPut = MathUtil.clamp(pidOutput + pivotFeedForward.calculate(setPointState.position, setPointState.velocity), -5, 5);
+
+        // DriverStation.reportWarning(String.valueOf(outPut), false);
+
+        // if (pivotLimitSwitch.get() && -outPut > 0) {
+        //     pivotMotor1.setVoltage(0);
+        //     pivotMotor2.setVoltage(0);
+
+        //     return;
+        // }
+
+        // pivotMotor1.setVoltage(-outPut);
+        // pivotMotor2.setVoltage(-outPut);
     }
 
     public Command setGoal(double angle) {
@@ -258,7 +296,7 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
     }
 
     public Runnable zeroPivotEncoder() {
-        return () -> pivot(0);
+        return () -> pivotEncoder.setPosition(0);
     }
 
     private double getDegrees() {
@@ -271,6 +309,10 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
     public Command sysIDDynamic(SysIdRoutine.Direction direction) {
         return routine.dynamic(direction);
+    }
+
+    public boolean getLimitSwitch() {
+        return pivotLimitSwitch.get();
     }
 
     @Override

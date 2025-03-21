@@ -21,7 +21,7 @@ import static edu.wpi.first.units.Units.*;
 public final class Constants {
     public static final class OperatorConstants {
         public static final int DRIVER_CONTROLLER_PORT = 1;
-        public static final double DRIVER_CONTROLLER_DEADBAND = 0.1;
+        public static final double DRIVER_CONTROLLER_DEADBAND = 0.05;
         public static final double SLIGHT_CREEP_NERF = 5;
         public static final double MAJOR_CREEP_NERF = 10;
         public static final int OPERATOR_CONTROLLER_PORT = 0;
@@ -40,9 +40,9 @@ public final class Constants {
         public static final Rotation2d RED_ALLIANCE_PERSPECTIVE_ROTATION = Rotation2d.k180deg;
 
         public static final double SIM_LOOP_PERIOD = 0.005; // 5 ms
-        public static final double MAX_SPEED = TunerConstants.SPEED_AT_12_VOLTS.in(MetersPerSecond);
+        public static final double MAX_SPEED = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
 
-        public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+        public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.2).in(RadiansPerSecond);
 
         public static final double DRIVE_KP = 0.16618;
         public static final double DRIVE_KI = 0;
@@ -116,7 +116,6 @@ public final class Constants {
 
     public static final class ClimberConstants {
         public static final int MOTOR1_CANID = 55;
-        public static final int MOTOR2_CANID = 54;
     }
 
     public static final class EndEffectorConstants {
@@ -126,24 +125,23 @@ public final class Constants {
 
         // find the pivot motors canID
         public static final int PIVOTMOTOR1_CANID = 40;
-        public static final int PIVOTMOTOR2_CANID = 5;
 
         public static final int ALGAE_REMOVER_CANDID = 7;
 
         public static final int LIMIT_SWITCH_PORT = 2;
 
         // SYS ID FOR THESE
-        public static final double PIVOT_P = 5;
+        public static final double PIVOT_P = 20;
         public static final double PIVOT_I = 0;
-        public static final double PIVOT_D = 0;
+        public static final double PIVOT_D = 0.03;
 
         // CALCULATE THIS
-        public static final double MAX_VELOCITY_MPS = 1;
+        public static final double MAX_VELOCITY_MPS = 2;
         public static final double MAX_ACCELERATION_MPS2 = 2.5;
 
         // SYSID FOR THIS
-        public static final double PIVOT_S = 0;
-        public static final double PIVOT_G = 0;
+        public static final double PIVOT_S = 0.01;
+        public static final double PIVOT_G = 0.5;
         public static final double PIVOT_V = 0;
         public static final double PIVOT_A = 0;
 

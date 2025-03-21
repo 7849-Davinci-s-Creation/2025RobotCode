@@ -12,8 +12,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.ZeroElevator;
+import frc.robot.commands.ZeroEndEffector;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -183,8 +187,16 @@ public final class RobotContainer implements RobotMethods {
                                 .onFalse(Commands.runOnce(climber.stop()));
 
                 // END EFFECTOR
-                operatorController.leftBumper().whileTrue(Commands.runOnce(endEffector.intake()))
-                                .onFalse(Commands.runOnce(endEffector.stopAlgaeAndIntake()));
+                operatorController.leftBumper().whileTrue(
+                                new ParallelCommandGroup(
+                                                Commands.runOnce(endEffector.intake()),
+                                                endEffector.setGoal(100)))
+                                .onFalse(
+                                                new ParallelCommandGroup(
+                                                                Commands.runOnce(endEffector.stopAlgaeAndIntake()),
+                                                                Commands.runOnce(endEffector.stopPivot()),
+                                                                new ZeroEndEffector(endEffector)));
+
                 operatorController.rightBumper().whileTrue(Commands.runOnce(endEffector.outake()))
                                 .onFalse(Commands.runOnce(endEffector.stopAlgaeAndIntake()));
 
@@ -193,7 +205,47 @@ public final class RobotContainer implements RobotMethods {
                 operatorController.povRight().whileTrue(Commands.runOnce(endEffector.runPivotMotorsDown()))
                                 .onFalse(Commands.runOnce(endEffector.stopPivot()));
 
-                operatorController.a().whileTrue(endEffector.setGoal(50)).onFalse(Commands.run(endEffector.stopPivot()));
+                operatorController.y().whileTrue(
+                                new ParallelCommandGroup(
+                                                endEffector.setGoal(0),
+                                                elevator.setGoal(1.6)))
+                                .onFalse(
+                                                new ParallelCommandGroup(
+                                                                Commands.run(endEffector.stopPivot()),
+                                                                Commands.run(elevator.pleaseStop()),
+                                                                new ZeroElevator(elevator)));
+
+                operatorController.b().whileTrue(
+                                new ParallelCommandGroup(
+                                                endEffector.setGoal(30),
+                                                elevator.setGoal(0.7)))
+                                .onFalse(
+                                                new ParallelCommandGroup(
+                                                                Commands.run(endEffector.stopPivot()),
+                                                                Commands.run(elevator.pleaseStop()),
+                                                                new ZeroElevator(elevator),
+                                                                new ZeroEndEffector(endEffector)));
+                operatorController.x().whileTrue(
+                                new ParallelCommandGroup(
+                                                endEffector.setGoal(20),
+                                                elevator.setGoal(0.3)))
+                                .onFalse(
+                                                new ParallelCommandGroup(
+                                                                Commands.run(endEffector.stopPivot()),
+                                                                Commands.run(elevator.pleaseStop()),
+                                                                new ZeroElevator(elevator),
+                                                                new ZeroEndEffector(endEffector)));
+
+                operatorController.a().whileTrue(
+                                new ParallelCommandGroup(
+                                                endEffector.setGoal(45),
+                                                elevator.setGoal(0)))
+                                .onFalse(
+                                                new ParallelCommandGroup(
+                                                                Commands.run(endEffector.stopPivot()),
+                                                                Commands.run(elevator.pleaseStop()),
+                                                                new ZeroElevator(elevator),
+                                                                new ZeroEndEffector(endEffector)));
 
                 // ELEVATOR
                 operatorController.povUp().whileTrue(Commands.runOnce(elevator.runElevatorUp()))
@@ -234,7 +286,6 @@ public final class RobotContainer implements RobotMethods {
 
         @Override
         public void autonomousInit() {
-
         }
 
         @Override
@@ -249,7 +300,6 @@ public final class RobotContainer implements RobotMethods {
 
         @Override
         public void teleopInit() {
-
         }
 
         @Override

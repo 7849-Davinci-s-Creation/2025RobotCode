@@ -177,6 +177,15 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                 }
         }
 
+        public Runnable runElevatorDown(double speed) {
+                if (elevatorLimitSwitch.get()) {
+                        return () -> motor1.set(0);
+
+                } else {
+                        return () -> motor1.set(speed);
+                }
+        }
+
         public Runnable pleaseStop() {
                 return () -> motor1.set(0);
         }
@@ -200,6 +209,10 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                                 .andThen(routine.quasistatic(Direction.kForward).until(atMax))
                                 .andThen(routine.quasistatic(Direction.kReverse).until(atMin))
                                 .andThen(Commands.print("DONE"));
+        }
+
+        public boolean getLimitSwitch() {
+                return elevatorLimitSwitch.get();
         }
 
         @Override
