@@ -190,10 +190,6 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                 return () -> motor1.set(0);
         }
 
-        public void zeroElevator() {
-                goToSetpoint(0);
-        }
-
         public Runnable zeroEncoder() {
                 return () -> encoder.setPosition(0);
         }

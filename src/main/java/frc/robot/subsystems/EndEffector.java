@@ -8,7 +8,6 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -20,8 +19,6 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.MutAngle;
@@ -30,7 +27,6 @@ import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -52,7 +48,6 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
     private final ProfiledPIDController pidPivotcontroller;
     private final ArmFeedforward pivotFeedForward;
-    private final SparkClosedLoopController sparkClosedLoopController;
 
     private final SysIdRoutine routine;
     private final MutVoltage appliedVoltage = Volts.mutable(0);
@@ -93,16 +88,6 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         pivotMotor1.configure(pivotMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         pivotEncoder = pivotMotor1.getEncoder();
 
-        // algaeRemoverMotor = new
-        // SparkMax(Constants.EndEffectorConstants.ALGAE_REMOVER_CANDID,
-        // MotorType.kBrushless);
-
-        final SparkBaseConfig algaeRemoverConfig = new SparkMaxConfig().idleMode(IdleMode.kBrake).inverted(false);
-        // algaeRemoverMotor.configure(algaeRemoverConfig,
-        // ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-        // algaeRemoverMotor.clearFaults();
-
         pivotLimitSwitch = new DigitalInput(Constants.EndEffectorConstants.LIMIT_SWITCH_PORT);
 
         pidPivotcontroller = new ProfiledPIDController(Constants.EndEffectorConstants.PIVOT_P,
@@ -113,8 +98,6 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         pivotFeedForward = new ArmFeedforward(Constants.EndEffectorConstants.PIVOT_S,
                 Constants.EndEffectorConstants.PIVOT_G, Constants.EndEffectorConstants.PIVOT_V,
                 Constants.EndEffectorConstants.PIVOT_A);
-
-        sparkClosedLoopController = pivotMotor1.getClosedLoopController();
 
         // SYS ID CRAP
         final Config sysIDConfig = new Config(
@@ -148,8 +131,6 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         return () -> {
             intakeMotor1.set(0.5);
             intakeMotor2.set(0.5);
-
-            // runAlgaeRemoverBackwards().run();
         };
     }
 
@@ -157,22 +138,8 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         return () -> {
             intakeMotor1.set(-0.15);
             intakeMotor2.set(-0.15);
-
-            // runAlgaeRemoverBackwards().run();
         };
     }
-
-    // public Runnable runAlgaeRemoverForwards() {
-    // return () -> algaeRemoverMotor.set(1);
-    // }
-
-    // public Runnable runAlgaeRemoverBackwards() {
-    // return () -> algaeRemoverMotor.set(-1);
-    // }
-
-    // public Runnable stopAlgaeRemover() {
-    // return () -> algaeRemoverMotor.set(0);
-    // }
 
     public Runnable stopIntake() {
         return () -> {
@@ -182,10 +149,7 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
     }
 
     public Runnable stopAlgaeAndIntake() {
-        return () -> {
-            stopIntake().run();
-            // stopAlgaeRemover().run();
-        };
+        return () -> stopIntake().run();
     }
 
     public Runnable stopPivot() {
@@ -199,7 +163,6 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         return () -> {
             stopIntake().run();
             stopPivot().run();
-            // stopAlgaeRemover().run();
         };
     }
 
@@ -208,40 +171,15 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
     }
 
     public Runnable runPivotMotorsUp() {
-        // if (pivotLimitSwitch.get()) {
-        // return () -> pivotMotor1.set(0);
-        // }
-
-        return () -> {
-            pivotMotor1.set(-0.2);
-            
-        };
+        return () -> pivotMotor1.set(-0.2);
     }
 
     public Runnable runPivotMotorsDown() {
-        // if (pivotLimitSwitch.get()) {
-        //     return () -> {
-        //         pivotMotor1.set(0);
-        //         pivotMotor2.set(0);
-        //     };
-        // }
-        return () -> {
-            pivotMotor1.set(0.20);
-            
-        };
+        return () -> pivotMotor1.set(0.20);
     }
 
     public Runnable runPivotMotorsDown(double speed) {
-        // if (pivotLimitSwitch.get()) {
-        //     return () -> {
-        //         pivotMotor1.set(0);
-        //         pivotMotor2.set(0);
-        //     };
-        // }
-        return () -> {
-            pivotMotor1.set(speed);
-            
-        };
+        return () -> pivotMotor1.set(speed);
     }
 
     public Angle convertAngleToSensorUnits(Angle measurment) {
@@ -258,37 +196,6 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         DriverStation.reportWarning(String.valueOf( -(pidControllerResult + ffResult)), false);
         
         pivotMotor1.setVoltage(-(pidControllerResult + ffResult));
-        
-
-        // if the limit switch is hit, and we are trying to go down, don't.
-        // add in safety once we know how limit switch behaves
-        // if (pivotLimitSwitch.get() && pidControllerResult + ffResult <= 0) {
-        // return;
-        // } else if (pivotEncoder.getPosition() >=
-        // Constants.EndEffectorConstants.MAX_ANGLE) {
-        // return;
-        // }
-
-        // double wantedSetPoint = convertAngleToSensorUnits(Degrees.of(angle)).in(Rotations);
-
-        // DriverStation.reportWarning(String.valueOf(wantedSetPoint), false);
-
-        // double pidOutput = pidPivotcontroller.calculate(pivotEncoder.getPosition(), wantedSetPoint);
-        // State setPointState = pidPivotcontroller.getSetpoint();
-
-        // double outPut = MathUtil.clamp(pidOutput + pivotFeedForward.calculate(setPointState.position, setPointState.velocity), -5, 5);
-
-        // DriverStation.reportWarning(String.valueOf(outPut), false);
-
-        // if (pivotLimitSwitch.get() && -outPut > 0) {
-        //     pivotMotor1.setVoltage(0);
-        //     pivotMotor2.setVoltage(0);
-
-        //     return;
-        // }
-
-        // pivotMotor1.setVoltage(-outPut);
-        // pivotMotor2.setVoltage(-outPut);
     }
 
     public Command setGoal(double angle) {
