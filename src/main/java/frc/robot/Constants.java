@@ -22,15 +22,11 @@ public final class Constants {
     public static final class OperatorConstants {
         public static final int DRIVER_CONTROLLER_PORT = 1;
         public static final double DRIVER_CONTROLLER_DEADBAND = 0.05;
-        public static final double SLIGHT_CREEP_NERF = 5;
-        public static final double MAJOR_CREEP_NERF = 10;
+        public static final double SLIGHT_CREEP_NERF_DRIVE = 0.2;
+        public static final double SLIGHT_CREEP_NERF_ROTATE = 0.1;
+        public static final double MAJOR_CREEP_NERF_DRIVE = 0.1;
+        public static final double MAJOR_CREEP_NERF_ROTATE = 0.05;
         public static final int OPERATOR_CONTROLLER_PORT = 0;
-
-        public static final double RED_LEFT_FEEDERSTATION_DEGREES = 0;
-        public static final double RED_RIGHT_FEEDERSTATION_DEGREES = 0;
-
-        public static final double BLUE_LEFT_FEEDERSTATION_DEGREES = 0;
-        public static final double BLUE_RIGHT_FEEDERSTATION_DEGREES = 0;
     }
 
     public static final class DriveTrainConstants {
@@ -90,14 +86,15 @@ public final class Constants {
         public static final double FF_A = 0;
 
         public static final double PC_P = 60;
-        public static final double PC_I = 0; 
+        public static final double PC_I = 0;
         public static final double PC_D = 0;
 
         // CALCULATE THIS
         public static final double MAX_VELOCITY_MPS = 0.98144;
         public static final double MAX_ACCELERATION_MPS2 = 4;
 
-        // THIS IS NOW GOING OFF OF WHAT THE ENCODER SAYS, OUR ELEVATOR IS NOT ACTUALLY THIS TALL 
+        // THIS IS NOW GOING OFF OF WHAT THE ENCODER SAYS, OUR ELEVATOR IS NOT ACTUALLY
+        // THIS TALL
         // (1.702) actual value in meters
         public static final double ELEVATOR_MAXHEIGHT_METERS = 1.6782701159578037;
     }
@@ -206,9 +203,33 @@ public final class Constants {
             NODES.put("node11", NODE11_POSE);
             NODES.put("node12", NODE12_POSE);
         }
+
+        public static final double RED_LEFT_FEEDERSTATION_DEGREES = 0;
+        public static final double RED_RIGHT_FEEDERSTATION_DEGREES = 0;
+
+        public static final double BLUE_LEFT_FEEDERSTATION_DEGREES = 0;
+        public static final double BLUE_RIGHT_FEEDERSTATION_DEGREES = 0;
+
+        public static final double L4_ENDEFFECTOR_ANGLE_DEGREES = 0;
+        public static final double L4_ELEVATOR_DISTANCE_METERS = 1.6;
+
+        public static final double L3_ENDEFFECTOR_ANGLE_DEGREES = 30;
+        public static final double L3_ELEVATOR_DISTANCE_METERS = 0.7;
+
+        public static final double L2_ENDEFFECTOR_ANGLE_DEGREES = 20;
+        public static final double L2_ELEVATOR_DISTANCE_METERS = 0.3;
+
+        public static final double L1_ENDEFFECTOR_ANGLE_DEGREES = 45;
+        public static final double L1_ELEVATOR_DISTANCE_METERS = 0;
+
+        public static final double INTAKE_ANGLE_DEGREES = 100;
     }
 
     public enum FeederStation {
         LEFT, RIGHT
+    }
+
+    public enum CoralLevel {
+        L1,L2,L3,L4
     }
 }

@@ -335,7 +335,7 @@ public final class CommandSwerveDrivetrain extends TunerSwerveDrivetrain impleme
         AutoBuilder.pathfindToPose(
                 target,
                 constraints,
-                0.0 // Goal end velocity in meters/se
+                0.0 // Goal end velocity in meters/sec
         );
     }
 
@@ -343,19 +343,19 @@ public final class CommandSwerveDrivetrain extends TunerSwerveDrivetrain impleme
             Constants.FeederStation feederStation) {
         if (alliance.equals(Alliance.Red) && feederStation.equals(Constants.FeederStation.LEFT)) {
             driveFacingAngle.withTargetDirection(
-                    Rotation2d.fromDegrees(Constants.OperatorConstants.RED_LEFT_FEEDERSTATION_DEGREES));
+                    Rotation2d.fromDegrees(Constants.FieldConstants.RED_LEFT_FEEDERSTATION_DEGREES));
 
         } else if (alliance.equals(Alliance.Red) && feederStation.equals(Constants.FeederStation.RIGHT)) {
             driveFacingAngle.withTargetDirection(
-                    Rotation2d.fromDegrees(Constants.OperatorConstants.RED_RIGHT_FEEDERSTATION_DEGREES));
+                    Rotation2d.fromDegrees(Constants.FieldConstants.RED_RIGHT_FEEDERSTATION_DEGREES));
 
         } else if (alliance.equals(Alliance.Blue) && feederStation.equals(Constants.FeederStation.LEFT)) {
             driveFacingAngle.withTargetDirection(
-                    Rotation2d.fromDegrees(Constants.OperatorConstants.BLUE_LEFT_FEEDERSTATION_DEGREES));
+                    Rotation2d.fromDegrees(Constants.FieldConstants.BLUE_LEFT_FEEDERSTATION_DEGREES));
 
         } else {
             driveFacingAngle.withTargetDirection(
-                    Rotation2d.fromDegrees(Constants.OperatorConstants.BLUE_RIGHT_FEEDERSTATION_DEGREES));
+                    Rotation2d.fromDegrees(Constants.FieldConstants.BLUE_RIGHT_FEEDERSTATION_DEGREES));
 
         }
 
