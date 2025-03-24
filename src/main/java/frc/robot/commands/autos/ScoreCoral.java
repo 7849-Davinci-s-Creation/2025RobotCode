@@ -1,29 +1,30 @@
 package frc.robot.commands.autos;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.Constants.CoralLevel;
 import frc.robot.subsystems.Elevator;
+import lib.Commands.TimedCommand;
 
-public class ScoreCoral extends Command {
+public class ScoreCoral extends TimedCommand {
     private final CoralLevel coralLevel;
     private final Elevator elevator;
 
-    public ScoreCoral(CoralLevel coralLevel, Elevator elevator) {
+    public ScoreCoral(CoralLevel coralLevel, Elevator elevator, double seconds, Subsystem... requirments) {
+        super(seconds, requirments);
+
         this.coralLevel = coralLevel;
         this.elevator = elevator;
-
-        addRequirements(elevator);
     }
 
     @Override
-    public void initialize() {
-        
+    public void init() {
+
     }
 
     @Override
-    public void execute() {
+    public void exec() {
         Runnable runnable;
 
         switch (coralLevel) {
@@ -54,12 +55,7 @@ public class ScoreCoral extends Command {
     }
 
     @Override
-    public void end(boolean interuppted) {
+    public void end() {
 
-    }
-
-    @Override
-    public boolean isFinished() {
-        return false;
     }
 }

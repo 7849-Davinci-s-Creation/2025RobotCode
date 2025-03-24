@@ -253,15 +253,15 @@ public final class RobotContainer implements RobotMethods {
 
         public void registerNamedCommands() {
                 NamedCommands.registerCommand("intake", new SequentialCommandGroup(
-                                new Intake(endEffector, elevator, 1),
+                                new Intake(endEffector, elevator, 1, endEffector, elevator),
                                 zeroMechanisms()));
 
-                NamedCommands.registerCommand("outtake", new Outtake(endEffector));
+                NamedCommands.registerCommand("outtake", new Outtake(endEffector, 0.5, endEffector));
 
-                NamedCommands.registerCommand("scorel1", new ScoreCoral(Constants.CoralLevel.L1, elevator));
-                NamedCommands.registerCommand("scorel2", new ScoreCoral(Constants.CoralLevel.L2, elevator));
-                NamedCommands.registerCommand("scorel3", new ScoreCoral(Constants.CoralLevel.L3, elevator));
-                NamedCommands.registerCommand("scorel4", new ScoreCoral(Constants.CoralLevel.L4, elevator));
+                NamedCommands.registerCommand("scorel1", new ScoreCoral(Constants.CoralLevel.L1, elevator, 1, elevator));
+                NamedCommands.registerCommand("scorel2", new ScoreCoral(Constants.CoralLevel.L2, elevator, 1, elevator));
+                NamedCommands.registerCommand("scorel3", new ScoreCoral(Constants.CoralLevel.L3, elevator, 1, elevator));
+                NamedCommands.registerCommand("scorel4", new ScoreCoral(Constants.CoralLevel.L4, elevator, 1, elevator));
                 NamedCommands.registerCommand("zeroele", zeroMechanisms());
         }
 

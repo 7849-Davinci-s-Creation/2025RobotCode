@@ -1,39 +1,30 @@
 package frc.robot.commands.autos;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.EndEffector;
 import lib.Commands.TimedCommand;
 
-public class Outtake extends Command {
+public class Outtake extends TimedCommand {
     private final EndEffector endEffector;
 
-    private double startTime;
+    public Outtake(EndEffector endEffector, double seconds, Subsystem... requirments) {
+        super(seconds, requirments);
 
-    public Outtake(EndEffector endEffector) {
         this.endEffector = endEffector;
-
-        addRequirements(endEffector);
     }
 
     @Override
-    public void initialize() {
-        
-    }
-
-    @Override
-    public void execute() {
-        endEffector.outake();
+    public void init() {
 
     }
 
     @Override
-    public void end(boolean interuppted) {
-        
+    public void exec() {
+        endEffector.outake().run();
     }
-    
+
     @Override
-    public boolean isFinished() {
-        return false;
+    public void end() {
+
     }
 }

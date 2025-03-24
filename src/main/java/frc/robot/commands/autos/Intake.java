@@ -1,40 +1,36 @@
 package frc.robot.commands.autos;
 
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.EndEffector;
+import lib.Commands.TimedCommand;
 
-public class Intake extends Command {
+public class Intake extends TimedCommand {
     private final EndEffector endEffector;
     private final Elevator elevator;
 
-    public Intake(EndEffector endEffector, Elevator elevator, double seconds) {
+    public Intake(EndEffector endEffector, Elevator elevator, double seconds, Subsystem... requirements) {
+        super(seconds, requirements);
+
         this.endEffector = endEffector;
         this.elevator = elevator;
-
-        addRequirements(elevator, endEffector);
     }
 
     @Override
-    public void initialize() {
+    public void init() {
 
     }
 
     @Override
-    public void execute() {
-        endEffector.intake();
+    public void exec() {
+        endEffector.intake().run();
         elevator.setGoal(Constants.FieldConstants.INTAKE_HEIGHT_METERS);
     }
 
     @Override
-    public void end(boolean interupted) {
-        elevator.pleaseStop();
-    }
+    public void end() {
 
-    @Override
-    public boolean isFinished() {
-        return false;
     }
     
 }
