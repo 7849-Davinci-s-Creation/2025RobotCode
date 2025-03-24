@@ -5,16 +5,19 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.ZeroElevator;
-import frc.robot.commands.ZeroEndEffector;
+import frc.robot.commands.autos.Intake;
+import frc.robot.commands.autos.Outtake;
+import frc.robot.commands.autos.ScoreCoral;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -25,23 +28,29 @@ import lib.RobotMethods;
 
 public final class RobotContainer implements RobotMethods {
         // Subsystems
-        private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-        private final Climber climber = Climber.getInstance();
-        private final EndEffector endEffector = EndEffector.getInstance();
-        private final Vision vision = Vision.getInstance();
-        private final Elevator elevator = Elevator.getInstance();
+        private final CommandSwerveDrivetrain drivetrain;
+        private final Climber climber;
+        private final EndEffector endEffector;
+        private final Vision vision;
+        private final Elevator elevator;
 
         // Controllers
         private final CommandXboxController driverController = new CommandXboxController(
                         Constants.OperatorConstants.DRIVER_CONTROLLER_PORT);
 
-        private final CommandXboxController operatorController = new CommandXboxController(
+        private final CommandPS4Controller operatorController = new CommandPS4Controller(
                         Constants.OperatorConstants.OPERATOR_CONTROLLER_PORT);
 
         // Everything else
         private final SendableChooser<Command> autoChooser;
 
         public RobotContainer() {
+                drivetrain = TunerConstants.createDrivetrain();
+                climber = Climber.getInstance();
+                endEffector = EndEffector.getInstance();
+                vision = Vision.getInstance();
+                elevator = Elevator.getInstance();
+
                 // Initialize subsystems
                 drivetrain.initialize();
                 climber.initialize();
@@ -53,11 +62,13 @@ public final class RobotContainer implements RobotMethods {
 
                 // the pathplanner auto builder must have been initialized before you call
                 // buildAutoChooser();
-                autoChooser = AutoBuilder.buildAutoChooser();
-                SmartDashboard.putData(autoChooser);
-
                 configureDefault();
                 configureBindings();
+                registerNamedCommands();
+
+                autoChooser = AutoBuilder.buildAutoChooser();
+
+                SmartDashboard.putData(autoChooser);
         }
 
         private void configureDefault() {
@@ -157,59 +168,61 @@ public final class RobotContainer implements RobotMethods {
                                                 new Rotation2d(-driverController.getLeftY(),
                                                                 -driverController.getLeftX()))));
 
-                driverController.leftBumper().whileTrue(
-                                Commands.runOnce(
-                                                () -> drivetrain.setControl(drivetrain.driveWithFeederStationAngle(
-                                                                DriverStation.getAlliance().get(),
-                                                                Constants.FeederStation.LEFT))));
+                // doesnt work atm and we dont have time to debug: future team fix this !
+                // driverController.leftBumper().whileTrue(
+                // Commands.runOnce(
+                // () -> drivetrain.setControl(drivetrain.driveWithFeederStationAngle(
+                // DriverStation.getAlliance().get(),
+                // Constants.FeederStation.LEFT))));
 
-                driverController.rightBumper().whileTrue(
-                                Commands.runOnce(
-                                                () -> drivetrain.setControl(drivetrain.driveWithFeederStationAngle(
-                                                                DriverStation.getAlliance().get(),
-                                                                Constants.FeederStation.RIGHT))));
+                // driverController.rightBumper().whileTrue(
+                // Commands.runOnce(
+                // () -> drivetrain.setControl(drivetrain.driveWithFeederStationAngle(
+                // DriverStation.getAlliance().get(),
+                // Constants.FeederStation.RIGHT))));
 
                 // operator controller
 
-                operatorController.leftTrigger().and(operatorController.rightTrigger())
+                operatorController.L2()
                                 .whileTrue(Commands.runOnce(climber.climb()))
                                 .onFalse(Commands.runOnce(climber.stop()));
 
-                operatorController.rightTrigger().whileTrue(Commands.runOnce(climber.lowerClimber()))
+                operatorController.R2().whileTrue(Commands.runOnce(climber.lowerClimber()))
                                 .onFalse(Commands.runOnce(climber.stop()));
 
                 // END EFFECTOR
-                operatorController.leftBumper().whileTrue(
+                operatorController.L1().whileTrue(
                                 new ParallelCommandGroup(
                                                 Commands.runOnce(endEffector.intake()),
-                                                endEffector.setGoal(Constants.FieldConstants.INTAKE_ANGLE_DEGREES)))
+                                                elevator.setGoal(Constants.FieldConstants.INTAKE_HEIGHT_METERS)))
                                 .onFalse(
                                                 // zero end effector
                                                 new ParallelCommandGroup(
                                                                 Commands.runOnce(endEffector.stopAlgaeAndIntake()),
-                                                                Commands.runOnce(endEffector.stopPivot()),
-                                                                new ZeroEndEffector(endEffector)));
+                                                                new ZeroElevator(elevator)));
 
-                operatorController.rightBumper().whileTrue(Commands.runOnce(endEffector.outake()))
+                operatorController.R1().whileTrue(Commands.runOnce(endEffector.outake()))
                                 .onFalse(Commands.runOnce(endEffector.stopAlgaeAndIntake()));
 
-                operatorController.povLeft().whileTrue(Commands.runOnce(endEffector.runPivotMotorsUp()))
-                                .onFalse(Commands.runOnce(endEffector.stopPivot()));
-                operatorController.povRight().whileTrue(Commands.runOnce(endEffector.runPivotMotorsDown()))
-                                .onFalse(Commands.runOnce(endEffector.stopPivot()));
+                // operatorController.povLeft().whileTrue(Commands.runOnce(endEffector.runPivotMotorsUp()))
+                // .onFalse(Commands.runOnce(endEffector.stopPivot()));
+                // operatorController.povRight().whileTrue(Commands.runOnce(endEffector.runPivotMotorsDown()))
+                // .onFalse(Commands.runOnce(endEffector.stopPivot()));
 
                 // scoring positions
                 // L4
-                operatorController.y().whileTrue(scoreCoral(Constants.CoralLevel.L4)).onFalse(zeroMechanisms());
+                operatorController.triangle().whileTrue(scoreCoral(Constants.CoralLevel.L4)).onFalse(zeroMechanisms());
 
                 // L3
-                operatorController.b().whileTrue(scoreCoral(Constants.CoralLevel.L3)).onFalse(zeroMechanisms());
+                operatorController.circle().whileTrue(scoreCoral(Constants.CoralLevel.L3)).onFalse(zeroMechanisms());
 
                 // l2
-                operatorController.x().whileTrue(scoreCoral(Constants.CoralLevel.L2)).onFalse(zeroMechanisms());
+                operatorController.square().whileTrue(scoreCoral(Constants.CoralLevel.L2)).onFalse(zeroMechanisms());
 
                 // l1
-                operatorController.a().whileTrue(scoreCoral(Constants.CoralLevel.L1)).onFalse(zeroMechanisms());
+                operatorController.cross().whileTrue(
+                                scoreCoral(Constants.CoralLevel.L1)).onFalse(
+                                                Commands.run(endEffector.stopIntake()));
 
                 // ELEVATOR
                 operatorController.povUp().whileTrue(Commands.runOnce(elevator.runElevatorUp()))
@@ -218,40 +231,44 @@ public final class RobotContainer implements RobotMethods {
                                 .onFalse(Commands.runOnce(elevator.pleaseStop()));
 
                 // zero end effector / elevator's encoder
-                operatorController.back().onTrue(Commands.runOnce(elevator.zeroEncoder()));
-                operatorController.start().onTrue(Commands.runOnce(endEffector.zeroPivotEncoder()));
+                operatorController.PS().onTrue(Commands.runOnce(elevator.zeroEncoder()));
+                // operatorController.start().onTrue(Commands.runOnce(endEffector.zeroPivotEncoder()));
         }
 
         public Command scoreCoral(Constants.CoralLevel coralLevel) {
                 return switch (coralLevel) {
                         case L1 -> new ParallelCommandGroup(
-                                        endEffector.setGoal(
-                                                        Constants.FieldConstants.L1_ENDEFFECTOR_ANGLE_DEGREES),
                                         elevator.setGoal(Constants.FieldConstants.L1_ELEVATOR_DISTANCE_METERS));
 
                         case L2 -> new ParallelCommandGroup(
-                                        endEffector.setGoal(
-                                                        Constants.FieldConstants.L2_ENDEFFECTOR_ANGLE_DEGREES),
                                         elevator.setGoal(Constants.FieldConstants.L2_ELEVATOR_DISTANCE_METERS));
 
                         case L3 -> new ParallelCommandGroup(
-                                        endEffector.setGoal(
-                                                        Constants.FieldConstants.L3_ENDEFFECTOR_ANGLE_DEGREES),
                                         elevator.setGoal(Constants.FieldConstants.L3_ELEVATOR_DISTANCE_METERS));
 
                         case L4 -> new ParallelCommandGroup(
-                                        endEffector.setGoal(
-                                                        Constants.FieldConstants.L4_ENDEFFECTOR_ANGLE_DEGREES),
                                         elevator.setGoal(Constants.FieldConstants.L4_ELEVATOR_DISTANCE_METERS));
                 };
         }
 
+        public void registerNamedCommands() {
+                NamedCommands.registerCommand("intake", new SequentialCommandGroup(
+                                new Intake(endEffector, elevator, 1),
+                                zeroMechanisms()));
+
+                NamedCommands.registerCommand("outtake", new Outtake(endEffector));
+
+                NamedCommands.registerCommand("scorel1", new ScoreCoral(Constants.CoralLevel.L1, elevator));
+                NamedCommands.registerCommand("scorel2", new ScoreCoral(Constants.CoralLevel.L2, elevator));
+                NamedCommands.registerCommand("scorel3", new ScoreCoral(Constants.CoralLevel.L3, elevator));
+                NamedCommands.registerCommand("scorel4", new ScoreCoral(Constants.CoralLevel.L4, elevator));
+                NamedCommands.registerCommand("zeroele", zeroMechanisms());
+        }
+
         public Command zeroMechanisms() {
                 return new ParallelCommandGroup(
-                                Commands.run(endEffector.stopPivot()),
                                 Commands.run(elevator.pleaseStop()),
-                                new ZeroElevator(elevator),
-                                new ZeroEndEffector(endEffector));
+                                new ZeroElevator(elevator));
         }
 
         public Command getAutonomousCommand() {

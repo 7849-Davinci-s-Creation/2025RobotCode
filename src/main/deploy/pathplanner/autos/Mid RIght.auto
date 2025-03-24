@@ -7,7 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Odomotry Test"
+            "pathName": "dont mvoe"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "outtake"
           }
         }
       ]

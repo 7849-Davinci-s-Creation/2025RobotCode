@@ -22,10 +22,10 @@ public final class Constants {
     public static final class OperatorConstants {
         public static final int DRIVER_CONTROLLER_PORT = 1;
         public static final double DRIVER_CONTROLLER_DEADBAND = 0.05;
-        public static final double SLIGHT_CREEP_NERF_DRIVE = 0.2;
-        public static final double SLIGHT_CREEP_NERF_ROTATE = 0.1;
-        public static final double MAJOR_CREEP_NERF_DRIVE = 0.1;
-        public static final double MAJOR_CREEP_NERF_ROTATE = 0.05;
+        public static final double SLIGHT_CREEP_NERF_DRIVE = 1;
+        public static final double SLIGHT_CREEP_NERF_ROTATE = 1;
+        public static final double MAJOR_CREEP_NERF_DRIVE = 0.5;
+        public static final double MAJOR_CREEP_NERF_ROTATE = 0.5;
         public static final int OPERATOR_CONTROLLER_PORT = 0;
     }
 
@@ -38,7 +38,7 @@ public final class Constants {
         public static final double SIM_LOOP_PERIOD = 0.005; // 5 ms
         public static final double MAX_SPEED = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
 
-        public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.2).in(RadiansPerSecond);
+        public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.5).in(RadiansPerSecond);
 
         public static final double DRIVE_KP = 0.16618;
         public static final double DRIVE_KI = 0;
@@ -145,7 +145,7 @@ public final class Constants {
         // FIND THIS
         public static final double MAX_ANGLE_DEGREES = 135;
 
-        public static final double GEAR_RATIO = 100;
+        public static final double GEAR_RATIO = 90;
 
         public static final double SYSID_RAMP_RATE = .25; // default 1
         public static final double SYSID_STEP_VOLTS = 3; // default 7
@@ -207,22 +207,22 @@ public final class Constants {
         public static final double RED_LEFT_FEEDERSTATION_DEGREES = 0;
         public static final double RED_RIGHT_FEEDERSTATION_DEGREES = 0;
 
-        public static final double BLUE_LEFT_FEEDERSTATION_DEGREES = 0;
-        public static final double BLUE_RIGHT_FEEDERSTATION_DEGREES = 0;
+        public static final double BLUE_LEFT_FEEDERSTATION_DEGREES = 127;
+        public static final double BLUE_RIGHT_FEEDERSTATION_DEGREES = -127;
 
-        public static final double L4_ENDEFFECTOR_ANGLE_DEGREES = 0;
-        public static final double L4_ELEVATOR_DISTANCE_METERS = 1.6;
+        public static final double L4_ENDEFFECTOR_ANGLE_DEGREES = 2;
+        public static final double L4_ELEVATOR_DISTANCE_METERS = 1.35;
 
-        public static final double L3_ENDEFFECTOR_ANGLE_DEGREES = 30;
-        public static final double L3_ELEVATOR_DISTANCE_METERS = 0.7;
+        public static final double L3_ENDEFFECTOR_ANGLE_DEGREES = 25;
+        public static final double L3_ELEVATOR_DISTANCE_METERS = 0.55;
 
-        public static final double L2_ENDEFFECTOR_ANGLE_DEGREES = 20;
-        public static final double L2_ELEVATOR_DISTANCE_METERS = 0.3;
+        public static final double L2_ENDEFFECTOR_ANGLE_DEGREES = 16;
+        public static final double L2_ELEVATOR_DISTANCE_METERS = 0.15;
 
-        public static final double L1_ENDEFFECTOR_ANGLE_DEGREES = 45;
+        public static final double L1_ENDEFFECTOR_ANGLE_DEGREES = 0;
         public static final double L1_ELEVATOR_DISTANCE_METERS = 0;
 
-        public static final double INTAKE_ANGLE_DEGREES = 100;
+        public static final double INTAKE_HEIGHT_METERS = 0.29;
     }
 
     public enum FeederStation {
