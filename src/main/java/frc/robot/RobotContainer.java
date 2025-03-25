@@ -45,6 +45,8 @@ public final class RobotContainer implements RobotMethods {
         private final SendableChooser<Command> autoChooser;
 
         public RobotContainer() {
+                // need to instantiate subsystems in constructor so pathplanner has
+                // subsystems to reference when we register named commands.
                 drivetrain = TunerConstants.createDrivetrain();
                 climber = Climber.getInstance();
                 endEffector = EndEffector.getInstance();
@@ -57,7 +59,7 @@ public final class RobotContainer implements RobotMethods {
                 vision.initialize();
                 elevator.initialize();
 
-                // ---- ALL ROBOT SUBSYSTEMS SHOULD BE INITIALIZED BEFORE DOING ANYTHING ELSE
+                // ---- ALL ROBOT SUBSYSTEMS SHOULD BE INITIALIZED AND INSTANTIATED BEFORE DOING ANYTHING ELSE
                 // IF THEY HAVE NOT THEN YOU ARE DOING SOMETHING COMPLETELY WRONG !! ----
 
                 // the pathplanner auto builder must have been initialized before you call
@@ -204,11 +206,6 @@ public final class RobotContainer implements RobotMethods {
                 operatorController.R1().whileTrue(Commands.runOnce(endEffector.outake()))
                                 .onFalse(Commands.runOnce(endEffector.stopAlgaeAndIntake()));
 
-                // operatorController.povLeft().whileTrue(Commands.runOnce(endEffector.runPivotMotorsUp()))
-                // .onFalse(Commands.runOnce(endEffector.stopPivot()));
-                // operatorController.povRight().whileTrue(Commands.runOnce(endEffector.runPivotMotorsDown()))
-                // .onFalse(Commands.runOnce(endEffector.stopPivot()));
-
                 // scoring positions
                 // L4
                 operatorController.triangle().whileTrue(scoreCoral(Constants.CoralLevel.L4)).onFalse(zeroMechanisms());
@@ -232,7 +229,6 @@ public final class RobotContainer implements RobotMethods {
 
                 // zero end effector / elevator's encoder
                 operatorController.PS().onTrue(Commands.runOnce(elevator.zeroEncoder()));
-                // operatorController.start().onTrue(Commands.runOnce(endEffector.zeroPivotEncoder()));
         }
 
         public Command scoreCoral(Constants.CoralLevel coralLevel) {
