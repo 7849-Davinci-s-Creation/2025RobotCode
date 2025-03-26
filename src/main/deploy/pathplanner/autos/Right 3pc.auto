@@ -1,0 +1,97 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Start"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "scorel2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "outtake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "zeroele"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right feed pt 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Score pt 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "scorel2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "outtake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "zeroele"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right feed pt 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Score Pt 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "outtake"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

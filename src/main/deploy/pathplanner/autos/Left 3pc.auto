@@ -1,0 +1,97 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left Start"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "scorel2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "outtake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "zeroele"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left Feed pt1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left Score pt1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "scorel2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "outtake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "zeroele"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left Feed pt2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left Score pt2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "outtake"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

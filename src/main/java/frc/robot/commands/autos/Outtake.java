@@ -25,6 +25,6 @@ public class Outtake extends TimedCommand {
 
     @Override
     public void end() {
-
+        endEffector.stopIntake().run();
     }
 }

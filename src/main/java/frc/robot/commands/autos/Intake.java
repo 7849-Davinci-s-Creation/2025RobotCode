@@ -25,12 +25,12 @@ public class Intake extends TimedCommand {
     @Override
     public void exec() {
         endEffector.intake().run();
-        elevator.setGoal(Constants.FieldConstants.INTAKE_HEIGHT_METERS);
+        elevator.goToSetpoint(Constants.FieldConstants.INTAKE_HEIGHT_METERS);
     }
 
     @Override
     public void end() {
-
+        endEffector.stopIntake().run();
     }
     
 }

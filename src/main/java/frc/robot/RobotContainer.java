@@ -18,6 +18,7 @@ import frc.robot.commands.ZeroElevator;
 import frc.robot.commands.autos.Intake;
 import frc.robot.commands.autos.Outtake;
 import frc.robot.commands.autos.ScoreCoral;
+import frc.robot.commands.autos.Timer;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -253,8 +254,10 @@ public final class RobotContainer implements RobotMethods {
 
         public void registerNamedCommands() {
                 NamedCommands.registerCommand("intake", new SequentialCommandGroup(
-                                new Intake(endEffector, elevator, 1, endEffector, elevator),
-                                zeroMechanisms()));
+                                new Intake(endEffector, elevator, 1.5, endEffector, elevator),
+                                new ParallelRaceGroup(zeroMechanisms(),
+                                                        new Timer(1)
+                                                        )));
 
                 NamedCommands.registerCommand("outtake", new Outtake(endEffector, 0.5, endEffector));
 
@@ -266,9 +269,7 @@ public final class RobotContainer implements RobotMethods {
         }
 
         public Command zeroMechanisms() {
-                return new ParallelCommandGroup(
-                                Commands.run(elevator.pleaseStop()),
-                                new ZeroElevator(elevator));
+                return new ZeroElevator(elevator);
         }
 
         public Command getAutonomousCommand() {

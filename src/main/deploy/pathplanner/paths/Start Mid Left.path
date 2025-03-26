@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.105642361111111,
-        "y": 3.200434027777777
+        "x": 6.80871766857252,
+        "y": 3.901129687954935
       },
       "isLocked": false,
       "linkedName": "Start Mid Acc"
     },
     {
       "anchor": {
-        "x": 5.127343749999999,
-        "y": 2.8789930555555556
+        "x": 5.138784246575342,
+        "y": 5.046746575342466
       },
       "prevControl": {
-        "x": 6.413107638888889,
-        "y": 3.382118055555556
+        "x": 6.5061215753424655,
+        "y": 4.896489726027397
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Start Mid Right Endpt"
+      "linkedName": "Start Mid Left Endpt"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.5387822595581
+    "rotation": -126.86989764584393
   },
   "reversed": false,
   "folder": "middle",

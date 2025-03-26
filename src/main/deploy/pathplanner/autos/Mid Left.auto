@@ -13,7 +13,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Start Mid Right"
+            "pathName": "Start Mid Left"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Fin Mid Right"
+            "pathName": "Fin Mid Left"
           }
         }
       ]
