@@ -34,7 +34,7 @@ public class ScoreCoral extends TimedCommand {
             }
 
             case L2 -> {
-                runnable = () -> elevator.setGoal(Constants.FieldConstants.L2_ELEVATOR_DISTANCE_METERS);
+                runnable = () -> elevator.goToSetpoint(Constants.FieldConstants.L2_ELEVATOR_DISTANCE_METERS);
                 break;
             }
 
