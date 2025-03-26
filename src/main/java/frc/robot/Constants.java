@@ -56,9 +56,6 @@ public final class Constants {
         public static final double ROTATION_KP = 0.094511;
         public static final double ROTATION_KI = 0;
         public static final double ROTATION_KD = 0;
-        public static final double ROTATION_KS = 0.052885;
-        public static final double ROTATION_KV = 0.11388;
-        public static final double ROTATION_KA = 0.0049551;
     }
 
     public static final class ElevatorConstants {
@@ -93,9 +90,6 @@ public final class Constants {
         public static final double MAX_VELOCITY_MPS = 0.98144;
         public static final double MAX_ACCELERATION_MPS2 = 4;
 
-        // THIS IS NOW GOING OFF OF WHAT THE ENCODER SAYS, OUR ELEVATOR IS NOT ACTUALLY
-        // THIS TALL
-        // (1.702) actual value in meters
         public static final double ELEVATOR_MAXHEIGHT_METERS = 1.6782701159578037;
     }
 
@@ -122,8 +116,6 @@ public final class Constants {
 
         // find the pivot motors canID
         public static final int PIVOTMOTOR1_CANID = 40;
-
-        public static final int ALGAE_REMOVER_CANDID = 7;
 
         public static final int LIMIT_SWITCH_PORT = 2;
 
@@ -210,16 +202,12 @@ public final class Constants {
         public static final double BLUE_LEFT_FEEDERSTATION_DEGREES = 127;
         public static final double BLUE_RIGHT_FEEDERSTATION_DEGREES = -127;
 
-        public static final double L4_ENDEFFECTOR_ANGLE_DEGREES = 2;
         public static final double L4_ELEVATOR_DISTANCE_METERS = 1.35;
 
-        public static final double L3_ENDEFFECTOR_ANGLE_DEGREES = 25;
         public static final double L3_ELEVATOR_DISTANCE_METERS = 0.55;
 
-        public static final double L2_ENDEFFECTOR_ANGLE_DEGREES = 16;
         public static final double L2_ELEVATOR_DISTANCE_METERS = 0.15;
 
-        public static final double L1_ENDEFFECTOR_ANGLE_DEGREES = 0;
         public static final double L1_ELEVATOR_DISTANCE_METERS = 0;
 
         public static final double INTAKE_HEIGHT_METERS = 0.29;

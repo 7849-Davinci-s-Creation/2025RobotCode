@@ -34,7 +34,7 @@ public class ScoreCoral extends TimedCommand {
             }
 
             case L2 -> {
-                runnable = () -> elevator.goToSetpoint(Constants.FieldConstants.L2_ELEVATOR_DISTANCE_METERS);
+                runnable = () -> elevator.setGoal(Constants.FieldConstants.L2_ELEVATOR_DISTANCE_METERS);
                 break;
             }
 
@@ -46,9 +46,7 @@ public class ScoreCoral extends TimedCommand {
                 runnable = () -> elevator.goToSetpoint(Constants.FieldConstants.L4_ELEVATOR_DISTANCE_METERS);
             }
 
-            default -> runnable = () -> {
-                DriverStation.reportError("ERROR WHEN TRYING TO SCORE CORAL IN AUTO", true);
-            };
+            default -> runnable = () -> DriverStation.reportError("ERROR WHEN TRYING TO SCORE CORAL IN AUTO", true);
         }
 
         runnable.run();
