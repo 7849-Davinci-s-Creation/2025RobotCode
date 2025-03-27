@@ -32,7 +32,6 @@ public final class RobotContainer implements RobotMethods {
         private final CommandSwerveDrivetrain drivetrain;
         private final Climber climber;
         private final EndEffector endEffector;
-        private final Vision vision;
         private final Elevator elevator;
 
         // Controllers
@@ -51,13 +50,12 @@ public final class RobotContainer implements RobotMethods {
                 drivetrain = TunerConstants.createDrivetrain();
                 climber = Climber.getInstance();
                 endEffector = EndEffector.getInstance();
-                vision = Vision.getInstance();
                 elevator = Elevator.getInstance();
 
                 // Initialize subsystems
                 drivetrain.initialize();
                 climber.initialize();
-                vision.initialize();
+                // vision.initialize();
                 elevator.initialize();
 
                 // ---- ALL ROBOT SUBSYSTEMS SHOULD BE INITIALIZED AND INSTANTIATED BEFORE DOING ANYTHING ELSE
