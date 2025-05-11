@@ -79,13 +79,13 @@ public final class RobotContainer implements RobotMethods {
                                 // Drivetrain will execute this command periodically
                                 drivetrain.applyRequest(() -> drivetrain.getDrive()
                                                 .withVelocityX(drivetrain.calculateVelocity(driverController.getLeftY(),
-                                                                Constants.DriveTrainConstants.MAX_SPEED)) // Drive
+                                                                Constants.DriveTrainConstants.STEMNIGHT_NERF)) // Drive
                                                 // forward
                                                 // with
                                                 // negative Y
                                                 // (forward)
                                                 .withVelocityY(drivetrain.calculateVelocity(driverController.getLeftX(),
-                                                                Constants.DriveTrainConstants.MAX_SPEED)) // Drive
+                                                                Constants.DriveTrainConstants.STEMNIGHT_NERF)) // Drive
                                                 // left
                                                 // with
                                                 // negative
@@ -185,11 +185,11 @@ public final class RobotContainer implements RobotMethods {
                 // operator controller
 
                 operatorController.L2()
-                                .whileTrue(Commands.runOnce(climber.climb()))
-                                .onFalse(Commands.runOnce(climber.stop()));
+                                .whileTrue(Commands.runOnce(endEffector.intake()))
+                                .onFalse(Commands.runOnce(endEffector.stopAlgaeAndIntake()));
 
-                operatorController.R2().whileTrue(Commands.runOnce(climber.lowerClimber()))
-                                .onFalse(Commands.runOnce(climber.stop()));
+                operatorController.R2().whileTrue(Commands.runOnce(endEffector.stopAlgaeAndIntake()))
+                                .onFalse(Commands.runOnce(endEffector.stopAlgaeAndIntake()));
 
                 // END EFFECTOR
                 operatorController.L1().whileTrue(
@@ -255,10 +255,10 @@ public final class RobotContainer implements RobotMethods {
 
                 NamedCommands.registerCommand("outtake", new Outtake(endEffector, 0.5, endEffector));
 
-                NamedCommands.registerCommand("scorel1", new ScoreCoral(Constants.CoralLevel.L1, elevator, 1, elevator));
-                NamedCommands.registerCommand("scorel2", new ScoreCoral(Constants.CoralLevel.L2, elevator, 1, elevator));
-                NamedCommands.registerCommand("scorel3", new ScoreCoral(Constants.CoralLevel.L3, elevator, 1, elevator));
-                NamedCommands.registerCommand("scorel4", new ScoreCoral(Constants.CoralLevel.L4, elevator, 1, elevator));
+                NamedCommands.registerCommand("scorel1", new ScoreCoral(Constants.CoralLevel.L1, elevator, 0.65, elevator));
+                NamedCommands.registerCommand("scorel2", new ScoreCoral(Constants.CoralLevel.L2, elevator, 0.65, elevator));
+                NamedCommands.registerCommand("scorel3", new ScoreCoral(Constants.CoralLevel.L3, elevator, 0.65, elevator));
+                NamedCommands.registerCommand("scorel4", new ScoreCoral(Constants.CoralLevel.L4, elevator, 0.65, elevator));
                 NamedCommands.registerCommand("zeroele", zeroMechanisms());
         }
 

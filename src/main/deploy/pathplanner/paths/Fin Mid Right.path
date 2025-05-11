@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.127343749999999,
-        "y": 2.8789930555555556
+        "x": 5.258989726027397,
+        "y": 2.928125
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.357204861111111,
-        "y": 0.3354166666666667
+        "x": 6.488850837138509,
+        "y": 0.3845486111111116
       },
       "isLocked": false,
       "linkedName": "Start Mid Right Endpt"
@@ -21,7 +21,7 @@
       },
       "prevControl": {
         "x": 2.7198813155683954,
-        "y": 0.7839968355138195
+        "y": 0.7839968355138198
       },
       "nextControl": null,
       "isLocked": false,

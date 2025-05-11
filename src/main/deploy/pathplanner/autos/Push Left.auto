@@ -1,0 +1,55 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Push Right"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Go Back After Push Right"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left Start"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "scorel2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "outtake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "zeroele"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left Feed pt1"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

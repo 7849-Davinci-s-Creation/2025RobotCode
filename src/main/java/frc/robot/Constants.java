@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.generated.TunerConstants;
 
@@ -37,6 +38,8 @@ public final class Constants {
 
         public static final double SIM_LOOP_PERIOD = 0.005; // 5 ms
         public static final double MAX_SPEED = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+
+        public static final double STEMNIGHT_NERF = MetersPerSecond.of(2.5).in(MetersPerSecond);
 
         public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(0.5).in(RadiansPerSecond);
 
