@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.led.FireAnimation;
+import com.ctre.phoenix.led.RainbowAnimation;
+import com.ctre.phoenix.led.StrobeAnimation;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -24,6 +27,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.EndEffector;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Vision;
 import lib.RobotMethods;
 
@@ -33,6 +37,7 @@ public final class RobotContainer implements RobotMethods {
         private final Climber climber;
         private final EndEffector endEffector;
         private final Elevator elevator;
+        private final LED led;
 
         // Controllers
         private final CommandXboxController driverController = new CommandXboxController(
@@ -51,14 +56,17 @@ public final class RobotContainer implements RobotMethods {
                 climber = Climber.getInstance();
                 endEffector = EndEffector.getInstance();
                 elevator = Elevator.getInstance();
+                led = LED.getInstance();
 
                 // Initialize subsystems
                 drivetrain.initialize();
                 climber.initialize();
                 // vision.initialize();
                 elevator.initialize();
+                led.initialize();
 
-                // ---- ALL ROBOT SUBSYSTEMS SHOULD BE INITIALIZED AND INSTANTIATED BEFORE DOING ANYTHING ELSE
+                // ---- ALL ROBOT SUBSYSTEMS SHOULD BE INITIALIZED AND INSTANTIATED BEFORE DOING
+                // ANYTHING ELSE
                 // IF THEY HAVE NOT THEN YOU ARE DOING SOMETHING COMPLETELY WRONG !! ----
 
                 // the pathplanner auto builder must have been initialized before you call
@@ -70,6 +78,8 @@ public final class RobotContainer implements RobotMethods {
                 autoChooser = AutoBuilder.buildAutoChooser();
 
                 SmartDashboard.putData(autoChooser);
+
+                led.doAnimate(new RainbowAnimation(0.75, 0.75, Constants.LEDConstants.NUMBER_LED));
         }
 
         private void configureDefault() {
@@ -250,15 +260,18 @@ public final class RobotContainer implements RobotMethods {
                 NamedCommands.registerCommand("intake", new SequentialCommandGroup(
                                 new Intake(endEffector, elevator, 1.5, endEffector, elevator),
                                 new ParallelRaceGroup(zeroMechanisms(),
-                                                        new Timer(1)
-                                                        )));
+                                                new Timer(1))));
 
                 NamedCommands.registerCommand("outtake", new Outtake(endEffector, 0.5, endEffector));
 
-                NamedCommands.registerCommand("scorel1", new ScoreCoral(Constants.CoralLevel.L1, elevator, 0.65, elevator));
-                NamedCommands.registerCommand("scorel2", new ScoreCoral(Constants.CoralLevel.L2, elevator, 0.65, elevator));
-                NamedCommands.registerCommand("scorel3", new ScoreCoral(Constants.CoralLevel.L3, elevator, 0.65, elevator));
-                NamedCommands.registerCommand("scorel4", new ScoreCoral(Constants.CoralLevel.L4, elevator, 0.65, elevator));
+                NamedCommands.registerCommand("scorel1",
+                                new ScoreCoral(Constants.CoralLevel.L1, elevator, 0.65, elevator));
+                NamedCommands.registerCommand("scorel2",
+                                new ScoreCoral(Constants.CoralLevel.L2, elevator, 0.65, elevator));
+                NamedCommands.registerCommand("scorel3",
+                                new ScoreCoral(Constants.CoralLevel.L3, elevator, 0.65, elevator));
+                NamedCommands.registerCommand("scorel4",
+                                new ScoreCoral(Constants.CoralLevel.L4, elevator, 0.65, elevator));
                 NamedCommands.registerCommand("zeroele", zeroMechanisms());
         }
 

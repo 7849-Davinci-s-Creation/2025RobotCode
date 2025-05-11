@@ -147,6 +147,12 @@ public final class Constants {
         public static final double SYSID_TIMEOUT = 5; // default 10
     }
 
+    public static final class LEDConstants {
+        public static final int CANDLE_ID = 10;
+
+        public static final int NUMBER_LED = 39;
+    }
+
     public static final class FieldConstants {
         public static final class Node {
             private final Pose2d redPose;
