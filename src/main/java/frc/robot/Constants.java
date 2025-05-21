@@ -150,7 +150,7 @@ public final class Constants {
     public static final class LEDConstants {
         public static final int CANDLE_ID = 10;
 
-        public static final int NUMBER_LED = 39;
+        public static final int NUMBER_LED = 31;
     }
 
     public static final class FieldConstants {

@@ -238,6 +238,9 @@ public final class RobotContainer implements RobotMethods {
 
                 // zero end effector / elevator's encoder
                 operatorController.PS().onTrue(Commands.runOnce(elevator.zeroEncoder()));
+
+                // algae remover prototype stuff
+                operatorController.L3().onTrue(Commands.run(endEffector.runServo()));
         }
 
         public Command scoreCoral(Constants.CoralLevel coralLevel) {

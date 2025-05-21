@@ -19,6 +19,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -30,6 +31,9 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
     private final SparkMax intakeMotor1;
     private final SparkMax intakeMotor2;
+
+    private final Servo servo;
+
     // private final SparkMax pivotMotor1;
     // private final SparkMax algaeRemoverMotor;
 
@@ -104,6 +108,10 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         //                 .linearVelocity(pivotVelocity.mut_replace(
         //                         pivotEncoder.getVelocity(), InchesPerSecond)),
         //         this));
+
+
+        // algae remover prototype stuff
+        servo = new Servo(1);
     }
 
     public static EndEffector getInstance() {
@@ -141,6 +149,10 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
     public Runnable stopAlgaeAndIntake() {
         return () -> stopIntake().run();
+    }
+
+    public Runnable runServo() {
+        return () -> servo.set(1);
     }
 
     // public Runnable stopPivot() {
