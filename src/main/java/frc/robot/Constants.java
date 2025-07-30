@@ -120,6 +120,8 @@ public final class Constants {
         // find the pivot motors canID
         public static final int PIVOTMOTOR1_CANID = 40;
 
+        public static final int ALGAEREMOVER_MOTOR_CANID = 54;
+
         public static final int LIMIT_SWITCH_PORT = 2;
 
         // SYS ID FOR THESE
@@ -211,6 +213,8 @@ public final class Constants {
         public static final double BLUE_LEFT_FEEDERSTATION_DEGREES = 127;
         public static final double BLUE_RIGHT_FEEDERSTATION_DEGREES = -127;
 
+        public static final double LOWER_ALGAE_DISTANCE_METERS = 0.75;
+
         public static final double L4_ELEVATOR_DISTANCE_METERS = 1.35;
 
         public static final double L3_ELEVATOR_DISTANCE_METERS = 0.55;
@@ -227,6 +231,6 @@ public final class Constants {
     }
 
     public enum CoralLevel {
-        L1,L2,L3,L4
+        L1,L2,L3,L4,LA
     }
 }

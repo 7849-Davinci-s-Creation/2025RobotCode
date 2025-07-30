@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -146,22 +147,23 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
         }
 
         public Command setGoal(double goal) {
-                return run(() -> goToSetpoint(goal) );
+                return run(() -> goToSetpoint(goal));
         }
 
         public double getHeightMeters() {
-                return (2*(encoder.getPosition() / Constants.ElevatorConstants.GEAR_RATIO)
+                return (2 * (encoder.getPosition() / Constants.ElevatorConstants.GEAR_RATIO)
                                 * (2 * Math.PI * ElevatorConstants.SPROCKET_PITCH_RADIUS));
         }
 
         public double getVelocityMPS() {
-                return 2*((encoder.getVelocity() / 60) / Constants.ElevatorConstants.GEAR_RATIO)
+                return 2 * ((encoder.getVelocity() / 60) / Constants.ElevatorConstants.GEAR_RATIO)
                                 * (2 * Math.PI * ElevatorConstants.SPROCKET_PITCH_RADIUS);
         }
 
         public Distance getLinearPosition() {
-                return Meters.of(2*((Rotations.of(encoder.getPosition()).in(Rotations) / ElevatorConstants.GEAR_RATIO) *
-                                (ElevatorConstants.SPROCKET_PITCH_RADIUS * 2 * Math.PI)));
+                return Meters.of(2
+                                * ((Rotations.of(encoder.getPosition()).in(Rotations) / ElevatorConstants.GEAR_RATIO) *
+                                                (ElevatorConstants.SPROCKET_PITCH_RADIUS * 2 * Math.PI)));
         }
 
         public Runnable runElevatorUp() {
@@ -211,6 +213,28 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                 return elevatorLimitSwitch.get();
         }
 
+        public Command goToLevel(Constants.CoralLevel coralLevel) {
+                return switch (coralLevel) {
+                        case L1 -> setGoal(Constants.FieldConstants.L1_ELEVATOR_DISTANCE_METERS);
+
+                        case L2 -> setGoal(Constants.FieldConstants.L2_ELEVATOR_DISTANCE_METERS);
+
+                        case L3 -> setGoal(Constants.FieldConstants.L3_ELEVATOR_DISTANCE_METERS);
+
+                        case L4 -> setGoal(Constants.FieldConstants.L4_ELEVATOR_DISTANCE_METERS);
+
+                        case LA -> setGoal(Constants.FieldConstants.LOWER_ALGAE_DISTANCE_METERS);
+                };
+        }
+
+        public Command sysIDQuasistatic(SysIdRoutine.Direction direction) {
+                return routine.quasistatic(direction);
+        }
+
+        public Command sysIDDynamic(SysIdRoutine.Direction direction) {
+                return routine.dynamic(direction);
+        }
+
         @Override
         public void periodic() {
                 // check if we are at the bottom of elevator and set position to 0 so we
@@ -227,14 +251,6 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
 
         @Override
         public void initialize() {
-                
-        }
 
-        public Command sysIDQuasistatic(SysIdRoutine.Direction direction) {
-                return routine.quasistatic(direction);
-        }
-
-        public Command sysIDDynamic(SysIdRoutine.Direction direction) {
-                return routine.dynamic(direction);
         }
 }

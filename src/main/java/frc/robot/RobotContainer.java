@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.CoralLevel;
 import frc.robot.commands.ZeroElevator;
 import frc.robot.commands.autos.Intake;
 import frc.robot.commands.autos.Outtake;
@@ -217,17 +218,20 @@ public final class RobotContainer implements RobotMethods {
 
                 // scoring positions
                 // L4
-                operatorController.triangle().whileTrue(scoreCoral(Constants.CoralLevel.L4)).onFalse(zeroMechanisms());
+                operatorController.triangle().whileTrue(elevator.goToLevel(Constants.CoralLevel.L4))
+                                .onFalse(zeroMechanisms());
 
                 // L3
-                operatorController.circle().whileTrue(scoreCoral(Constants.CoralLevel.L3)).onFalse(zeroMechanisms());
+                operatorController.circle().whileTrue(elevator.goToLevel(Constants.CoralLevel.L3))
+                                .onFalse(zeroMechanisms());
 
                 // l2
-                operatorController.square().whileTrue(scoreCoral(Constants.CoralLevel.L2)).onFalse(zeroMechanisms());
+                operatorController.square().whileTrue(elevator.goToLevel(Constants.CoralLevel.L2))
+                                .onFalse(zeroMechanisms());
 
                 // l1
                 operatorController.cross().whileTrue(
-                                scoreCoral(Constants.CoralLevel.L1)).onFalse(
+                                elevator.goToLevel(Constants.CoralLevel.L1)).onFalse(
                                                 Commands.run(endEffector.stopIntake()));
 
                 // ELEVATOR
@@ -239,24 +243,21 @@ public final class RobotContainer implements RobotMethods {
                 // zero end effector / elevator's encoder
                 operatorController.PS().onTrue(Commands.runOnce(elevator.zeroEncoder()));
 
-                // algae remover prototype stuff
-                operatorController.L3().onTrue(Commands.run(endEffector.runServo()));
-        }
+                operatorController.povLeft().whileTrue(Commands.run(endEffector.runAlgaeRemoverUp()))
+                                .onFalse(Commands.run(endEffector.stopAlgaeRemover()));
 
-        public Command scoreCoral(Constants.CoralLevel coralLevel) {
-                return switch (coralLevel) {
-                        case L1 -> new ParallelCommandGroup(
-                                        elevator.setGoal(Constants.FieldConstants.L1_ELEVATOR_DISTANCE_METERS));
+                operatorController.povRight().whileTrue(Commands.run(endEffector.runAlgaeRemoverDown()))
+                                .onFalse(Commands.run(endEffector.stopAlgaeRemover()));
 
-                        case L2 -> new ParallelCommandGroup(
-                                        elevator.setGoal(Constants.FieldConstants.L2_ELEVATOR_DISTANCE_METERS));
+                operatorController.L3().whileTrue(elevator.goToLevel(CoralLevel.L4))
+                                .onFalse(zeroMechanisms());
 
-                        case L3 -> new ParallelCommandGroup(
-                                        elevator.setGoal(Constants.FieldConstants.L3_ELEVATOR_DISTANCE_METERS));
+                operatorController.L3().whileTrue(elevator.goToLevel(CoralLevel.L4))
+                                .onFalse(zeroMechanisms());
 
-                        case L4 -> new ParallelCommandGroup(
-                                        elevator.setGoal(Constants.FieldConstants.L4_ELEVATOR_DISTANCE_METERS));
-                };
+                operatorController.R3().whileTrue(elevator.goToLevel(CoralLevel.LA))
+                                .onFalse(zeroMechanisms());
+
         }
 
         public void registerNamedCommands() {
