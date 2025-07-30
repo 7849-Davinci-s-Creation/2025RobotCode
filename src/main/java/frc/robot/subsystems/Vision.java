@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -84,6 +85,18 @@ public final class Vision extends SubsystemBase implements NiceSubsystem {
         return cameraMap.get(cameraName);
     }
 
+    public AprilTagFieldLayout getAprilTagFieldLayout() {
+        return aprilTagFieldLayout;
+    }
+
+    public VisionCam[] getCameras() {
+        return cameras;
+    }
+
+    private void runCameraServer() {
+        CameraServer.startAutomaticCapture();
+    }
+
     @Override
     public void periodic() {
 
@@ -91,15 +104,9 @@ public final class Vision extends SubsystemBase implements NiceSubsystem {
 
     @Override
     public void initialize() {
+        runCameraServer();
+
         PortForwarder.add(5800, "photonvision.local", 5800);
-    }
-
-    public AprilTagFieldLayout getAprilTagFieldLayout() {
-        return aprilTagFieldLayout;
-    }
-
-    public VisionCam[] getCameras() {
-        return cameras;
     }
 
     public record VisionCam(PhotonCamera camera, Transform3d cameraPosition) {

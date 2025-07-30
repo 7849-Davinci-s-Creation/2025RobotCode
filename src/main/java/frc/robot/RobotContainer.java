@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.CoralLevel;
+import frc.robot.commands.ZeroAlgaeRemover;
 import frc.robot.commands.ZeroElevator;
 import frc.robot.commands.autos.Intake;
 import frc.robot.commands.autos.Outtake;
@@ -39,6 +40,7 @@ public final class RobotContainer implements RobotMethods {
         private final EndEffector endEffector;
         private final Elevator elevator;
         private final LED led;
+        private final Vision vision;
 
         // Controllers
         private final CommandXboxController driverController = new CommandXboxController(
@@ -58,11 +60,12 @@ public final class RobotContainer implements RobotMethods {
                 endEffector = EndEffector.getInstance();
                 elevator = Elevator.getInstance();
                 led = LED.getInstance();
+                vision = Vision.getInstance();
 
                 // Initialize subsystems
                 drivetrain.initialize();
                 climber.initialize();
-                // vision.initialize();
+                vision.initialize();
                 elevator.initialize();
                 led.initialize();
 
@@ -252,11 +255,19 @@ public final class RobotContainer implements RobotMethods {
                 operatorController.L3().whileTrue(elevator.goToLevel(CoralLevel.L4))
                                 .onFalse(zeroMechanisms());
 
-                operatorController.L3().whileTrue(elevator.goToLevel(CoralLevel.L4))
+                operatorController.L3().whileTrue(
+                                new ParallelCommandGroup(
+                                                elevator.goToLevel(CoralLevel.HA),
+                                                Commands.run(endEffector.setAlgaeGoal(2.4))))
                                 .onFalse(zeroMechanisms());
 
-                operatorController.R3().whileTrue(elevator.goToLevel(CoralLevel.LA))
+                operatorController.R3().whileTrue(
+                                new ParallelCommandGroup(
+                                                elevator.goToLevel(CoralLevel.LA),
+                                                Commands.run(endEffector.setAlgaeGoal(2.4))))
                                 .onFalse(zeroMechanisms());
+
+                operatorController.PS().onTrue(Commands.runOnce(endEffector.zeroAlgaeRemoverEncoder()));
 
         }
 
@@ -280,7 +291,9 @@ public final class RobotContainer implements RobotMethods {
         }
 
         public Command zeroMechanisms() {
-                return new ZeroElevator(elevator);
+                return new ParallelCommandGroup(
+                                new ZeroElevator(elevator),
+                                new ZeroAlgaeRemover(endEffector));
         }
 
         public Command getAutonomousCommand() {

@@ -215,6 +215,8 @@ public final class Constants {
 
         public static final double LOWER_ALGAE_DISTANCE_METERS = 0.75;
 
+        public static final double HIGH_ALGAE_DISTANCE_METERS = 1.1;
+
         public static final double L4_ELEVATOR_DISTANCE_METERS = 1.35;
 
         public static final double L3_ELEVATOR_DISTANCE_METERS = 0.55;
@@ -231,6 +233,6 @@ public final class Constants {
     }
 
     public enum CoralLevel {
-        L1,L2,L3,L4,LA
+        L1,L2,L3,L4,LA, HA
     }
 }

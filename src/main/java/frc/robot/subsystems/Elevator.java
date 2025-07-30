@@ -141,8 +141,6 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                                                                 positionController.getSetpoint().velocity),
                                 -7, 7);
 
-                DriverStation.reportWarning(String.valueOf(voltsOut), false);
-
                 motor1.setVoltage(voltsOut);
         }
 
@@ -224,6 +222,8 @@ public final class Elevator extends SubsystemBase implements NiceSubsystem {
                         case L4 -> setGoal(Constants.FieldConstants.L4_ELEVATOR_DISTANCE_METERS);
 
                         case LA -> setGoal(Constants.FieldConstants.LOWER_ALGAE_DISTANCE_METERS);
+
+                        case HA -> setGoal(Constants.FieldConstants.HIGH_ALGAE_DISTANCE_METERS);
                 };
         }
 

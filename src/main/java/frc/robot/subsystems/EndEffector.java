@@ -16,6 +16,8 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutLinearVelocity;
@@ -36,6 +38,8 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
     private final SparkMax algaeRemoverMotor;
     private final RelativeEncoder algaeRemoverEncoder;
+
+    private final PIDController algaeController;
 
     // private final SparkMax pivotMotor1;
 
@@ -125,6 +129,8 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         // .linearVelocity(pivotVelocity.mut_replace(
         // pivotEncoder.getVelocity(), InchesPerSecond)),
         // this));
+
+        algaeController = new PIDController(1.25, 0, 0);
     }
 
     public static EndEffector getInstance() {
@@ -174,6 +180,25 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
 
     public Runnable stopAlgaeRemover() {
         return () -> algaeRemoverMotor.set(0);
+    }
+
+    public Runnable setAlgaeGoal(double goal) {
+        double clampedGoal = MathUtil.clamp(goal, 0, 4.5);
+
+        return () -> algaeRemoverMotor
+                .setVoltage(algaeController.calculate(algaeRemoverEncoder.getPosition(), clampedGoal));
+    }
+
+    public Runnable zeroAlgaeRemover() {
+        return () -> setAlgaeGoal(0);
+    }
+
+    public Runnable zeroAlgaeRemoverEncoder() {
+        return () -> algaeRemoverEncoder.setPosition(0);
+    }
+
+    public double getAlgaeRemoverPosition() {
+        return algaeRemoverEncoder.getPosition();
     }
 
     // public Runnable stopPivot() {
