@@ -147,6 +147,10 @@ public final class Constants {
         public static final double SYSID_RAMP_RATE = .25; // default 1
         public static final double SYSID_STEP_VOLTS = 3; // default 7
         public static final double SYSID_TIMEOUT = 5; // default 10
+
+        public static final double ALGAE_REMOVER_MAX_ROTATIONS = 4.5;
+
+        public static final double ALGAE_REMOVER_P = 1.25;
     }
 
     public static final class LEDConstants {

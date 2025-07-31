@@ -130,7 +130,7 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         // pivotEncoder.getVelocity(), InchesPerSecond)),
         // this));
 
-        algaeController = new PIDController(1.25, 0, 0);
+        algaeController = new PIDController(Constants.EndEffectorConstants.ALGAE_REMOVER_P, 0, 0);
     }
 
     public static EndEffector getInstance() {
@@ -183,7 +183,7 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
     }
 
     public Runnable setAlgaeGoal(double goal) {
-        double clampedGoal = MathUtil.clamp(goal, 0, 4.5);
+        double clampedGoal = MathUtil.clamp(goal, 0, Constants.EndEffectorConstants.ALGAE_REMOVER_MAX_ROTATIONS);
 
         return () -> algaeRemoverMotor
                 .setVoltage(algaeController.calculate(algaeRemoverEncoder.getPosition(), clampedGoal));

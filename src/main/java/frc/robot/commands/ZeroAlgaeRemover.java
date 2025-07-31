@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.EndEffector;
 
 public class ZeroAlgaeRemover extends Command {
@@ -23,7 +22,7 @@ public class ZeroAlgaeRemover extends Command {
     public void execute() {
         //elevator.runElevatorDown(0.30).run();
 
-        endEffector.setAlgaeGoal(0).run();
+        endEffector.zeroAlgaeRemover().run();
     }
 
     // Called once the command ends or is interrupted.
