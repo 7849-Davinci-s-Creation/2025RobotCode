@@ -178,13 +178,6 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         return () -> algaeRemoverMotor.set(0);
     }
 
-    public Runnable setAlgaeGoal(double goal) {
-        double clampedGoal = MathUtil.clamp(goal, 0, 4.5);
-
-    //     return () -> algaeRemoverMotor
-    //             .setVoltage(algaeController.calculate(algaeRemoverEncoder.getPosition(), clampedGoal));
-    // }
-
     // public Runnable stopPivot() {
     // return () -> {
     // pivotMotor1.set(0);
