@@ -102,10 +102,9 @@ public final class Constants {
         public static final Matrix<N3, N1> SINGLE_TAG_DEVIATION = VecBuilder.fill(.1, .2, .3);
         public static final Matrix<N3, N1> MULTI_TAG_DEVIATION = VecBuilder.fill(.1, .1, .2);
 
-        public static final String FRONT_LEFT_CAMERA_NAME = "frontleftcamera";
-        public static final String FRONT_RIGHT_CAMERA_NAME = "frontrightcamera";
-        public static final String BACK_LEFT_CAMERA_NAME = "backleftcamera";
-        public static final String BACK_RIGHT_CAMERA_NAME = "backrightcamera";
+        public static final String FRONT_LEFT_CAMERA_NAME = "frontleft";
+        public static final String BACK_LEFT_CAMERA_NAME = "backleft";
+        public static final String BACK_RIGHT_CAMERA_NAME = "backright";
     }
 
     public static final class ClimberConstants {

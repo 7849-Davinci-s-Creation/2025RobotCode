@@ -7,6 +7,9 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
@@ -36,10 +39,7 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
     private final SparkMax intakeMotor1;
     private final SparkMax intakeMotor2;
 
-    private final SparkMax algaeRemoverMotor;
-    private final RelativeEncoder algaeRemoverEncoder;
-
-    private final PIDController algaeController;
+    private final WPI_VictorSPX algaeRemoverMotor;
 
     // private final SparkMax pivotMotor1;
 
@@ -70,15 +70,13 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         intakeMotor1.configure(intakeMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         intakeMotor2.configure(intakeMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        algaeRemoverMotor = new SparkMax(Constants.EndEffectorConstants.ALGAEREMOVER_MOTOR_CANID, MotorType.kBrushless);
-        algaeRemoverEncoder = algaeRemoverMotor.getEncoder();
+        algaeRemoverMotor = new WPI_VictorSPX(Constants.EndEffectorConstants.ALGAEREMOVER_MOTOR_CANID);
 
-        algaeRemoverMotor.clearFaults();
+        algaeRemoverMotor.clearStickyFaults();
+
+        algaeRemoverMotor.setNeutralMode(NeutralMode.Brake);
 
         final SparkBaseConfig algaeRemoverMotorConfig = new SparkMaxConfig().idleMode(IdleMode.kBrake).inverted(true);
-
-        algaeRemoverMotor.configure(algaeRemoverMotorConfig, ResetMode.kResetSafeParameters,
-                PersistMode.kPersistParameters);
 
         // pivotMotor1 = new SparkMax(Constants.EndEffectorConstants.PIVOTMOTOR1_CANID,
         // MotorType.kBrushless);
@@ -129,8 +127,6 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         // .linearVelocity(pivotVelocity.mut_replace(
         // pivotEncoder.getVelocity(), InchesPerSecond)),
         // this));
-
-        algaeController = new PIDController(1.25, 0, 0);
     }
 
     public static EndEffector getInstance() {
@@ -182,24 +178,12 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         return () -> algaeRemoverMotor.set(0);
     }
 
-    public Runnable setAlgaeGoal(double goal) {
-        double clampedGoal = MathUtil.clamp(goal, 0, 4.5);
+    // public Runnable setAlgaeGoal(double goal) {
+    //     double clampedGoal = MathUtil.clamp(goal, 0, 4.5);
 
-        return () -> algaeRemoverMotor
-                .setVoltage(algaeController.calculate(algaeRemoverEncoder.getPosition(), clampedGoal));
-    }
-
-    public Runnable zeroAlgaeRemover() {
-        return () -> setAlgaeGoal(0);
-    }
-
-    public Runnable zeroAlgaeRemoverEncoder() {
-        return () -> algaeRemoverEncoder.setPosition(0);
-    }
-
-    public double getAlgaeRemoverPosition() {
-        return algaeRemoverEncoder.getPosition();
-    }
+    //     return () -> algaeRemoverMotor
+    //             .setVoltage(algaeController.calculate(algaeRemoverEncoder.getPosition(), clampedGoal));
+    // }
 
     // public Runnable stopPivot() {
     // return () -> {
@@ -289,8 +273,6 @@ public final class EndEffector extends SubsystemBase implements NiceSubsystem {
         // pivotEncoder.getVelocity());
         // SmartDashboard.putBoolean("End Effector Limit Switch",
         // pivotLimitSwitch.get());
-
-        SmartDashboard.putNumber("AlgaeRemover Rotations: ", algaeRemoverEncoder.getPosition());
     }
 
     @Override

@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.CoralLevel;
-import frc.robot.commands.ZeroAlgaeRemover;
 import frc.robot.commands.ZeroElevator;
 import frc.robot.commands.autos.Intake;
 import frc.robot.commands.autos.Outtake;
@@ -52,7 +51,11 @@ public final class RobotContainer implements RobotMethods {
         // Everything else
         private final SendableChooser<Command> autoChooser;
 
+        private final edu.wpi.first.wpilibj.Timer timer = new edu.wpi.first.wpilibj.Timer();
+
         public RobotContainer() {
+                timer.start();
+
                 // need to instantiate subsystems in constructor so pathplanner has
                 // subsystems to reference when we register named commands.
                 drivetrain = TunerConstants.createDrivetrain();
@@ -255,20 +258,10 @@ public final class RobotContainer implements RobotMethods {
                 operatorController.L3().whileTrue(elevator.goToLevel(CoralLevel.L4))
                                 .onFalse(zeroMechanisms());
 
-                operatorController.L3().whileTrue(
-                                new ParallelCommandGroup(
-                                                elevator.goToLevel(CoralLevel.HA),
-                                                Commands.run(endEffector.setAlgaeGoal(2.4))))
+                operatorController.L3().whileTrue(elevator.goToLevel(CoralLevel.HA)).onFalse(zeroMechanisms());
+
+                operatorController.R3().whileTrue(elevator.goToLevel(CoralLevel.LA))
                                 .onFalse(zeroMechanisms());
-
-                operatorController.R3().whileTrue(
-                                new ParallelCommandGroup(
-                                                elevator.goToLevel(CoralLevel.LA),
-                                                Commands.run(endEffector.setAlgaeGoal(2.4))))
-                                .onFalse(zeroMechanisms());
-
-                operatorController.PS().onTrue(Commands.runOnce(endEffector.zeroAlgaeRemoverEncoder()));
-
         }
 
         public void registerNamedCommands() {
@@ -291,9 +284,7 @@ public final class RobotContainer implements RobotMethods {
         }
 
         public Command zeroMechanisms() {
-                return new ParallelCommandGroup(
-                                new ZeroElevator(elevator),
-                                new ZeroAlgaeRemover(endEffector));
+                return new ZeroElevator(elevator);
         }
 
         public Command getAutonomousCommand() {
@@ -302,7 +293,10 @@ public final class RobotContainer implements RobotMethods {
 
         @Override
         public void robotPeriodic() {
-
+        // periodically call garbage collector
+        if (timer.advanceIfElapsed(5)) {
+                System.gc();
+        }
         }
 
         @Override

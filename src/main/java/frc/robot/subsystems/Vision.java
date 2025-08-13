@@ -36,10 +36,6 @@ public final class Vision extends SubsystemBase implements NiceSubsystem {
         final Transform3d frontLeftCameraPosition = new Transform3d(new Translation3d(0, 0, 0),
                 new Rotation3d(0, 0, 0));
 
-        final PhotonCamera frontRightPhotonCamera = new PhotonCamera(Constants.VisionConstants.FRONT_RIGHT_CAMERA_NAME);
-        final Transform3d frontRightCameraPosition = new Transform3d(new Translation3d(0, 0, 0),
-                new Rotation3d(0, 0, 0));
-
         final PhotonCamera backLeftPhotonCamera = new PhotonCamera(Constants.VisionConstants.BACK_LEFT_CAMERA_NAME);
         final Transform3d backLeftCameraPosition = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
 
@@ -47,12 +43,11 @@ public final class Vision extends SubsystemBase implements NiceSubsystem {
         final Transform3d backRightCameraPosition = new Transform3d(new Translation3d(0, 0, 0),
                 new Rotation3d(0, 0, 0));
 
-        cameras = new VisionCam[4];
+        cameras = new VisionCam[3];
 
         cameras[0] = new VisionCam(frontLeftPhotonCamera, frontLeftCameraPosition);
-        cameras[1] = new VisionCam(frontRightPhotonCamera, frontRightCameraPosition);
-        cameras[2] = new VisionCam(backLeftPhotonCamera, backLeftCameraPosition);
-        cameras[3] = new VisionCam(backRightPhotonCamera, backRightCameraPosition);
+        cameras[1] = new VisionCam(backLeftPhotonCamera, backLeftCameraPosition);
+        cameras[2] = new VisionCam(backRightPhotonCamera, backRightCameraPosition);
 
         cameraMap = new HashMap<>();
         // check that cameras are instantiated correctly, and that they are connected.
@@ -63,14 +58,13 @@ public final class Vision extends SubsystemBase implements NiceSubsystem {
             } else {
                 cameraMap.put(camera.camera.getName(), camera);
             }
-
-            if (!camera.camera.isConnected()) {
-                DriverStation.reportError("Camera: " + camera.camera.getName() + " is not connected!", true);
-            }
         }
 
         // HOME FIELD IS ANDYMARK, COMP FIELD IS WELDED
         aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
+
+        // CLEAR HEAP OF USELESS CRAP
+        System.gc();
     }
 
     public static Vision getInstance() {
@@ -104,9 +98,8 @@ public final class Vision extends SubsystemBase implements NiceSubsystem {
 
     @Override
     public void initialize() {
-        runCameraServer();
-
-        PortForwarder.add(5800, "photonvision.local", 5800);
+        PortForwarder.add(5800, "orangepi1.local", 5800);
+        PortForwarder.add(5800, "orangepi2.local", 5801);
     }
 
     public record VisionCam(PhotonCamera camera, Transform3d cameraPosition) {
