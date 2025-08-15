@@ -97,14 +97,28 @@ public final class Constants {
     }
 
     public static final class VisionConstants {
-        public static final double CAMERA_MOUNT_HEIGHT_INCHES = 18.5;
-
         public static final Matrix<N3, N1> SINGLE_TAG_DEVIATION = VecBuilder.fill(.1, .2, .3);
         public static final Matrix<N3, N1> MULTI_TAG_DEVIATION = VecBuilder.fill(.1, .1, .2);
 
-        public static final String FRONT_LEFT_CAMERA_NAME = "frontleft";
+        public static final String FRONT_RIGHT_CAMERA_NAME = "frontright";
         public static final String BACK_LEFT_CAMERA_NAME = "backleft";
         public static final String BACK_RIGHT_CAMERA_NAME = "backright";
+
+        public static double FRONTRIGHT_CAMERA_X_METERS = 0.2921;
+        public static double FRONTRIGHT_CAMERA_Y_METERS = -0.2921;
+        public static double FRONTRIGHT_CAMERA_YAW_RADIANS = 0.872665;
+
+        public static double BACKRIGHT_CAMERA_X_METERS = -FRONTRIGHT_CAMERA_X_METERS;
+        public static double BACKRIGHT_CAMERA_Y_METERS = FRONTRIGHT_CAMERA_Y_METERS;
+        public static double BACKRIGHT_CAMERA_YAW_RADIANS = 2.53073;
+
+        public static double BACKLEFT_CAMERA_X_METERS = BACKRIGHT_CAMERA_X_METERS;
+        public static double BACKLEFT_CAMERA_Y_METERS = -FRONTRIGHT_CAMERA_X_METERS;
+        public static double BACKLEFT_CAMERA_YAW_RADIANS = 3.75246;
+
+        public static double CAMERAS_Z_METERS = 0.1778;
+        public static double CAMERA_PITCH_RADIANS = 0.698132;
+
     }
 
     public static final class ClimberConstants {

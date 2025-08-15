@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.CoralLevel;
+import frc.robot.commands.PoseEstimate;
 import frc.robot.commands.ZeroElevator;
 import frc.robot.commands.autos.Intake;
 import frc.robot.commands.autos.Outtake;
@@ -115,6 +116,16 @@ public final class RobotContainer implements RobotMethods {
                                 // with
                                 // negative X (left)
                                 ));
+
+                // SUPER OP SWAG POSE ESTIMATION WITH 3 CAMERAS
+                vision.setDefaultCommand(
+                                new ParallelCommandGroup(
+                                                new PoseEstimate(vision, drivetrain,
+                                                                Constants.VisionConstants.BACK_LEFT_CAMERA_NAME),
+                                                new PoseEstimate(vision, drivetrain,
+                                                                Constants.VisionConstants.FRONT_RIGHT_CAMERA_NAME),
+                                                new PoseEstimate(vision, drivetrain,
+                                                                Constants.VisionConstants.BACK_RIGHT_CAMERA_NAME)));
         }
 
         private void configureBindings() {
@@ -293,10 +304,10 @@ public final class RobotContainer implements RobotMethods {
 
         @Override
         public void robotPeriodic() {
-        // periodically call garbage collector
-        if (timer.advanceIfElapsed(5)) {
-                System.gc();
-        }
+                // periodically call garbage collector
+                if (timer.advanceIfElapsed(5)) {
+                        System.gc();
+                }
         }
 
         @Override

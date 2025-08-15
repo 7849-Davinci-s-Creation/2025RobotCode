@@ -32,20 +32,32 @@ public final class Vision extends SubsystemBase implements NiceSubsystem {
         // from center.
 
         // translation3d takes in x , y , and z , rotation3d takes in roll, pitch, yaw
-        final PhotonCamera frontLeftPhotonCamera = new PhotonCamera(Constants.VisionConstants.FRONT_LEFT_CAMERA_NAME);
-        final Transform3d frontLeftCameraPosition = new Transform3d(new Translation3d(0, 0, 0),
-                new Rotation3d(0, 0, 0));
+        final PhotonCamera frontRightPhotonCamera = new PhotonCamera(Constants.VisionConstants.FRONT_RIGHT_CAMERA_NAME);
+        final Transform3d frontRightCameraPosition = new Transform3d(
+                new Translation3d(Constants.VisionConstants.FRONTRIGHT_CAMERA_X_METERS,
+                        Constants.VisionConstants.FRONTRIGHT_CAMERA_Y_METERS,
+                        Constants.VisionConstants.CAMERAS_Z_METERS),
+                new Rotation3d(0, Constants.VisionConstants.CAMERA_PITCH_RADIANS,
+                        Constants.VisionConstants.FRONTRIGHT_CAMERA_YAW_RADIANS));
 
         final PhotonCamera backLeftPhotonCamera = new PhotonCamera(Constants.VisionConstants.BACK_LEFT_CAMERA_NAME);
-        final Transform3d backLeftCameraPosition = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
+        final Transform3d backLeftCameraPosition = new Transform3d(
+                new Translation3d(Constants.VisionConstants.BACKLEFT_CAMERA_X_METERS,
+                        Constants.VisionConstants.BACKLEFT_CAMERA_Y_METERS, Constants.VisionConstants.CAMERAS_Z_METERS),
+                new Rotation3d(0, Constants.VisionConstants.CAMERA_PITCH_RADIANS,
+                        Constants.VisionConstants.BACKLEFT_CAMERA_YAW_RADIANS));
 
         final PhotonCamera backRightPhotonCamera = new PhotonCamera(Constants.VisionConstants.BACK_RIGHT_CAMERA_NAME);
-        final Transform3d backRightCameraPosition = new Transform3d(new Translation3d(0, 0, 0),
-                new Rotation3d(0, 0, 0));
+        final Transform3d backRightCameraPosition = new Transform3d(
+                new Translation3d(Constants.VisionConstants.BACKRIGHT_CAMERA_X_METERS,
+                        Constants.VisionConstants.BACKRIGHT_CAMERA_Y_METERS,
+                        Constants.VisionConstants.CAMERAS_Z_METERS),
+                new Rotation3d(0, Constants.VisionConstants.CAMERA_PITCH_RADIANS,
+                        Constants.VisionConstants.BACKRIGHT_CAMERA_YAW_RADIANS));
 
         cameras = new VisionCam[3];
 
-        cameras[0] = new VisionCam(frontLeftPhotonCamera, frontLeftCameraPosition);
+        cameras[0] = new VisionCam(frontRightPhotonCamera, frontRightCameraPosition);
         cameras[1] = new VisionCam(backLeftPhotonCamera, backLeftCameraPosition);
         cameras[2] = new VisionCam(backRightPhotonCamera, backRightCameraPosition);
 
@@ -61,7 +73,7 @@ public final class Vision extends SubsystemBase implements NiceSubsystem {
         }
 
         // HOME FIELD IS ANDYMARK, COMP FIELD IS WELDED
-        aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
+        aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
 
         // CLEAR HEAP OF USELESS CRAP
         System.gc();
