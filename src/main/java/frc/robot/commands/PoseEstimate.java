@@ -1,6 +1,8 @@
 package frc.robot.commands;
 
 import com.ctre.phoenix6.Utils;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.numbers.N1;
@@ -21,26 +23,29 @@ import java.util.Optional;
 
 public final class PoseEstimate extends Command {
     private final CommandSwerveDrivetrain drivetrain;
-    private final Vision.VisionCam camera;
+    private final Vision camera;
     private final PhotonPoseEstimator poseEstimator;
 
     private Matrix<N3, N1> currentStdDevs;
 
     private final DoubleArrayPublisher estimatedPoses;
 
-    public PoseEstimate(Vision vision, CommandSwerveDrivetrain drivetrain, String camera) {
+    public PoseEstimate(Vision vision, CommandSwerveDrivetrain drivetrain) {
         this.drivetrain = drivetrain;
-        this.camera = vision.getCamera(camera);
+        this.camera = vision;
 
-        poseEstimator = new PhotonPoseEstimator(vision.getAprilTagFieldLayout(),
+        final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(
+                AprilTagFields.k2025ReefscapeAndyMark);
+
+        poseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout,
                 PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-                this.camera.cameraPosition());
+                this.camera.getPosition());
 
         poseEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
 
         // logging crap
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
-        estimatedPoses = inst.getDoubleArrayTopic(this.camera.camera().getName() + "_estimated_pose").publish();
+        estimatedPoses = inst.getDoubleArrayTopic(this.camera.getName() + "_estimated_pose").publish();
 
         addRequirements(vision, drivetrain);
     }
@@ -48,15 +53,7 @@ public final class PoseEstimate extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        // if camera is not there or connected do not even try to do things with it.
-        if (camera.camera() == null) {
-            isFinished();
-            return;
-        }
 
-        if (!camera.camera().isConnected()) {
-            isFinished();
-        }
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -84,11 +81,11 @@ public final class PoseEstimate extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return camera.camera() == null || !camera.camera().isConnected();
+        return camera == null || !camera.getCamera().isConnected();
     }
 
     private Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
-        List<PhotonPipelineResult> results = camera.camera().getAllUnreadResults();
+        List<PhotonPipelineResult> results = camera.getCamera().getAllUnreadResults();
         Optional<EstimatedRobotPose> visionEstimate = Optional.empty();
 
         for (PhotonPipelineResult result : results) {

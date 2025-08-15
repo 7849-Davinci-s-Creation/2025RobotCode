@@ -2,8 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -119,10 +118,45 @@ public final class Constants {
         public static double CAMERAS_Z_METERS = 0.1778;
         public static double CAMERA_PITCH_RADIANS = 0.698132;
 
-    }
+        public static Transform3d FRONTRIGHT_CAMERA_POSITION = new Transform3d(
+                new Translation3d(
+                        FRONTRIGHT_CAMERA_X_METERS,
+                        FRONTRIGHT_CAMERA_Y_METERS,
+                        CAMERAS_Z_METERS
+                ),
+                new Rotation3d(
+                      0,
+                        CAMERA_PITCH_RADIANS,
+                        FRONTRIGHT_CAMERA_YAW_RADIANS
+                )
+        );
 
-    public static final class ClimberConstants {
-        public static final int MOTOR1_CANID = 55;
+        public static Transform3d BACKRIGHT_CAMERA_POSITION = new Transform3d(
+                new Translation3d(
+                        BACKRIGHT_CAMERA_X_METERS,
+                        BACKRIGHT_CAMERA_Y_METERS,
+                        CAMERAS_Z_METERS
+                ),
+                new Rotation3d(
+                        0,
+                        CAMERA_PITCH_RADIANS,
+                        BACKRIGHT_CAMERA_YAW_RADIANS
+                )
+        );
+
+        public static Transform3d BACKLEFT_CAMERA_POSITION = new Transform3d(
+                new Translation3d(
+                        BACKLEFT_CAMERA_X_METERS,
+                        BACKLEFT_CAMERA_Y_METERS,
+                        CAMERAS_Z_METERS
+                ),
+                new Rotation3d(
+                        0,
+                        CAMERA_PITCH_RADIANS,
+                        BACKLEFT_CAMERA_YAW_RADIANS
+                )
+        );
+
     }
 
     public static final class EndEffectorConstants {
@@ -187,17 +221,17 @@ public final class Constants {
 
         // FIND ALL OF THESE
         public static final Node NODE1_POSE = new Node(null, null);
-        public static final Node NODE2_POSE = new Node(null, null);;
-        public static final Node NODE3_POSE = new Node(null, null);;
-        public static final Node NODE4_POSE = new Node(null, null);;
-        public static final Node NODE5_POSE = new Node(null, null);;
-        public static final Node NODE6_POSE = new Node(null, null);;
-        public static final Node NODE7_POSE = new Node(null, null);;
-        public static final Node NODE8_POSE = new Node(null, null);;
-        public static final Node NODE9_POSE = new Node(null, null);;
-        public static final Node NODE10_POSE = new Node(null, null);;
-        public static final Node NODE11_POSE = new Node(null, null);;
-        public static final Node NODE12_POSE = new Node(null, null);;
+        public static final Node NODE2_POSE = new Node(null, null);
+        public static final Node NODE3_POSE = new Node(null, null);
+        public static final Node NODE4_POSE = new Node(null, null);
+        public static final Node NODE5_POSE = new Node(null, null);
+        public static final Node NODE6_POSE = new Node(null, null);
+        public static final Node NODE7_POSE = new Node(null, null);
+        public static final Node NODE8_POSE = new Node(null, null);
+        public static final Node NODE9_POSE = new Node(null, null);
+        public static final Node NODE10_POSE = new Node(null, null);
+        public static final Node NODE11_POSE = new Node(null, null);
+        public static final Node NODE12_POSE = new Node(null, null);
 
         public static Pose2d getScoringNodePose(String nodeName, DriverStation.Alliance alliance) {
             final Node wantedNode = NODES.get(nodeName);

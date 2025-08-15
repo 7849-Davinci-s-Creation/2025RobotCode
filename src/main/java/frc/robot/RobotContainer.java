@@ -1,16 +1,15 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
-import com.ctre.phoenix.led.FireAnimation;
 import com.ctre.phoenix.led.RainbowAnimation;
-import com.ctre.phoenix.led.StrobeAnimation;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
@@ -25,7 +24,6 @@ import frc.robot.commands.autos.Outtake;
 import frc.robot.commands.autos.ScoreCoral;
 import frc.robot.commands.autos.Timer;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.EndEffector;
@@ -36,11 +34,12 @@ import lib.RobotMethods;
 public final class RobotContainer implements RobotMethods {
         // Subsystems
         private final CommandSwerveDrivetrain drivetrain;
-        private final Climber climber;
         private final EndEffector endEffector;
         private final Elevator elevator;
         private final LED led;
-        private final Vision vision;
+        private final Vision backLeftVision;
+        private final Vision backRightVision;
+        private final Vision frontRightVision;
 
         // Controllers
         private final CommandXboxController driverController = new CommandXboxController(
@@ -60,16 +59,31 @@ public final class RobotContainer implements RobotMethods {
                 // need to instantiate subsystems in constructor so pathplanner has
                 // subsystems to reference when we register named commands.
                 drivetrain = TunerConstants.createDrivetrain();
-                climber = Climber.getInstance();
                 endEffector = EndEffector.getInstance();
                 elevator = Elevator.getInstance();
                 led = LED.getInstance();
-                vision = Vision.getInstance();
+
+                // Vision cameras
+                backLeftVision = new Vision(
+                        Constants.VisionConstants.BACK_LEFT_CAMERA_NAME,
+                        Constants.VisionConstants.BACKLEFT_CAMERA_POSITION
+                );
+
+                backRightVision = new Vision(
+                        Constants.VisionConstants.BACK_RIGHT_CAMERA_NAME,
+                        Constants.VisionConstants.BACKRIGHT_CAMERA_POSITION
+                );
+
+                frontRightVision = new Vision(
+                        Constants.VisionConstants.FRONT_RIGHT_CAMERA_NAME,
+                        Constants.VisionConstants.FRONTRIGHT_CAMERA_POSITION
+                );
 
                 // Initialize subsystems
                 drivetrain.initialize();
-                climber.initialize();
-                vision.initialize();
+                backRightVision.initialize();
+                frontRightVision.initialize();
+                backLeftVision.initialize();
                 elevator.initialize();
                 led.initialize();
 
@@ -82,6 +96,10 @@ public final class RobotContainer implements RobotMethods {
                 configureDefault();
                 configureBindings();
                 registerNamedCommands();
+
+                // port forward photon vision dashboards
+                PortForwarder.add(5800, "orangepi1.local", 5800);
+                PortForwarder.add(5800, "orangepi2.local", 5801);
 
                 autoChooser = AutoBuilder.buildAutoChooser();
 
@@ -117,15 +135,19 @@ public final class RobotContainer implements RobotMethods {
                                 // negative X (left)
                                 ));
 
-                // SUPER OP SWAG POSE ESTIMATION WITH 3 CAMERAS
-                vision.setDefaultCommand(
-                                new ParallelCommandGroup(
-                                                new PoseEstimate(vision, drivetrain,
-                                                                Constants.VisionConstants.BACK_LEFT_CAMERA_NAME),
-                                                new PoseEstimate(vision, drivetrain,
-                                                                Constants.VisionConstants.FRONT_RIGHT_CAMERA_NAME),
-                                                new PoseEstimate(vision, drivetrain,
-                                                                Constants.VisionConstants.BACK_RIGHT_CAMERA_NAME)));
+                // Mega super pose estimator
+                // (needs to be seperated to individual cameras to update same drivetrain pose)
+                backLeftVision.setDefaultCommand(
+                        new PoseEstimate(backLeftVision, drivetrain)
+                );
+
+                backRightVision.setDefaultCommand(
+                        new PoseEstimate(backRightVision, drivetrain)
+                );
+
+                frontRightVision.setDefaultCommand(
+                        new PoseEstimate(frontRightVision, drivetrain)
+                );
         }
 
         private void configureBindings() {
@@ -187,7 +209,7 @@ public final class RobotContainer implements RobotMethods {
                 driverController.rightBumper().and(driverController.x())
                                 .whileTrue(drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
 
-                // reset the field-centric heading on left bumper press
+                // reset the field-centric heading on back press
                 driverController.back().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
                 driverController.a().whileTrue(drivetrain.applyRequest(drivetrain::getBrake));
@@ -197,18 +219,17 @@ public final class RobotContainer implements RobotMethods {
                                                 new Rotation2d(-driverController.getLeftY(),
                                                                 -driverController.getLeftX()))));
 
-                // doesnt work atm and we dont have time to debug: future team fix this !
-                // driverController.leftBumper().whileTrue(
-                // Commands.runOnce(
-                // () -> drivetrain.setControl(drivetrain.driveWithFeederStationAngle(
-                // DriverStation.getAlliance().get(),
-                // Constants.FeederStation.LEFT))));
+                 driverController.leftBumper().whileTrue(
+                 Commands.run(
+                 () -> drivetrain.setControl(drivetrain.driveWithFeederStationAngle(
+                 DriverStation.getAlliance().get(),
+                 Constants.FeederStation.LEFT))));
 
-                // driverController.rightBumper().whileTrue(
-                // Commands.runOnce(
-                // () -> drivetrain.setControl(drivetrain.driveWithFeederStationAngle(
-                // DriverStation.getAlliance().get(),
-                // Constants.FeederStation.RIGHT))));
+                 driverController.rightBumper().whileTrue(
+                 Commands.run(
+                 () -> drivetrain.setControl(drivetrain.driveWithFeederStationAngle(
+                 DriverStation.getAlliance().get(),
+                 Constants.FeederStation.RIGHT))));
 
                 // operator controller
 
