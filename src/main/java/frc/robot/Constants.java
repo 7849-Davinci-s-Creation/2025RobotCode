@@ -5,7 +5,6 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.generated.TunerConstants;
 

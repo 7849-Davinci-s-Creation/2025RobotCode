@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.CoralLevel;
-import frc.robot.commands.PoseEstimate;
 import frc.robot.commands.ZeroElevator;
 import frc.robot.commands.autos.Intake;
 import frc.robot.commands.autos.Outtake;
@@ -37,9 +36,9 @@ public final class RobotContainer implements RobotMethods {
         private final EndEffector endEffector;
         private final Elevator elevator;
         private final LED led;
-        private final Vision backLeftVision;
-        private final Vision backRightVision;
-        private final Vision frontRightVision;
+        // private final Vision frontRightVision;
+        // private final Vision backRightVision;
+        // private final Vision backLeftVision;
 
         // Controllers
         private final CommandXboxController driverController = new CommandXboxController(
@@ -63,29 +62,20 @@ public final class RobotContainer implements RobotMethods {
                 elevator = Elevator.getInstance();
                 led = LED.getInstance();
 
-                // Vision cameras
-                backLeftVision = new Vision(
-                        Constants.VisionConstants.BACK_LEFT_CAMERA_NAME,
-                        Constants.VisionConstants.BACKLEFT_CAMERA_POSITION
-                );
+                // frontRightVision = new Vision(Constants.VisionConstants.FRONT_RIGHT_CAMERA_NAME,
+                //                 Constants.VisionConstants.FRONTRIGHT_CAMERA_POSITION, drivetrain);
 
-                backRightVision = new Vision(
-                        Constants.VisionConstants.BACK_RIGHT_CAMERA_NAME,
-                        Constants.VisionConstants.BACKRIGHT_CAMERA_POSITION
-                );
+                // backRightVision = new Vision(Constants.VisionConstants.BACK_RIGHT_CAMERA_NAME,
+                //                 Constants.VisionConstants.BACKRIGHT_CAMERA_POSITION, drivetrain);
 
-                frontRightVision = new Vision(
-                        Constants.VisionConstants.FRONT_RIGHT_CAMERA_NAME,
-                        Constants.VisionConstants.FRONTRIGHT_CAMERA_POSITION
-                );
+                // backLeftVision = new Vision(Constants.VisionConstants.BACK_LEFT_CAMERA_NAME,
+                //                 Constants.VisionConstants.BACKLEFT_CAMERA_POSITION, drivetrain);
 
                 // Initialize subsystems
                 drivetrain.initialize();
-                backRightVision.initialize();
-                frontRightVision.initialize();
-                backLeftVision.initialize();
                 elevator.initialize();
                 led.initialize();
+                // frontRightVision.initialize();
 
                 // ---- ALL ROBOT SUBSYSTEMS SHOULD BE INITIALIZED AND INSTANTIATED BEFORE DOING
                 // ANYTHING ELSE
@@ -137,17 +127,7 @@ public final class RobotContainer implements RobotMethods {
 
                 // Mega super pose estimator
                 // (needs to be seperated to individual cameras to update same drivetrain pose)
-                backLeftVision.setDefaultCommand(
-                        new PoseEstimate(backLeftVision, drivetrain)
-                );
 
-                backRightVision.setDefaultCommand(
-                        new PoseEstimate(backRightVision, drivetrain)
-                );
-
-                frontRightVision.setDefaultCommand(
-                        new PoseEstimate(frontRightVision, drivetrain)
-                );
         }
 
         private void configureBindings() {
@@ -219,17 +199,17 @@ public final class RobotContainer implements RobotMethods {
                                                 new Rotation2d(-driverController.getLeftY(),
                                                                 -driverController.getLeftX()))));
 
-                 driverController.leftBumper().whileTrue(
-                 Commands.run(
-                 () -> drivetrain.setControl(drivetrain.driveWithFeederStationAngle(
-                 DriverStation.getAlliance().get(),
-                 Constants.FeederStation.LEFT))));
+                driverController.leftBumper().whileTrue(
+                                Commands.run(
+                                                () -> drivetrain.setControl(drivetrain.driveWithFeederStationAngle(
+                                                                DriverStation.getAlliance().get(),
+                                                                Constants.FeederStation.LEFT))));
 
-                 driverController.rightBumper().whileTrue(
-                 Commands.run(
-                 () -> drivetrain.setControl(drivetrain.driveWithFeederStationAngle(
-                 DriverStation.getAlliance().get(),
-                 Constants.FeederStation.RIGHT))));
+                driverController.rightBumper().whileTrue(
+                                Commands.run(
+                                                () -> drivetrain.setControl(drivetrain.driveWithFeederStationAngle(
+                                                                DriverStation.getAlliance().get(),
+                                                                Constants.FeederStation.RIGHT))));
 
                 // operator controller
 
